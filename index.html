@@ -810,6 +810,45 @@
   .cla-input::placeholder { color: var(--text-dim); }
 
 
+  /* Custom item dropdown */
+  .loot-item-display {
+    min-height: 38px;
+    position: relative;
+  }
+  .loot-item-display::after {
+    content: '▾';
+    position: absolute;
+    right: 10px;
+    color: var(--gold-dim);
+    font-size: 12px;
+  }
+  .loot-item-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg2);
+    border: 1px solid var(--gold-dim);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .loot-item-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    cursor: pointer;
+    font-family: 'Crimson Pro', serif;
+    font-size: 15px;
+    color: var(--text);
+    border-bottom: 1px solid rgba(46,37,16,0.4);
+    transition: background 0.1s;
+  }
+  .loot-item-option:hover { background: rgba(201,168,76,0.08); }
+  .loot-item-option.selected { color: var(--gold); }
+  .loot-item-option img { width: 18px; height: 18px; border: 1px solid #444; border-radius: 2px; flex-shrink: 0; }
+
   /* ── Loot Panel ─────────────────────────────────────────────── */
   .loot-selectors {
     display: flex;
@@ -948,6 +987,8 @@
   }
 
 </style>
+<script>const whTooltips = {colorLinks: true, iconizeLinks: true, iconSize: 'small', rename: true, hide: {molt: true}};</script>
+<script src="https://wow.zamimg.com/widgets/power.js"></script>
 </head>
 <body>
 <div class="container">
@@ -984,11 +1025,12 @@
           <option value="">— Select Boss —</option>
         </select>
       </div>
-      <div class="loot-select-group">
+      <div class="loot-select-group" style="position:relative;">
         <label class="loot-select-label">Item</label>
-        <select class="loot-select" id="lootItem" onchange="onItemChange()" disabled>
-          <option value="">— Select Item —</option>
-        </select>
+        <div id="lootItemDisplay" class="loot-select loot-item-display" onclick="toggleItemDropdown()" style="display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;opacity:0.4;pointer-events:none;">
+          <span id="lootItemText">— Select Item —</span>
+        </div>
+        <div id="lootItemDropdown" class="loot-item-dropdown" style="display:none;"></div>
       </div>
     </div>
     <div id="lootEligible"></div>
@@ -1062,6 +1104,8 @@ function normalizeDate(d) {
 }
 
 let lootByPlayer = {};
+let itemMap = {}; // normalized item name -> { id, name }
+let itemIcons = {}; // item id -> icon name
 let claSheets = [];
 let claDataByPlayer = {};
 let buffScoreByPlayerDate = {}; // normalized name -> { normalizedDate -> pct }
@@ -1244,6 +1288,107 @@ function parseClasses(text) {
   return map;
 }
 
+const ITEM_IDS = {
+  'aegisofthevindicator': 29458,
+  'aldorilegacydefender': 28825,
+  'axeofthegronnlords': 28794,
+  'beltofdivineinsipration': 28799,
+  'beltofdivineinspiration': 28799,
+  'bladespirewarbands': 28795,
+  'bloodmawmagusblade': 28802,
+  'brutecloakoftheogremagi': 28797,
+  'chestgaurdofthefalledhero': 29755,
+  'chestgaurdofthefallenchampion': 29754,
+  'chestgaurdofthefallendefender': 29753,
+  'chestguardofthefallenchampion': 29754,
+  'chestguardofthefallendefender': 29753,
+  'chestguardofthefallenhero': 29755,
+  'cloakofthepitstalker': 28777,
+  'collarofchogall': 28804,
+  'cowlofnaturesbreath': 28803,
+  'crystalheartpulsestaff': 28782,
+  'dragonspinetrophy': 28830,
+  'eredarwandofobliteration': 28783,
+  'eyeofgruul': 28823,
+  'eyeofmagtheridon': 28789,
+  'gauntletsofmartialperfection': 28824,
+  'gauntletsofthedragonslayer': 28827,
+  'girdleoftheendlesspit': 28779,
+  'glaiveofthepit': 28774,
+  'gronnstitchedgirdle': 28828,
+  'hammerofthenaaru': 28800,
+  'karaboriantalisman': 28781,
+  'leggingsofthefallenchampion': 29766,
+  'leggingsofthefallendefender': 29767,
+  'leggingsofthefallenhero': 29765,
+  'liarstonguegloves': 28776,
+  'magtheridonshead': 32385,
+  'maleficmaskoftheshadows': 28796,
+  'maleficmastoftheshadows': 28796,
+  'maulgarswarhelm': 28801,
+  'pauldronsofthefallenchampion': 29763,
+  'pauldronsofthefallendefender': 29764,
+  'pauldronsofthefallenhero': 29762,
+  'pitlordssatchel': 34845,
+  'shurikenofnegation': 28826,
+  'souleatershandwraps': 28780,
+  'teethofgruul': 28822,
+  'terrorpitgirdle': 28778,
+  'thunderinggreathelm': 28775,
+  'windshearboots': 28810,
+};
+
+async function fetchItemIcons() {
+  const ids = [...new Set(Object.values(ITEM_IDS))];
+  await Promise.all(ids.map(async id => {
+    if (itemIcons[id]) return; // already fetched
+    try {
+      const res = await fetch(`${ICON_SCRIPT}?itemId=${id}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.icon) itemIcons[id] = data.icon.toLowerCase();
+    } catch(e) {}
+  }));
+}
+
+function fetchItemMap() {
+  // ITEM_IDS already uses pre-normalized keys — getItemId reads directly from it
+  // No async work needed; this is a no-op placeholder for future sheet lookup
+}
+
+function parseItemSheet(text) {
+  const rows = parseCsvRows(text);
+  for (const row of rows) {
+    const name = row[1]?.trim();
+    if (!name) continue;
+    const key = normalizeName(name);
+    // Only add if not already in static map
+    if (!itemMap[key]) {
+      itemMap[key] = { id: null, name };
+    }
+  }
+}
+
+function getItemId(itemName) {
+  const key = normalizeName(itemName);
+  return itemMap[key]?.id || ITEM_IDS[key] || null;
+}
+
+function itemIconImg(id, size = 18) {
+  const icon = itemIcons[id];
+  if (!icon) return '';
+  return `<img src="https://wow.zamimg.com/images/wow/icons/small/${icon}.jpg" style="width:${size}px;height:${size}px;border:1px solid #444;border-radius:2px;vertical-align:middle;flex-shrink:0;" />`;
+}
+
+function itemLink(itemName, linkText) {
+  const id = getItemId(itemName);
+  if (id) {
+    const icon = itemIconImg(id);
+    return `<a href="https://www.wowhead.com/tbc/item=${id}" data-wowhead="item=${id}&domain=tbc" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:5px;text-decoration:none;color:inherit;">${icon}${linkText}</a>`;
+  }
+  return `<a href="https://www.wowhead.com/tbc/search?q=${encodeURIComponent(itemName)}" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">${linkText}</a>`;
+}
+
 async function fetchLoot() {
   try {
     const text = await fetchSheet(SHEET_ID, '964257878');
@@ -1315,6 +1460,8 @@ function parseLoot(text) {
   return loot;
 }
 
+const ITEM_SHEET_ID = '1bt-0NVkheMGvWl2FgCcHZH86ZzQxIMuzK_cxPEAsr0A';
+const ITEM_SHEET_GIDS = [170506057, 461402221, 1447687848, 962096481, 1520599598];
 const GITHUB_REPO = 'bunzosteele/dbs-lc';
 const GITHUB_FILE = 'cla-sheets.json';
 let githubToken = sessionStorage.getItem('ghToken') || '';
@@ -1363,6 +1510,7 @@ async function saveClaSheetsToGitHub() {
 }
 
 const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbwewgQ14fY_34nK0HpKRt2YuVy2FLQZmfu-FrjraGQa55I5oKmYk7p_X3zsswxZAPU4/exec';
+const ICON_SCRIPT = 'https://script.google.com/macros/s/AKfycbz2KeGr4dM1lhddDgYarQNMrsV2SpvX6UMe5BOmS5QGVj_EVTEmcB6tHMAeuUdx-j5W/exec';
 
 // Fetch a Google Sheet tab via Apps Script proxy
 async function fetchSheet(sheetId, gid) {
@@ -1457,6 +1605,8 @@ async function fetchData() {
       addError('Attendance Sheet', parseErr.message);
       throw parseErr;
     }
+    fetchItemMap(); // populates from static map + sheet
+    fetchItemIcons(); // async icon fetch, non-blocking
     await fetchLoot();
     await fetchPoints();
     await fetchClasses();
@@ -1931,6 +2081,7 @@ function render({ dates, roles }) {
   `;
 
   out.innerHTML = html;
+  setTimeout(() => { if (typeof $WowheadPower !== 'undefined') { $WowheadPower.init(); } }, 200);
 }
 
 function toggleLoot(td, playerName) {
@@ -1961,11 +2112,12 @@ function toggleLoot(td, playerName) {
   if (items.length === 0) {
     html += `<em class="no-loot">No loot recorded</em>`;
   } else {
-    html += `<div class="loot-list">${items.map(item => `<a class="loot-item" href="https://www.wowhead.com/tbc/search?q=${encodeURIComponent(item)}" target="_blank" rel="noopener">⚔ ${item}</a>`).join('')}</div>`;
+    html += `<div class="loot-list">${items.map(item => `<span class="loot-item">${itemLink(item, item)}</span>`).join('')}</div>`;
   }
 
   html += `</td>`;
   lootTr.innerHTML = html;
+  setTimeout(() => { if (typeof $WowheadPower !== 'undefined') $WowheadPower.init(); }, 200);
 
   tr.after(lootTr);
   arrow.textContent = '▾';
@@ -2357,10 +2509,16 @@ function renderLootDropdowns() {
 function onRaidChange(preserveBoss = false) {
   const raid = document.getElementById('lootRaid').value;
   const bossSel = document.getElementById('lootBoss');
-  const itemSel = document.getElementById('lootItem');
   bossSel.innerHTML = '<option value="">— Select Boss —</option>';
-  itemSel.innerHTML = '<option value="">— Select Item —</option>';
-  itemSel.disabled = true;
+  selectedItem = '';
+  const display = document.getElementById('lootItemDisplay');
+  const existingIcon = display?.querySelector('img');
+  if (existingIcon) existingIcon.remove();
+  const itemText = document.getElementById('lootItemText');
+  if (itemText) itemText.textContent = '— Select Item —';
+  const dropdown = document.getElementById('lootItemDropdown');
+  if (dropdown) { dropdown.innerHTML = ''; dropdown.style.display = 'none'; }
+  if (display) { display.style.opacity = '0.4'; display.style.pointerEvents = 'none'; }
   document.getElementById('lootEligible').innerHTML = '';
   if (!raid) { bossSel.disabled = true; return; }
   const bosses = [...new Set(glossaryData.filter(r => r.raid === raid).map(r => r.boss))];
@@ -2373,18 +2531,71 @@ function onRaidChange(preserveBoss = false) {
   }
 }
 
+let selectedItem = '';
+
 function onBossChange() {
   const raid = document.getElementById('lootRaid').value;
   const boss = document.getElementById('lootBoss').value;
-  const itemSel = document.getElementById('lootItem');
-  itemSel.innerHTML = '<option value="">— Select Item —</option>';
+  const display = document.getElementById('lootItemDisplay');
+  const dropdown = document.getElementById('lootItemDropdown');
+  const text = document.getElementById('lootItemText');
+  dropdown.innerHTML = '';
   document.getElementById('lootEligible').innerHTML = '';
-  if (!boss) { itemSel.disabled = true; return; }
+  selectedItem = '';
+  text.textContent = '— Select Item —';
+  // Remove icon if present
+  const existingIcon = display.querySelector('img');
+  if (existingIcon) existingIcon.remove();
+  if (!boss) { display.style.opacity = '0.4'; display.style.pointerEvents = 'none'; return; }
   const items = [...new Set(glossaryData.filter(r => r.raid === raid && r.boss === boss).map(r => r.item))];
-  itemSel.innerHTML = '<option value="">— Select Item —</option>' +
-    items.map(i => `<option value="${i}">${i}</option>`).join('');
-  itemSel.disabled = false;
+  items.forEach(item => {
+    const id = getItemId(item);
+    const icon = id && itemIcons[id] ? `<img src="https://wow.zamimg.com/images/wow/icons/small/${itemIcons[id]}.jpg" />` : '';
+    const opt = document.createElement('div');
+    opt.className = 'loot-item-option';
+    opt.innerHTML = `${icon}<span>${item}</span>`;
+    opt.onclick = () => selectItem(item, id, itemIcons[id]);
+    dropdown.appendChild(opt);
+  });
+  display.style.opacity = '1';
+  display.style.pointerEvents = 'auto';
 }
+
+function toggleItemDropdown() {
+  const dropdown = document.getElementById('lootItemDropdown');
+  dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+}
+
+function selectItem(item, id, iconName) {
+  selectedItem = item;
+  const display = document.getElementById('lootItemDisplay');
+  const text = document.getElementById('lootItemText');
+  const dropdown = document.getElementById('lootItemDropdown');
+  // Update display
+  const existingIcon = display.querySelector('img');
+  if (existingIcon) existingIcon.remove();
+  if (iconName) {
+    const img = document.createElement('img');
+    img.src = `https://wow.zamimg.com/images/wow/icons/small/${iconName}.jpg`;
+    img.style.cssText = 'width:18px;height:18px;border:1px solid #444;border-radius:2px;flex-shrink:0;';
+    display.insertBefore(img, text);
+  }
+  text.textContent = item;
+  // Update selected state in dropdown
+  dropdown.querySelectorAll('.loot-item-option').forEach(opt => {
+    opt.classList.toggle('selected', opt.querySelector('span')?.textContent === item);
+  });
+  dropdown.style.display = 'none';
+  onItemChange();
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  if (!e.target.closest('#lootItemDisplay') && !e.target.closest('#lootItemDropdown')) {
+    const dd = document.getElementById('lootItemDropdown');
+    if (dd) dd.style.display = 'none';
+  }
+});
 
 function lootSortArrow(col) {
   return lootSortCol === col ? (lootSortDir === 'desc' ? ' ▾' : ' ▴') : ' ⬦';
@@ -2399,9 +2610,21 @@ function setLootSort(col) {
 function onItemChange() {
   const raid = document.getElementById('lootRaid').value;
   const boss = document.getElementById('lootBoss').value;
-  const item = document.getElementById('lootItem').value;
+  const item = selectedItem;
   const el = document.getElementById('lootEligible');
   if (!item) { el.innerHTML = ''; return; }
+
+  // Show item icon + link above the table
+  const itemId = getItemId(item);
+  const itemIconHtml = itemId && itemIcons[itemId]
+    ? `<a href="https://www.wowhead.com/tbc/item=${itemId}" data-wowhead="item=${itemId}&domain=tbc" target="_blank" rel="noopener" style="flex-shrink:0;"><img src="https://wow.zamimg.com/images/wow/icons/large/${itemIcons[itemId]}.jpg" style="width:40px;height:40px;border:2px solid var(--gold-dim);border-radius:4px;display:block;" /></a>`
+    : '';
+  const itemHeaderHtml = itemId
+    ? `<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        ${itemIconHtml}
+        <a href="https://www.wowhead.com/tbc/item=${itemId}" data-wowhead="item=${itemId}&domain=tbc" target="_blank" rel="noopener" style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold);text-decoration:none;">${item}</a>
+       </div>`
+    : `<div style="margin-bottom:16px;font-family:'Cinzel',serif;font-size:16px;color:var(--gold);">${item}</div>`;
 
   const entry = glossaryData.find(r => r.raid === raid && r.boss === boss && r.item === item);
   if (!entry) { el.innerHTML = '<p style="color:var(--text-dim);font-style:italic;">No data found for this item.</p>'; return; }
@@ -2595,7 +2818,8 @@ function onItemChange() {
   const thS = (label, col, align='center') =>
     `<th onclick="setLootSort('${col}')" style="cursor:pointer;text-align:${align};padding:6px 12px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);white-space:nowrap;" title="${col === 'priority' ? 'Loot priority recommendation based on raid attendance, consume usage, and loot received.' : col === 'points' ? 'Amount of loot received relative to raids attended.' : col === 'consumes' ? 'Uptime of all required consumables.' : col === 'attendance' ? 'Raids attended.' : ''}">${label}<span class="sort-arrow">${lootSortArrow(col)}</span></th>`;
 
-  el.innerHTML = `
+  // Re-init Wowhead tooltips after DOM update
+  el.innerHTML = itemHeaderHtml + `
     <table style="width:100%;border-collapse:collapse;margin-top:24px;">
       <colgroup>
         <col style="width:160px;"> <!-- Player -->
@@ -2627,6 +2851,7 @@ function onItemChange() {
     </table>
     <p style="margin-top:12px;font-size:13px;color:var(--text-dim);font-style:italic;">${needIt.length} eligible · ${haveIt.length} already received · ${inactiveNeedIt.length} inactive</p>
   `;
+  setTimeout(() => { if (typeof $WowheadPower !== 'undefined') $WowheadPower.init(); }, 200);
 }
 
 </script>
