@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raid Attendance</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --gold-dim: #7a5f28;
+    --bg: #0a0804;
+    --bg2: #110e08;
+    --bg3: #1a1508;
+    --border: #2e2510;
+    --text: #e8dfc8;
+    --text-dim: #8a7d60;
+    --red: #c94c4c;
+    --green: #4caa6e;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 17px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Parchment texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(201,168,76,0.03) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    padding: 48px 0 40px;
+    position: relative;
+  }
+
+  header::after {
+    content: '';
+    display: block;
+    width: 320px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 24px auto 0;
+  }
+
+  .guild-name {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 400;
+    letter-spacing: 0.4em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    line-height: 1.1;
+    text-shadow: 0 0 40px rgba(201,168,76,0.3);
+  }
+
+  .subtitle {
+    margin-top: 10px;
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: 20px;
+    letter-spacing: 0.08em;
+  }
+
+  /* Dot legend */
+  .dot-legend {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin: 16px 0 0;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.05em;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: inline-block;
+    flex-shrink: 0;
+  }
+
+  /* Grouping buttons */
+  .group-btns {
+    display: flex;
+    gap: 4px;
+  }
+
+  .group-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 7px 14px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .group-btn:hover {
+    border-color: var(--gold-dim);
+    color: var(--gold);
+  }
+
+  .group-btn.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: rgba(201,168,76,0.08);
+  }
+
+  .role-icon {
+    font-size: 11px;
+    opacity: 0.75;
+    margin-left: 3px;
+    cursor: default;
+  }
+
+  .role-subtitle {
+    font-family: 'Crimson Pro', serif;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: var(--text-dim);
+    text-transform: none;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--gold-dim);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 10px 24px;
+    border: 1px solid var(--gold-dim);
+    background: transparent;
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.2s;
+    z-index: -1;
+  }
+
+  .btn:hover {
+    color: var(--bg);
+    border-color: var(--gold);
+  }
+
+  .btn:hover::before { transform: scaleX(1); }
+
+  .btn.primary {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+  }
+
+  .btn.primary:hover { background: var(--gold-light); border-color: var(--gold-light); }
+  .btn.primary::before { display: none; }
+
+  .status {
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-left: auto;
+  }
+
+  .status.loading { color: var(--gold-dim); }
+  .status.error { color: var(--red); }
+  .status.success { color: var(--green); }
+
+  /* Role sections */
+  .role-section {
+    margin-bottom: 48px;
+    animation: fadeIn 0.4s ease both;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .role-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .role-title {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .role-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold-dim), transparent);
+  }
+
+  .role-toggle {
+    font-size: 11px;
+    color: var(--gold-dim);
+    margin-left: 6px;
+  }
+
+  .role-header:hover .role-count { color: var(--gold); }
+  .role-header:hover .role-toggle { color: var(--gold); }
+
+  .role-count {
+    font-size: 12px;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+  }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  thead th {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+
+  thead th:not(:first-child) { text-align: right; }
+  thead th[data-col] { cursor: pointer; user-select: none; white-space: nowrap; }
+  thead th[data-col]:hover { color: var(--gold); }
+  .sort-arrow { color: var(--gold-dim); font-size: 10px; }
+  td.points-cell, td.consumes-cell { text-align: center !important; }
+  td.att-count { text-align: right !important; font-family: 'Cinzel', serif; font-size: 13px; color: var(--text-dim); }
+  td:has(.raid-dots), td:has(.raid-dot), td:has(.raid-star) { text-align: center !important; }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(46,37,16,0.6);
+    transition: background 0.15s;
+  }
+
+  tbody tr:hover { background: rgba(201,168,76,0.04); }
+
+  tbody tr.na-row { opacity: 0.45; }
+
+  td {
+    padding: 10px 12px;
+    font-size: 16px;
+  }
+
+  td:not(:first-child) { text-align: right; }
+
+  .player-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 400;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  .raids-num {
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+
+  .window-num {
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+
+  /* Attendance bar cell */
+  .att-cell {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+
+  .att-pct {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 700;
+    min-width: 52px;
+    text-align: right;
+  }
+
+  .att-pct.high { color: #8abf50; }
+  .att-pct.mid { color: #d4c84a; }
+  .att-pct.low { color: #c94c4c; }
+  .att-pct.exact100 { color: #4caa6e; }
+  .att-bar-fill.exact100 { background: #4caa6e; }
+  .att-bar-fill.high { background: #8abf50; }
+  .att-bar-fill.mid { background: #d4c84a; }
+  .att-bar-fill.low { background: #c94c4c; }
+  .att-pct.na { color: var(--text-dim); font-weight: 400; font-family: 'Crimson Pro', serif; font-style: italic; }
+
+  .att-bar-bg {
+    width: 80px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .att-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.6s ease;
+  }
+
+
+
+  /* Summary footer */
+  .summary {
+    margin-top: 48px;
+    padding: 24px;
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    text-align: center;
+    align-items: start;
+  }
+
+  .summary-item label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    min-height: 2.4em;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .summary-item .val {
+    font-family: 'Cinzel', serif;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--gold);
+  }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    padding: 80px 24px;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .empty .icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+  }
+
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0 0 36px;
+  }
+
+  /* Points highlighting */
+  .points-cell {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+    color: var(--text-dim);
+  }
+
+  .pts-top .points-cell,
+  .points-cell.pts-top {
+    color: #e05555;
+    text-shadow: 0 0 12px rgba(220,80,80,0.5);
+  }
+
+  .pts-bottom .points-cell,
+  .points-cell.pts-bottom {
+    color: #4caa6e;
+    text-shadow: 0 0 12px rgba(76,170,110,0.4);
+  }
+
+  tr.pts-top {
+    background: rgba(200, 60, 60, 0.06);
+  }
+
+  tr.pts-bottom {
+    background: rgba(76, 170, 110, 0.06);
+  }
+
+  /* Priority column */
+  .priority-cell {
+    text-align: center !important;
+  }
+
+  .priority-score {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: default;
+  }
+
+  /* Gear issue flag */
+  .gear-flag-cell {
+    width: 20px;
+    text-align: center;
+    padding: 10px 4px;
+  }
+
+  .gear-flag {
+    color: #e07830;
+    font-size: 13px;
+    cursor: default;
+    filter: drop-shadow(0 0 4px rgba(224,120,48,0.6));
+  }
+
+  /* Consumes column */
+  .consumes-cell {
+    text-align: right;
+  }
+
+  /* Inactive players */
+  .inactive-row {
+    opacity: 0.4;
+    filter: grayscale(0.4);
+  }
+
+  .inactive-badge {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  /* Loot expansion */
+  .loot-arrow {
+    font-size: 11px;
+    color: var(--gold-dim);
+    transition: transform 0.2s;
+    margin-left: 4px;
+  }
+
+  .player-name:hover .loot-arrow { color: var(--gold); }
+
+  .loot-row {
+    animation: fadeIn 0.2s ease both;
+  }
+
+  .loot-cell {
+    padding: 10px 16px 14px 24px !important;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border) !important;
+  }
+
+  .loot-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .loot-item {
+    font-size: 13px;
+    color: var(--gold-light);
+    background: rgba(201,168,76,0.07);
+    border: 1px solid var(--gold-dim);
+    padding: 3px 10px;
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  a.loot-item:hover {
+    background: rgba(201,168,76,0.18);
+    color: #fff;
+    border-color: var(--gold);
+  }
+
+  .expand-section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold-dim);
+    margin-bottom: 8px;
+  }
+
+  .cla-entry-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    margin-top: 4px;
+  }
+
+  .loot-item.gear-issue {
+    color: #e09050;
+    border-color: #7a4a20;
+    background: rgba(200,120,60,0.07);
+  }
+
+  .buff-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .buff-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4px 10px;
+    border: 1px solid var(--border);
+    font-size: 11px;
+    min-width: 70px;
+  }
+
+  .buff-label {
+    color: var(--text-dim);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+    text-align: center;
+  }
+
+  .buff-val {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .buff-ok { border-color: #2a5a3a; background: rgba(76,170,110,0.06); }
+  .buff-ok .buff-val { color: var(--green); }
+  .buff-missing { border-color: #5a2a2a; background: rgba(200,80,80,0.06); }
+  .buff-missing .buff-val { color: var(--red); }
+  .buff-partial { border-color: #5a4a20; background: rgba(200,160,60,0.06); }
+  .buff-partial .buff-val { color: var(--gold); }
+
+  .no-loot {
+    color: var(--text-dim);
+    font-size: 14px;
+  }
+
+  /* Dot indicators for raid dates */
+  .raid-dots {
+    display: inline-flex;
+    gap: 4px;
+    justify-content: center;
+    flex-wrap: nowrap;
+  }
+
+  .raid-dot {
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  .raid-dot.present { background: var(--green); border-color: var(--green); }
+
+  .raid-star {
+    font-size: 14px;
+    width: 8px;
+    height: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    overflow: visible;
+    position: relative;
+    top: -1px;
+    color: #4caa6e;
+    cursor: default;
+    filter: drop-shadow(0 0 3px currentColor);
+  }
+  .raid-dot.absent { background: transparent; }
+  .raid-dot.inactive { background: transparent; border-color: transparent; }
+
+  /* CLA Manager */
+  .cla-manager {
+    border: 1px solid var(--border);
+    background: var(--bg2);
+    margin-bottom: 24px;
+  }
+
+  .cla-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+  }
+
+  .cla-header:hover { background: rgba(201,168,76,0.04); }
+
+  .cla-title {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .cla-count {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-left: 4px;
+  }
+
+  .cla-toggle {
+    margin-left: auto;
+    color: var(--gold-dim);
+    font-size: 12px;
+  }
+
+  .cla-body {
+    border-top: 1px solid var(--border);
+    padding: 16px;
+  }
+
+  .cla-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+  .cla-row-label {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    color: var(--gold);
+    min-width: 60px;
+  }
+
+  .cla-row-url {
+    color: var(--text-dim);
+    font-size: 12px;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cla-row-gids {
+    font-size: 11px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .cla-remove {
+    background: none;
+    border: none;
+    color: var(--red);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+    opacity: 0.6;
+    transition: opacity 0.15s;
+  }
+
+  .cla-remove:hover { opacity: 1; }
+
+  .cla-io-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding: 10px 0 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+
+  .cla-io-hint {
+    font-size: 13px;
+    font-style: italic;
+  }
+
+  .cla-add-form {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .cla-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 10px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 14px;
+    width: 120px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .cla-input.wide { width: 260px; }
+  .cla-input:focus { border-color: var(--gold-dim); }
+  .cla-input::placeholder { color: var(--text-dim); }
+
+
+  /* ── Loot Panel ─────────────────────────────────────────────── */
+  .loot-selectors {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .loot-select-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 180px;
+  }
+
+  .loot-select-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .loot-select {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 12px;
+    font-family: 'Crimson Pro', serif;
+    font-size: 15px;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+
+  .loot-select:focus { border-color: var(--gold-dim); }
+  .loot-select:disabled { opacity: 0.4; cursor: not-allowed; }
+  .loot-select option { background: var(--bg2); }
+
+  /* ── Mobile Responsive ────────────────────────────── */
+  @media (max-width: 768px) {
+
+    .container {
+      padding: 20px 12px 60px;
+    }
+
+    h1 { font-size: 28px; }
+    .subtitle { font-size: 13px; }
+
+    /* Controls */
+    .controls {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .status { margin-left: 0; }
+
+    /* Legend wraps tightly */
+    .dot-legend {
+      gap: 10px;
+      justify-content: flex-start;
+    }
+    .legend-item { font-size: 11px; }
+
+    /* Role section */
+    .role-header { gap: 8px; }
+    .role-title { font-size: 11px; letter-spacing: 0.15em; }
+
+    /* Scrollable table */
+    .role-section { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    table { min-width: 600px; }
+
+    /* Shrink text in table */
+    td, th { padding: 8px 6px; font-size: 13px; }
+    .player-name { font-size: 14px; }
+    .att-pct { font-size: 12px; min-width: 40px; }
+    .att-bar-bg { width: 50px; }
+    .priority-score { font-size: 12px; }
+
+    /* Dots smaller gap */
+    .raid-dots { gap: 3px; }
+    .raid-dot { width: 7px; height: 7px; min-width: 7px; }
+    .raid-star { font-size: 12px; width: 7px; height: 7px; }
+
+    /* Loot expand panel */
+    .loot-cell { padding: 8px 10px 12px !important; }
+    .loot-item { font-size: 12px; padding: 2px 8px; }
+
+    /* CLA manager */
+    .cla-add-form { flex-direction: column; }
+    .cla-input, .cla-input.wide { width: 100%; }
+    .cla-io-row { flex-wrap: wrap; }
+
+    /* Summary grid */
+    .summary { grid-template-columns: repeat(3, 1fr); gap: 12px; padding: 16px; }
+    .summary-item .val { font-size: 20px; }
+  }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 22px; }
+
+    /* Attendance bar hidden on very small screens, just show % */
+    .att-bar-bg { display: none; }
+
+    .summary { grid-template-columns: repeat(2, 1fr); }
+  }
+
+
+  /* ── Custom Tooltip (works on mobile long-press) ── */
+  .tt {
+    position: relative;
+  }
+
+  #custom-tooltip {
+    position: fixed;
+    z-index: 9999;
+    background: var(--bg2);
+    border: 1px solid var(--gold-dim);
+    color: var(--text);
+    font-family: 'Crimson Pro', serif;
+    font-size: 13px;
+    line-height: 1.6;
+    padding: 8px 12px;
+    max-width: 260px;
+    pointer-events: none;
+    white-space: pre-line;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  #custom-tooltip.visible {
+    opacity: 1;
+  }
+
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Don't Be Suspicious</h1>
+    <p class="subtitle">Loot Council Summary</p>
+  </header>
+
+  <div class="controls">
+    <button class="btn primary" onclick="fetchData()">⟳ Fetch Data</button>
+    <div class="group-btns">
+      <button class="group-btn active" data-mode="role" onclick="setGrouping('role')">Role</button>
+      <button class="group-btn" data-mode="t45" onclick="setGrouping('t45')">T4/5</button>
+      <button class="group-btn" data-mode="t6" onclick="setGrouping('t6')">T6</button>
+      <button class="group-btn" data-mode="loot" onclick="setGrouping('loot')">Loot</button>
+    </div>
+    <span class="status" id="status">Click Fetch Data to load the latest raid summary</span>
+  </div>
+
+  <textarea id="claPersist" style="display:none;"></textarea>
+
+
+  <div id="lootPanel" style="display:none;">
+    <div class="loot-selectors">
+      <div class="loot-select-group">
+        <label class="loot-select-label">Raid</label>
+        <select class="loot-select" id="lootRaid" onchange="onRaidChange()">
+          <option value="">— Select Raid —</option>
+        </select>
+      </div>
+      <div class="loot-select-group">
+        <label class="loot-select-label">Boss</label>
+        <select class="loot-select" id="lootBoss" onchange="onBossChange()" disabled>
+          <option value="">— Select Boss —</option>
+        </select>
+      </div>
+      <div class="loot-select-group">
+        <label class="loot-select-label">Item</label>
+        <select class="loot-select" id="lootItem" onchange="onItemChange()" disabled>
+          <option value="">— Select Item —</option>
+        </select>
+      </div>
+    </div>
+    <div id="lootEligible"></div>
+  </div>
+
+  <div class="divider"></div>
+  <div id="output">
+    <div class="empty">
+      <div class="icon">⚔</div>
+      <div>No data loaded yet.<br>Click <strong>Fetch Data</strong> to load the latest raid summary.</div>
+    </div>
+  </div>
+
+  <div class="cla-manager" id="claManager">
+    <div class="cla-header" onclick="toggleClaManager()">
+      <span class="cla-title">⚔ CLA Sheets</span>
+      <span class="cla-count" id="claCount">0 sheets</span>
+      <span class="cla-toggle" id="claToggle">▸</span>
+    </div>
+    <div class="cla-body" id="claBody" style="display:none;">
+      <div id="claList"></div>
+      <div class="cla-io-row">
+        <button class="btn" onclick="exportCla()">↑ Export</button>
+        <button class="btn" onclick="showImport()">↓ Import</button>
+        <span class="cla-io-hint" id="claIoHint"></span>
+      </div>
+      <div id="claImportArea" style="display:none;margin-bottom:12px;">
+        <textarea class="cla-input wide" id="claImportText" rows="3" placeholder="Paste exported CLA data here..." style="width:100%;resize:vertical;"></textarea>
+        <button class="btn primary" onclick="importCla()" style="margin-top:6px;">Import</button>
+      </div>
+      <div class="cla-add-form">
+        <input class="cla-input" id="claLabel" placeholder="Label (e.g. 2/26)" />
+        <input class="cla-input wide" id="claUrl" placeholder="Google Sheet URL" />
+        <input class="cla-input" id="claGearGid" placeholder="Gear Issues GID" />
+        <input class="cla-input" id="claBuffGid" placeholder="Buff Consumables GID" />
+        <button class="btn" onclick="addCla()">+ Add</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const SHEET_ID = '1jWVKqBCSwf9yaGMSAYywDH178Dr__fQQQiJmu0EEBDM';
+const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=2077814587`;
+const LOOT_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=964257878`;
+const CLASSES_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=139934655`;
+const GLOSSARY_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=917147935`;
+const POINTS_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=678080595`;
+
+let pointsByPlayer = {}; // normalized name -> point value
+
+// Normalize player names for fuzzy matching (strip special chars, lowercase)
+function normalizeName(name) {
+  return name.toLowerCase()
+    // Expand ligatures before stripping accents
+    .replace(/æ/g, 'ae').replace(/œ/g, 'oe').replace(/ß/g, 'ss')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // strip accent marks
+    .replace(/[^a-z0-9]/g, '');       // strip everything else
+}
+
+// Normalize date strings for flexible matching: strip leading zeros, whitespace
+// e.g. "03/11", " 3/11 ", "3/11/2026" all -> "3/11"
+function normalizeDate(d) {
+  return (d || '').trim()
+    .replace(/\b0(\d)/g, '$1')   // remove leading zeros from each number
+    .replace(/\/\d{4}$/, '')     // strip 4-digit year suffix if present
+    .trim();
+}
+
+let lootByPlayer = {};
+let classMap = {}; // normalized name -> class (e.g. 'Warrior')
+let glossaryData = []; // array of { raid, boss, item, eligibleClasses[] }
+let lootSortCol = 'priority';
+let lootSortDir = 'desc'; // normalized name -> [item, item, ...]
+
+async function fetchGlossary(workingProxy) {
+  const ordered = workingProxy ? [workingProxy, ...PROXIES.filter(p => p !== workingProxy)] : PROXIES;
+  for (const proxy of ordered) {
+    try {
+      const res = await fetch(proxy(GLOSSARY_URL));
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      if (!text.includes(',')) throw new Error('Not CSV');
+      glossaryData = parseGlossary(text);
+      renderLootDropdowns(); // refresh if loot view is active
+      return;
+    } catch(e) { console.warn('Glossary fetch failed:', e.message); }
+  }
+  addError('Loot Glossary Sheet (gid: 917147935)', 'All proxies failed — loot lookup unavailable');
+}
+
+function parseGlossary(text) {
+  const rows = parseCsvRows(text);
+  const data = [];
+  for (let i = 1; i < rows.length; i++) { // skip header row
+    const row = rows[i];
+    const raid = row[0]?.trim();
+    const boss = row[1]?.trim();
+    const item = row[2]?.trim();
+    const eligibleStr = row[9]?.trim(); // col J (index 9)
+    if (!raid || !boss || !item) continue;
+    const eligibleClasses = eligibleStr ? eligibleStr.split(',').map(c => c.trim()).filter(Boolean) : [];
+    const hardPrioStr = row[12]?.trim(); // col M
+    const softPrioStr = row[13]?.trim(); // col N
+    const hardPrio = hardPrioStr ? hardPrioStr.split(',').map(c => c.trim()).filter(Boolean) : [];
+    const softPrio = softPrioStr ? softPrioStr.split(',').map(c => c.trim()).filter(Boolean) : [];
+    // Cols E-H (indices 4-7): Tank, Physical DPS, Ranged DPS, Healer
+    // If cell is non-empty, that role is eligible. Empty means no restriction if all 4 are empty.
+    const roleColMap = [
+      { idx: 4, role: 'Tanks' },
+      { idx: 5, role: 'Physical DPS' },
+      { idx: 6, role: 'Ranged DPS' },
+      { idx: 7, role: 'Healers' },
+    ];
+    const eligibleRoles = roleColMap.filter(r => row[r.idx]?.trim()).map(r => r.role);
+    data.push({ raid, boss, item, eligibleClasses, eligibleRoles, hardPrio, softPrio });
+  }
+  return data;
+}
+
+async function fetchClasses(workingProxy) {
+  const ordered = workingProxy ? [workingProxy, ...PROXIES.filter(p => p !== workingProxy)] : PROXIES;
+  for (const proxy of ordered) {
+    try {
+      const res = await fetch(proxy(CLASSES_URL));
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      if (!text.includes(',')) throw new Error('Not CSV');
+      classMap = parseClasses(text);
+      return;
+    } catch(e) { console.warn('Classes fetch failed:', e.message); }
+  }
+  addError('Classes Sheet (gid: 139934655)', 'All proxies failed — class colours unavailable');
+}
+
+function parseClasses(text) {
+  const rows = parseCsvRows(text);
+  // Row index 1 = class headers (cols 1+), rows 2+ = players
+  const headers = rows[1].slice(1).map(h => h.trim()).filter(h => h);
+  const map = {};
+  for (let r = 2; r < rows.length; r++) {
+    const row = rows[r];
+    for (let c = 0; c < headers.length; c++) {
+      const name = row[c + 1]?.trim();
+      if (name) map[normalizeName(name)] = headers[c];
+    }
+  }
+  return map;
+}
+
+async function fetchLoot(workingProxy) {
+  // Try the known-working proxy first, then fall back to others
+  const ordered = workingProxy
+    ? [workingProxy, ...PROXIES.filter(p => p !== workingProxy)]
+    : PROXIES;
+  for (const proxy of ordered) {
+    try {
+      const res = await fetch(proxy(LOOT_URL));
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      if (!text.trim() || !text.includes(',')) throw new Error('No CSV content');
+      lootByPlayer = parseLoot(text);
+      return;
+    } catch(e) {
+      console.warn('Loot proxy failed:', e.message);
+    }
+  }
+  addError('Loot Sheet (gid: 964257878)', 'All proxies failed — loot data unavailable');
+}
+
+async function fetchPoints(workingProxy) {
+  const ordered = workingProxy
+    ? [workingProxy, ...PROXIES.filter(p => p !== workingProxy)]
+    : PROXIES;
+  for (const proxy of ordered) {
+    try {
+      const res = await fetch(proxy(POINTS_URL));
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      if (!text.trim() || !text.includes(',')) throw new Error('No CSV content');
+      pointsByPlayer = parsePoints(text);
+      return;
+    } catch(e) {
+      console.warn('Points proxy failed:', e.message);
+    }
+  }
+  addError('Loot Summary Sheet (gid: 678080595)', 'All proxies failed — points data unavailable');
+}
+
+function parsePoints(text) {
+  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').trim().split('\n');
+  function parseRow(line) {
+    const result = []; let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+      else { cur += ch; }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+  const points = {};
+  for (let i = 1; i < lines.length; i++) {
+    const row = parseRow(lines[i]);
+    const name = row[0]?.trim();
+    const pts = row[3]?.trim(); // col D = index 3
+    if (!name) continue;
+    const val = parseFloat(pts);
+    points[normalizeName(name)] = isNaN(val) ? 0 : val;
+  }
+  return points;
+}
+
+function parseLoot(text) {
+  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').trim().split('\n');
+  function parseRow(line) {
+    const result = []; let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+      else { cur += ch; }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+  const loot = {};
+  for (const line of lines) {
+    const row = parseRow(line);
+    const item = row[2]?.trim();
+    const player = row[4]?.trim();
+    if (!item || !player) continue;
+    const key = normalizeName(player);
+    if (!loot[key]) loot[key] = [];
+    loot[key].push(item);
+  }
+  // Reverse each player's list so most recent loot appears first
+  for (const key in loot) loot[key].reverse();
+  return loot;
+}
+
+const PROXIES = [
+  url => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+  url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+  url => `https://proxy.cors.sh/${url}`,
+  url => `https://cors-proxy.fringe.zone/${url}`,
+  url => `https://yacdn.org/proxy/${url}`,
+];
+
+// ── Error collection & display ──────────────────────────────────
+const fetchErrors = [];
+
+function addError(source, message) {
+  fetchErrors.push({ source, message, time: new Date().toLocaleTimeString() });
+}
+
+function showErrors() {
+  if (!fetchErrors.length) return;
+  const out = document.getElementById('output');
+  const rows = fetchErrors.map(e =>
+    `<tr>
+      <td style="padding:6px 12px;color:var(--gold);white-space:nowrap;font-family:'Cinzel',serif;font-size:12px;">${e.source}</td>
+      <td style="padding:6px 12px;color:var(--text);font-size:14px;">${e.message}</td>
+      <td style="padding:6px 12px;color:var(--text-dim);font-size:12px;white-space:nowrap;">${e.time}</td>
+    </tr>`
+  ).join('');
+  out.innerHTML = `
+    <div style="border:1px solid var(--red);background:rgba(201,76,76,0.06);padding:20px 24px;">
+      <div style="font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.2em;color:var(--red);margin-bottom:16px;">⚠ DATA LOAD ERRORS</div>
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th style="padding:4px 12px;text-align:left;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);border-bottom:1px solid var(--border);">Source</th>
+            <th style="padding:4px 12px;text-align:left;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);border-bottom:1px solid var(--border);">Error</th>
+            <th style="padding:4px 12px;text-align:left;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);border-bottom:1px solid var(--border);">Time</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div style="margin-top:16px;font-size:13px;color:var(--text-dim);font-style:italic;">Check that the spreadsheet is public and GIDs are correct. Then click Fetch Data to retry.</div>
+    </div>`;
+}
+
+function setStatus(msg, type='') {
+  const el = document.getElementById('status');
+  const btn = document.querySelector('.btn.primary');
+  if (type === 'loading') {
+    el.innerHTML = '<span class="spinner"></span>' + msg;
+    if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
+  } else {
+    el.textContent = msg;
+    if (btn) { btn.disabled = false; btn.style.opacity = ''; btn.style.cursor = ''; }
+  }
+  el.className = 'status ' + type;
+}
+
+async function fetchData() {
+  fetchErrors.length = 0; // clear previous errors
+  setStatus('Summoning the scrolls...', 'loading');
+  document.getElementById('output').innerHTML = `
+    <div class="empty">
+      <div class="icon" style="animation: spin 1.5s linear infinite; display:inline-block;">⚔</div>
+      <div style="margin-top:16px;">Fetching data&hellip; please wait.</div>
+    </div>`;
+
+  let lastError;
+  for (const proxy of PROXIES) {
+    try {
+      const res = await fetch(proxy(CSV_URL));
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const text = await res.text();
+      if (!text.trim() || !text.includes(',')) throw new Error('Response does not look like CSV');
+      let data;
+      try {
+        data = parseCSV(text);
+        if (!data.dates.length) throw new Error('No raid dates found in header row — check sheet format');
+        if (!data.roles.length) throw new Error('No role groups found — check sheet format');
+      } catch(parseErr) {
+        addError('Attendance Sheet', parseErr.message);
+        throw parseErr;
+      }
+      await fetchLoot(proxy);
+      await fetchPoints(proxy);
+      await fetchClasses(proxy);
+      await fetchGlossary(proxy);
+      await fetchAllClaData(proxy);
+      if (fetchErrors.length) {
+        // Non-fatal errors — still render but show warning
+        setStatus(`Updated at ${new Date().toLocaleTimeString()} — ${fetchErrors.length} warning(s)`, 'loading');
+      } else {
+        setStatus(`Updated at ${new Date().toLocaleTimeString()}`, 'success');
+      }
+      render(data);
+      return;
+    } catch (e) {
+      lastError = e;
+    }
+  }
+
+  setStatus(`Failed to load data — ${lastError?.message}`, 'error');
+  showErrors();
+}
+
+function parseCSV(text) {
+  // Normalize line endings, strip BOM, split into rows
+  const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').replace(/^\uFEFF/, '').trim().split('\n');
+  // Parse each row properly handling quoted fields
+  function parseRow(line) {
+    const result = [];
+    let cur = '', inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQuotes = !inQuotes; }
+      else if (ch === ',' && !inQuotes) { result.push(cur.trim()); cur = ''; }
+      else { cur += ch; }
+    }
+    result.push(cur.trim());
+    return result;
+  }
+  const rows = lines.map(parseRow);
+  const header = rows[0];
+  const dates = header.slice(2).filter(d => d.trim());
+  const n = dates.length;
+
+  const roles = [];
+  let currentRole = null;
+
+  for (let i = 1; i < rows.length; i++) {
+    const row = rows[i];
+    if (!row || row.length < 2) continue;
+    const name = row[0].trim();
+    const raidsVal = row[1].trim();
+
+    // Role header rows have a name, no raidsVal, and no TRUE/FALSE attendance values
+    const attendanceCols = row.slice(2, 2 + n).map(v => v.trim().toUpperCase());
+    const hasBooleans = attendanceCols.some(v => v === 'TRUE' || v === 'FALSE');
+    if (name && !raidsVal && !hasBooleans) {
+      currentRole = { name, players: [] };
+      roles.push(currentRole);
+      continue;
+    }
+    if (!name) continue;
+    if (!currentRole) continue;
+
+    const flags = row.slice(2, 2 + n).map(v => v.trim().toUpperCase() === 'TRUE');
+    const trueIdx = flags.map((b, i) => b ? i : -1).filter(i => i >= 0);
+
+    const totalRaids = n; // total raid columns with dates
+    if (trueIdx.length === 0) {
+      currentRole.players.push({ name, attended: 0, window: 0, pct: null, flags, n, inactive: false });
+    } else {
+      const first = trueIdx[0], last = trueIdx[trueIdx.length - 1];
+      const window = last - first + 1;
+      const attended = flags.slice(first, last + 1).filter(Boolean).length;
+      const pct = (attended / window) * 100;
+      const raidsSinceLast = (totalRaids - 1) - last; // how many raids after their last attendance
+      const inactive = raidsSinceLast > 2;
+      currentRole.players.push({ name, attended, window, pct, flags, n, first, last, inactive });
+    }
+  }
+
+  return { dates, roles };
+}
+
+// Sort state per role: { [roleName]: { col, dir } }
+// col: 'player' | 'points' | 'consumes' | 'attendance' | 'priority'
+// dir: 'asc' | 'desc'
+const roleSortState = {};
+
+function getSortedPlayers(role, players, bottom20threshold, top20threshold, pointValues) {
+  const state = roleSortState[role] || { col: 'priority', dir: 'desc' };
+  const { col, dir } = state;
+
+  const withPct = players.filter(p => p.pct !== null && !p.inactive);
+  const inactive = players.filter(p => p.inactive);
+  const noPct   = players.filter(p => p.pct === null && !p.inactive);
+
+  withPct.sort((a, b) => {
+    let av, bv;
+    if (col === 'player') {
+      av = a.name.toLowerCase(); bv = b.name.toLowerCase();
+    } else if (col === 'points') {
+      av = pointsByPlayer[normalizeName(a.name)] ?? 0;
+      bv = pointsByPlayer[normalizeName(b.name)] ?? 0;
+    } else if (col === 'consumes') {
+      const aScores = Object.values(buffScoreByPlayerDate[normalizeName(a.name)] || {}).map(v => v?.total).filter(v => v !== null);
+      const bScores = Object.values(buffScoreByPlayerDate[normalizeName(b.name)] || {}).map(v => v?.total).filter(v => v !== null);
+      av = aScores.length ? aScores.reduce((x,y) => x+y,0) / aScores.length : -1;
+      bv = bScores.length ? bScores.reduce((x,y) => x+y,0) / bScores.length : -1;
+    } else if (col === 'priority') {
+      av = calculatePriority(a, bottom20threshold, top20threshold, pointValues).score;
+      bv = calculatePriority(b, bottom20threshold, top20threshold, pointValues).score;
+    } else if (col === 'pct') {
+      av = a.pct ?? -1; bv = b.pct ?? -1;
+    } else { // attendance (count)
+      av = a.attended; bv = b.attended;
+    }
+    if (av < bv) return dir === 'asc' ? -1 : 1;
+    if (av > bv) return dir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  return [...withPct, ...noPct, ...inactive];
+}
+
+function toggleRole(safeId) {
+  const body = document.getElementById('rolebody-' + safeId);
+  const arrow = document.getElementById('roletoggle-' + safeId);
+  if (!body) return;
+  const collapsed = body.style.display === 'none';
+  body.style.display = collapsed ? '' : 'none';
+  if (arrow) arrow.textContent = collapsed ? '▾' : '▸';
+}
+
+function setSort(safeId, roleName, col) {
+  const cur = roleSortState[roleName] || { col: 'priority', dir: 'desc' };
+  const dir = cur.col === col ? (cur.dir === 'desc' ? 'asc' : 'desc') : 'desc';
+  roleSortState[roleName] = { col, dir };
+  const tbody = document.getElementById('table-' + safeId);
+  if (!tbody) return;
+  const role = lastRenderData.roles.find(r => r.name === roleName);
+  if (!role) return;
+  renderRoleBody(tbody, role, lastRenderData.dates, lastRenderData.thresholds[roleName]);
+  // Update header arrows
+  const thead = document.getElementById('thead-' + safeId);
+  if (!thead) return;
+  const state = roleSortState[roleName];
+  thead.querySelectorAll('th[data-col]').forEach(th => {
+    const arrow = th.querySelector('.sort-arrow');
+    if (!arrow) return;
+    arrow.textContent = th.dataset.col === state.col ? (state.dir === 'desc' ? ' ▾' : ' ▴') : ' ⬦';
+  });
+}
+
+let lastRenderData = { roles: [], dates: [], thresholds: {} };
+let groupingMode = 'role'; // 'role' | 't45' | 't6'
+
+const GROUPINGS = {
+  t45: [
+    { name: 'Defender', classes: ['Warrior', 'Druid', 'Priest'] },
+    { name: 'Champion', classes: ['Paladin', 'Shaman', 'Rogue'] },
+    { name: 'Hero',     classes: ['Hunter', 'Mage', 'Warlock'] },
+  ],
+  t6: [
+    { name: 'Conqueror', classes: ['Paladin', 'Priest', 'Warlock'] },
+    { name: 'Protector', classes: ['Warrior', 'Hunter', 'Shaman'] },
+    { name: 'Vanquisher', classes: ['Mage', 'Druid', 'Rogue'] },
+  ],
+};
+
+// Build subtitle text for grouping labels
+const GROUPING_SUBTITLES = {
+  t45: { Defender: 'Warrior / Druid / Priest', Champion: 'Paladin / Shaman / Rogue', Hero: 'Hunter / Mage / Warlock' },
+  t6:  { Conqueror: 'Paladin / Priest / Warlock', Protector: 'Warrior / Hunter / Shaman', Vanquisher: 'Mage / Druid / Rogue' },
+};
+
+function setGrouping(mode) {
+  groupingMode = mode;
+  document.querySelectorAll('.group-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  const isLoot = mode === 'loot';
+  document.getElementById('lootPanel').style.display = isLoot ? 'block' : 'none';
+  document.getElementById('output').style.display = isLoot ? 'none' : 'block';
+  if (isLoot) {
+    renderLootDropdowns();
+  } else if (lastRenderData.roles.length) {
+    render(lastRenderData);
+  }
+}
+
+// ── Role Icons ──────────────────────────────────────────────────
+const ROLE_ICONS = {
+  'Tanks':        '🛡',
+  'Physical DPS': '⚔',
+  'Ranged DPS':   '↗',
+  'Healers':      '✚',
+};
+
+const ROLE_DISPLAY_NAMES = {
+  'Tanks':        'Tank',
+  'Physical DPS': 'Melee DPS',
+  'Ranged DPS':   'Ranged DPS',
+  'Healers':      'Healer',
+};
+
+function playerRoleName(playerName) {
+  if (!lastRenderData.roles.length) return '';
+  for (const role of lastRenderData.roles) {
+    if (role.players.some(p => normalizeName(p.name) === normalizeName(playerName))) {
+      return ROLE_DISPLAY_NAMES[role.name] || role.name;
+    }
+  }
+  return '';
+}
+
+function playerRoleIcon(playerName) {
+  // Find which role group this player belongs to in the original roles data
+  if (!lastRenderData.roles.length) return '';
+  for (const role of lastRenderData.roles) {
+    if (role.players.some(p => normalizeName(p.name) === normalizeName(playerName))) {
+      return ROLE_ICONS[role.name] || '';
+    }
+  }
+  return '';
+}
+
+// ── WoW Class Colours ───────────────────────────────────────────
+const CLASS_COLORS = {
+  'Warrior':   '#C79C6E',
+  'Paladin':   '#F58CBA',
+  'Hunter':    '#ABD473',
+  'Rogue':     '#FFF569',
+  'Priest':    '#FFFFFF',
+  'Shaman':    '#0070DE',
+  'Mage':      '#69CCF0',
+  'Warlock':   '#9482C9',
+  'Druid':     '#FF7D0A',
+};
+
+function classColor(playerName) {
+  const cls = classMap[normalizeName(playerName)];
+  return cls ? (CLASS_COLORS[cls] || null) : null;
+}
+
+// ── Shared 5-band colour palette ────────────────────────────────
+const C1 = '#4caa6e'; // green
+const C2 = '#8abf50'; // yellow-green
+const C3 = '#d4c84a'; // yellow
+const C4 = '#e07830'; // orange
+const C5 = '#c94c4c'; // red
+
+function priorityColor(score) {
+  // 100 / 90+ / 60+ / 30+ / <30
+  if (score >= 100) return C1;
+  if (score >= 90)  return C2;
+  if (score >= 60)  return C3;
+  if (score >= 30)  return C4;
+  return C5;
+}
+
+function pctColor(pct) {
+  // 100 / 90+ / 75+ / 50+ / <50  (used for attendance & consumes & dots)
+  if (pct >= 100) return C1;
+  if (pct >= 90)  return C2;
+  if (pct >= 75)  return C3;
+  if (pct >= 50)  return C4;
+  return C5;
+}
+
+function gearColor(count) {
+  // 1 / 2 / 3 / 4 / 5+
+  if (count <= 0) return C1;
+  if (count === 1) return C2;
+  if (count === 2) return C3;
+  if (count === 3) return C4;
+  return C5; // 4+
+}
+
+function calculatePriority(p, bottom20threshold, top20threshold, pointValues) {
+  // Must have attended more than 2 raids
+  if (!p.pct || p.attended <= 2) return { score: 0, tooltip: 'Insufficient raids attended' };
+
+  // Attendance score: floor(pct/10) * raids attended
+  const attFloor = Math.floor(p.pct / 10);
+  const attScore = attFloor * p.attended;
+
+  // Consume modifier: 1 / (1 + missingConsumePct/100)
+  const playerBuffScores = buffScoreByPlayerDate[normalizeName(p.name)] || {};
+  const consumeScores = Object.values(playerBuffScores).map(v => v?.total).filter(v => v !== null);
+  const avgConsume = consumeScores.length ? consumeScores.reduce((a, b) => a + b, 0) / consumeScores.length : 100;
+  const missingConsume = Math.max(0, 100 - avgConsume);
+  const consumeMod = 1 / (1 + missingConsume / 100);
+
+  // Gear modifier: 1 / (1 + 0.1 * gearIssues)
+  const gi = latestGearIssuesByPlayer[normalizeName(p.name)];
+  const gearIssueCount = gi?.issues?.length || 0;
+  const gearMod = 1 / (1 + 0.1 * gearIssueCount);
+
+  // Loot score modifier — 5 tiers based on points position within role
+  const pts = pointsByPlayer[normalizeName(p.name)] ?? 0;
+  const maxPts = pointValues.length > 0 ? pointValues[pointValues.length - 1] : 0;
+  const nonZeroPts = pointValues.filter(v => v > 0);
+  const minNonZeroPts = nonZeroPts.length > 0 ? nonZeroPts[0] : null;
+  const isHighest = pointValues.length > 0 && pts === maxPts && pts > 0;
+  const isZeroOrLowest = pts === 0 || (minNonZeroPts !== null && pts === minNonZeroPts);
+  const isTop20 = !isHighest && !isZeroOrLowest && pts >= top20threshold && pointValues.length > 0;
+  const isBottom20 = !isHighest && !isZeroOrLowest && pts <= bottom20threshold && pointValues.length > 0;
+  const lootMod = isHighest ? 0.2 : isTop20 ? 0.33 : isBottom20 ? 0.67 : isZeroOrLowest ? 0.8 : 0.5;
+  const lootTier = isHighest ? 'Highest in role (×0.2)' : isTop20 ? 'Top 20% (×0.33)' : isBottom20 ? 'Bottom 20% (×0.67)' : isZeroOrLowest ? 'Zero/lowest (×0.8)' : 'Mid 60% (×0.5)';
+
+  const score = attScore * consumeMod * gearMod * lootMod;
+
+  const tooltip = [
+    `Attendance: floor(${p.pct.toFixed(1)}%/10)×${p.attended} = ${attScore}`,
+    `Consume mod: 1/(1+${missingConsume.toFixed(1)}%) = ×${consumeMod.toFixed(3)}`,
+    `Gear mod: 1/(1+0.1×${gearIssueCount}) = ×${gearMod.toFixed(3)}`,
+    `Loot mod: ${lootTier}`,
+  ].join('&#10;');
+
+  return { score, tooltip };
+}
+
+function groupPlayers(allPlayers) {
+  if (groupingMode === 'role') return lastRenderData.roles;
+
+  const groups = GROUPINGS[groupingMode];
+  return groups.map(g => {
+    const players = allPlayers.filter(p => {
+      const cls = classMap[normalizeName(p.name)];
+      return cls && g.classes.map(c => c.toLowerCase()).includes(cls.toLowerCase());
+    });
+    const subtitle = GROUPING_SUBTITLES[groupingMode][g.name];
+    return { name: g.name, subtitle, players };
+  });
+}
+
+function getRoleRowsHtml(sorted, dates, bottom20threshold, top20threshold, pointValues, priorityNorm = 1) {
+  let html = '';
+  for (const p of sorted) {
+      const cls = pctClass(p.pct);
+      const pctStr = p.pct !== null ? (p.pct % 1 === 0 ? p.pct.toFixed(0) : p.pct.toFixed(1)) + '%' : 'N/A';
+      const barWidth = p.pct !== null ? p.pct : 0;
+
+      // Raid dots — show the 10 most recent raids only
+      const playerBuffScores = buffScoreByPlayerDate[normalizeName(p.name)] || {};
+      const MAX_DOTS = 10;
+      const dotStart = Math.max(0, p.n - MAX_DOTS); // always show last 10
+      let dotsHtml = '<div class="raid-dots">';
+      for (let i = dotStart; i < p.n; i++) {
+        const dateLabel = normalizeDate(dates[i]);
+        if (p.pct === null) {
+          dotsHtml += `<div class="raid-dot absent" title="${dates[i]}"></div>`;
+        } else if (i < p.first || i > p.last) {
+          dotsHtml += `<div class="raid-dot inactive"></div>`;
+        } else if (!p.flags[i]) {
+          dotsHtml += `<div class="raid-dot absent" title="${dates[i]}: Absent"></div>`;
+        } else {
+          const buffScore = playerBuffScores[dateLabel] ?? null;
+          const buffPct = buffScore?.total ?? null;
+          const scrollsPct = buffScore?.scrolls ?? 0;
+          const isPerfect = buffPct === 100 && scrollsPct === 100;
+          let dotTitle = `${dates[i]}: Present`;
+          if (buffPct !== null) {
+            dotTitle += ` | Buffs: ${buffPct}%`;
+            const missing = [];
+            if ((buffScore.elixir ?? 100) < 100) missing.push(`Elixir/Flask: ${buffScore.elixir}%`);
+            if ((buffScore.food   ?? 100) < 100) missing.push(`Food: ${buffScore.food}%`);
+            if ((buffScore.wepOil ?? 100) < 100) missing.push(`Wep Oil: ${buffScore.wepOil}%`);
+            if (missing.length) dotTitle += '&#10;Missing: ' + missing.join(', ');
+          }
+          if (isPerfect) {
+            const col = '#4caa6e';
+            dotsHtml += `<span class="raid-star" style="color:${col};" title="${dotTitle}">★</span>`;
+          } else {
+            const col = buffPct !== null ? pctColor(buffPct) : null;
+            const bgStyle = col ? `background:${col};border-color:${col};` : '';
+            dotsHtml += `<div class="raid-dot present" style="${bgStyle}" title="${dotTitle}"></div>`;
+          }
+        }
+      }
+      dotsHtml += '</div>';
+
+      html += `
+        ${(() => {
+        const pts = pointsByPlayer[normalizeName(p.name)] ?? 0;
+        const isBottom = !p.inactive && p.pct !== null && p.attended > 2 && pts <= bottom20threshold && pointValues.length > 0;
+        const isTop = !p.inactive && p.pct !== null && p.attended > 2 && pts >= top20threshold && pointValues.length > 0;
+        const ptClass = isTop ? 'pts-top' : isBottom ? 'pts-bottom' : '';
+        const { score: prScore } = calculatePriority(p, bottom20threshold, top20threshold, pointValues);
+        const prNorm = prScore * priorityNorm;
+        const prBg = prNorm >= 100 ? 'rgba(76,170,110,0.08)' : prNorm >= 90 ? 'rgba(138,191,80,0.07)' : prNorm >= 60 ? 'rgba(212,200,74,0.06)' : prNorm >= 30 ? 'rgba(224,120,48,0.06)' : prScore > 0 ? 'rgba(201,76,76,0.06)' : '';
+        return `<tr class="${p.pct === null ? 'na-row' : ''}${p.inactive ? ' inactive-row' : ''}" style="${prBg ? 'background:' + prBg + ';' : ''}">
+          <td class="player-name" onclick="toggleLoot(this, '${p.name}')" style="cursor:pointer;" title="Click to view loot"><span style="${(() => { const cc = classColor(p.name); return cc ? 'color:' + cc + ';' : ''; })()}">${p.name}</span>${groupingMode !== 'role' ? ` <span class="role-icon" title="${playerRoleName(p.name)}">${playerRoleIcon(p.name)}</span>` : ''} <span class="loot-arrow">▸</span></td>
+          <td class="priority-cell">${(() => {
+            const { score, tooltip } = calculatePriority(p, bottom20threshold, top20threshold, pointValues);
+            if (!score) return '<span style="color:var(--text-dim);font-style:italic;font-size:12px;">—</span>';
+            const normScore = score * priorityNorm;
+            const col = priorityColor(normScore);
+            const fullTip = tooltip + `&#10;Score: ${score.toFixed(2)}`;
+            return `<span class="priority-score" style="color:${col};" title="${fullTip}">${displayStr}</span>`;
+          })()}</td>
+          <td class="gear-flag-cell">${(() => {
+            const gi = latestGearIssuesByPlayer[normalizeName(p.name)];
+            if (!gi || !gi.issues.length) return '';
+            const count = gi.issues.length;
+            const col = gearColor(count);
+            const tooltip = gi.issues.join('&#10;');
+            return `<span class="gear-flag" style="color:${col};filter:drop-shadow(0 0 4px ${col}88);" title="${tooltip}">⚠</span>`;
+          })()}</td>
+          <td class="points-cell" style="${(() => {
+            const maxP = pointValues.length > 0 ? pointValues[pointValues.length - 1] : 0;
+            const nzP  = pointValues.filter(v => v > 0);
+            const minNzP = nzP.length > 0 ? nzP[0] : null;
+            const hi  = pointValues.length > 0 && pts === maxP && pts > 0;
+            const zlo = pts === 0 || (minNzP !== null && pts === minNzP);
+            const t20 = !hi && !zlo && pts >= top20threshold && pointValues.length > 0;
+            const b20 = !hi && !zlo && pts <= bottom20threshold && pointValues.length > 0;
+            const col = hi ? C5 : t20 ? C4 : b20 ? C2 : zlo ? C1 : C3;
+            return `color:${col};`;
+          })()}">${pts}</td>
+          <td class="consumes-cell">${(() => {
+            const scores = Object.values(buffScoreByPlayerDate[normalizeName(p.name)] || {}).map(v => v?.total).filter(v => v !== null);
+            if (!scores.length) return '<span style="color:var(--text-dim);font-style:italic;font-size:13px;">—</span>';
+            const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+            const avgRound = Math.round(avg);
+            let col = pctColor(avgRound);
+            return `<span style="font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:${col};">${avgRound}%</span>`;
+          })()}</td>
+          <td `;
+      })()}
+          <td>${dotsHtml}</td>
+          <td class="att-count">${p.attended}</td>
+          <td>
+            <div class="att-cell">
+              <div class="att-bar-bg"><div class="att-bar-fill ${cls}" style="width:${barWidth}%"></div></div>
+              <span class="att-pct ${cls}">${pctStr}</span>
+            </div>
+          </td>
+        </tr>
+      `;
+  }
+  return html;
+}
+
+function renderRoleBody(tbody, role, dates, thresholds) {
+  const { bottom20threshold, top20threshold, pointValues } = thresholds;
+  const sorted = getSortedPlayers(role.name, role.players, bottom20threshold, top20threshold, pointValues);
+  const allPriorityScores = sorted
+    .filter(p => p.pct !== null && !p.inactive && p.attended > 2)
+    .map(p => calculatePriority(p, bottom20threshold, top20threshold, pointValues).score)
+    .filter(s => s > 0);
+  const maxPriority = allPriorityScores.length > 0 ? Math.max(...allPriorityScores) : 1;
+  const priorityNorm = maxPriority > 0 ? 100 / maxPriority : 1;
+  tbody.innerHTML = getRoleRowsHtml(sorted, dates, bottom20threshold, top20threshold, pointValues, priorityNorm);
+}
+
+function pctClass(pct) {
+  if (pct === null) return 'na';
+  if (pct >= 100) return 'exact100';
+  if (pct >= 90)  return 'high';
+  if (pct >= 75)  return 'mid';
+  if (pct >= 50)  return 'low';
+  return 'low';
+}
+// Inline colour for attendance bar text
+function attPctColor(pct) { return pct === null ? '' : pctColor(pct); }
+
+function render({ dates, roles }) {
+  const out = document.getElementById('output');
+
+  // Store for re-render on sort
+  const allPlayers = roles.flatMap(r => r.players);
+  lastRenderData = { roles, dates, thresholds: {}, allPlayers };
+
+  // Avg consumes (weighted by raids attended)
+  let _totalWeighted = 0, _totalWeight = 0;
+  roles.flatMap(r => r.players).filter(p => p.pct !== null && !p.inactive && p.attended > 2).forEach(p => {
+    const scores = Object.values(buffScoreByPlayerDate[normalizeName(p.name)] || {}).map(v => v?.total).filter(v => v !== null);
+    if (!scores.length) return;
+    const playerAvg = scores.reduce((a, b) => a + b, 0) / scores.length;
+    _totalWeighted += playerAvg * p.attended;
+    _totalWeight += p.attended;
+  });
+  const avgConsumeStr = _totalWeight > 0 ? (_totalWeighted / _totalWeight).toFixed(1) + '%' : '—';
+
+  // Summary stats
+  const activePlayers = roles.flatMap(r => r.players).filter(p => p.pct !== null && !p.inactive);
+  const avgPct = activePlayers.length ? activePlayers.reduce((s, p) => s + p.pct, 0) / activePlayers.length : 0;
+  const perfect = activePlayers.filter(p => p.pct === 100).length;
+  const active = activePlayers.length;
+  const total = roles.flatMap(r => r.players).filter(p => p.name).length;
+
+  let html = '';
+
+  const displayGroups = groupingMode === 'role' ? roles : groupPlayers(allPlayers);
+  for (const role of displayGroups) {
+    if (!role.players.length) continue;
+
+    // Calculate top/bottom 20% thresholds — active, non-inactive players with >2 raids only
+    const roleActive = role.players.filter(p => p.pct !== null && !p.inactive && p.attended > 2);
+    const rolePoints = roleActive.map(p => pointsByPlayer[normalizeName(p.name)] ?? 0).sort((a, b) => a - b);
+    const bottom20threshold = rolePoints.length > 0 ? rolePoints[Math.floor(rolePoints.length * 0.2)] : 0;
+    const top20threshold = rolePoints.length > 0 ? rolePoints[Math.floor(rolePoints.length * 0.8)] : Infinity;
+    const pointValues = rolePoints;
+    lastRenderData.thresholds[role.name] = { bottom20threshold, top20threshold, pointValues };
+
+    const roleSafeId = role.name.replace(/\s+/g, '-');
+    const sorted = getSortedPlayers(role.name, role.players, bottom20threshold, top20threshold, pointValues);
+    const state = roleSortState[role.name] || { col: 'priority', dir: 'desc' };
+
+    html += `
+    <div class="role-section">
+      <div class="role-header" onclick="toggleRole('${roleSafeId}')" style="cursor:pointer;">
+        <span class="role-title">${groupingMode === 'role' && ROLE_ICONS[role.name] ? ROLE_ICONS[role.name] + ' ' : ''}${ROLE_DISPLAY_NAMES[role.name] || role.name}${role.subtitle ? '<span class="role-subtitle"> — ' + role.subtitle + '</span>' : ''}</span>
+        <div class="role-line"></div>
+        <span class="role-count">${sorted.filter(p=>p.pct!==null && !p.inactive).length} active <span class="role-toggle" id="roletoggle-${roleSafeId}">▾</span></span>
+      </div>
+      <div class="role-body" id="rolebody-${roleSafeId}">
+      <table>
+        <colgroup>
+          <col style="width:160px;"> <!-- Player -->
+          <col style="width:70px;">  <!-- Priority -->
+          <col style="width:24px;">  <!-- Gear flag -->
+          <col style="width:64px;">  <!-- Loot Score -->
+          <col style="width:80px;">  <!-- Consumes -->
+          <col>                      <!-- Raids (dots) -->
+          <col style="width:50px;">  <!-- # -->
+          <col style="width:140px;"> <!-- Attendance % -->
+        </colgroup>
+        <thead id="thead-${roleSafeId}">
+          <tr>
+            <th data-col="player" onclick="setSort('${roleSafeId}', '${role.name}', 'player')" style="cursor:pointer;">Player<span class="sort-arrow">${state.col==='player' ? (state.dir==='desc' ? ' ▾' : ' ▴') : ' ⬦'}</span></th>
+            <th data-col="priority" onclick="setSort('${roleSafeId}', '${role.name}', 'priority')" style="cursor:pointer;text-align:center;" title="Loot priority recommendation based on raid attendance, consume usage, and loot received.">Priority<span class="sort-arrow">${state.col==='priority' ? (state.dir==='desc' ? ' ▾' : ' ▴') : ' ⬦'}</span></th>
+            <th></th>
+            <th data-col="points" onclick="setSort('${roleSafeId}', '${role.name}', 'points')" style="cursor:pointer;text-align:center;" title="Amount of loot received relative to raids attended.">Loot Score<span class="sort-arrow">${state.col==='points' ? (state.dir==='desc' ? ' ▾' : ' ▴') : ' ⬦'}</span></th>
+            <th data-col="consumes" onclick="setSort('${roleSafeId}', '${role.name}', 'consumes')" style="cursor:pointer;text-align:center;" title="Uptime of all required consumables.">Consumes<span class="sort-arrow">${state.col==='consumes' ? (state.dir==='desc' ? ' ▾' : ' ▴') : ' ⬦'}</span></th>
+            <th style="text-align:center;" title="Raids attended. Color indicates consumable usage.">Raids</th>
+            <th data-col="attendance" onclick="setSort('${roleSafeId}', '${role.name}', 'attendance')" style="cursor:pointer;text-align:center;">#<span class="sort-arrow">${state.col==='attendance' ? (state.dir==='desc' ? ' ▾' : ' ▴') : ' ⬦'}</span></th>
+            <th data-col="pct" onclick="setSort('${roleSafeId}', '${role.name}', 'pct')" style="cursor:pointer;">Attendance %<span class="sort-arrow">${state.col==='pct' ? (state.dir==='desc' ? ' ▾' : ' ▴') : ' ⬦'}</span></th>
+          </tr>
+        </thead>
+        <tbody id="table-${roleSafeId}">
+    `;
+
+    // Calculate priority normalisation factor: X = 100 / maxPriority so highest = 100
+    const allPriorityScores = sorted
+      .filter(p => p.pct !== null && !p.inactive && p.attended > 2)
+      .map(p => calculatePriority(p, bottom20threshold, top20threshold, pointValues).score)
+      .filter(s => s > 0);
+    const maxPriority = allPriorityScores.length > 0 ? Math.max(...allPriorityScores) : 1;
+    const priorityNorm = maxPriority > 0 ? 100 / maxPriority : 1;
+
+    const rowsHtml = getRoleRowsHtml(sorted, dates, bottom20threshold, top20threshold, pointValues, priorityNorm);
+    html += rowsHtml;
+    html += `</tbody></table></div></div>`;
+  }
+
+  html += `
+    <div class="summary">
+      <div class="summary-item"><label>Raiders</label><div class="val">${total}</div></div>
+      <div class="summary-item"><label>Active Raiders</label><div class="val">${active}</div></div>
+      <div class="summary-item"><label>Avg Attendance</label><div class="val">${avgPct.toFixed(1)}%</div></div>
+      <div class="summary-item"><label>Avg Consumes</label><div class="val">${avgConsumeStr}</div></div>
+      <div class="summary-item"><label># Raids</label><div class="val">${dates.length}</div></div>
+      
+    </div>
+  `;
+
+  out.innerHTML = html;
+}
+
+function toggleLoot(td, playerName) {
+  const tr = td.closest('tr');
+  const arrow = td.querySelector('.loot-arrow');
+  const existing = tr.nextElementSibling;
+
+  // If already open, close it
+  if (existing && existing.classList.contains('loot-row')) {
+    existing.remove();
+    arrow.textContent = '▸';
+    return;
+  }
+
+  const key = normalizeName(playerName);
+  const items = lootByPlayer[key] || [];
+
+  const lootTr = document.createElement('tr');
+  lootTr.className = 'loot-row';
+  const colspan = tr.children.length;
+
+  const cla = claDataByPlayer[key] || { gearIssues: [], buffConsumables: [] };
+
+  let html = `<td colspan="${colspan}" class="loot-cell">`;
+
+  // Loot section
+  html += `<div class="expand-section-title">Loot Received</div>`;
+  if (items.length === 0) {
+    html += `<em class="no-loot">No loot recorded</em>`;
+  } else {
+    html += `<div class="loot-list">${items.map(item => `<a class="loot-item" href="https://www.wowhead.com/tbc/search?q=${encodeURIComponent(item)}" target="_blank" rel="noopener">⚔ ${item}</a>`).join('')}</div>`;
+  }
+
+  html += `</td>`;
+  lootTr.innerHTML = html;
+
+  tr.after(lootTr);
+  arrow.textContent = '▾';
+}
+
+// ── CLA Management ──────────────────────────────────────────────
+let claSheets = [];  // initialised below after function definitions
+let claDataByPlayer = {};
+let buffScoreByPlayerDate = {}; // normalized name -> { normalizedDate -> pct }
+let latestGearIssuesByPlayer = {}; // normalized name -> { label, issues[] } for most recent CLA only
+
+function saveClaSheets() {
+  try { sessionStorage.setItem('claSheets', JSON.stringify(claSheets)); } catch(e) {}
+  // Also persist in a hidden field so it survives even without sessionStorage
+  const el = document.getElementById('claPersist');
+  if (el) el.value = JSON.stringify(claSheets);
+}
+
+function loadClaSheets() {
+  // Try sessionStorage first, then hidden field
+  try {
+    const ss = sessionStorage.getItem('claSheets');
+    if (ss) return JSON.parse(ss);
+  } catch(e) {}
+  try {
+    const el = document.getElementById('claPersist');
+    if (el && el.value) return JSON.parse(el.value);
+  } catch(e) {}
+  return [];
+}
+
+function extractSheetId(url) {
+  const m = url.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  return m ? m[1] : null;
+}
+
+function toggleClaManager() {
+  const body = document.getElementById('claBody');
+  const toggle = document.getElementById('claToggle');
+  const open = body.style.display === 'none';
+  body.style.display = open ? 'block' : 'none';
+  toggle.textContent = open ? '▾' : '▸';
+}
+
+function exportCla() {
+  if (!claSheets.length) {
+    setHint('No CLA sheets to export.', 'error'); return;
+  }
+  const data = JSON.stringify(claSheets);
+  navigator.clipboard.writeText(data).then(() => {
+    setHint('Copied to clipboard!', 'success');
+  }).catch(() => {
+    // Fallback: show in textarea
+    document.getElementById('claImportArea').style.display = 'block';
+    document.getElementById('claImportText').value = data;
+    setHint('Clipboard unavailable — copy the text below manually.', 'error');
+  });
+}
+
+function showImport() {
+  const area = document.getElementById('claImportArea');
+  area.style.display = area.style.display === 'none' ? 'block' : 'none';
+}
+
+function importCla() {
+  const text = document.getElementById('claImportText').value.trim();
+  try {
+    const parsed = JSON.parse(text);
+    if (!Array.isArray(parsed)) throw new Error('Not an array');
+    claSheets = parsed;
+    saveClaSheets();
+    renderClaList();
+    document.getElementById('claImportArea').style.display = 'none';
+    document.getElementById('claImportText').value = '';
+    setHint(`Imported ${claSheets.length} sheet(s)!`, 'success');
+  } catch(e) {
+    setHint('Invalid data — make sure you pasted the full export text.', 'error');
+  }
+}
+
+function setHint(msg, type) {
+  const el = document.getElementById('claIoHint');
+  el.textContent = msg;
+  el.style.color = type === 'error' ? 'var(--red)' : 'var(--green)';
+  setTimeout(() => { el.textContent = ''; }, 4000);
+}
+
+function renderClaList() {
+  const list = document.getElementById('claList');
+  const count = document.getElementById('claCount');
+  count.textContent = claSheets.length + ' sheet' + (claSheets.length !== 1 ? 's' : '');
+  if (!claSheets.length) {
+    list.innerHTML = '<div style="color:var(--text-dim);font-size:13px;font-style:italic;padding:4px 0 10px;">No CLA sheets added yet.</div>';
+    return;
+  }
+  list.innerHTML = claSheets.map((s, i) => `
+    <div class="cla-row">
+      <span class="cla-row-label">${s.label}</span>
+      <span class="cla-row-url" title="${s.url}">${s.url.substring(0, 60)}...</span>
+      <span class="cla-row-gids">Gear: ${s.gearGid} / Buff: ${s.buffGid}</span>
+      <button class="cla-remove" onclick="removeCla(${i})" title="Remove">✕</button>
+    </div>
+  `).join('');
+}
+
+function addCla() {
+  const label = document.getElementById('claLabel').value.trim();
+  const url = document.getElementById('claUrl').value.trim();
+  const gearGid = document.getElementById('claGearGid').value.trim();
+  const buffGid = document.getElementById('claBuffGid').value.trim();
+  if (!label || !url || !gearGid || !buffGid) {
+    alert('Please fill in all fields.');
+    return;
+  }
+  const sheetId = extractSheetId(url);
+  if (!sheetId) { alert('Could not parse Sheet ID from URL.'); return; }
+  claSheets.push({ label, url, sheetId, gearGid, buffGid });
+  saveClaSheets();
+  renderClaList();
+  document.getElementById('claLabel').value = '';
+  document.getElementById('claUrl').value = '';
+  document.getElementById('claGearGid').value = '';
+  document.getElementById('claBuffGid').value = '';
+}
+
+function removeCla(i) {
+  claSheets.splice(i, 1);
+  saveClaSheets();
+  renderClaList();
+}
+
+async function fetchAllClaData(workingProxy) {
+  claDataByPlayer = {};
+  buffScoreByPlayerDate = {};
+  latestGearIssuesByPlayer = {};
+  for (const sheet of claSheets) {
+    const gearUrl = `https://docs.google.com/spreadsheets/d/${sheet.sheetId}/export?format=csv&gid=${sheet.gearGid}`;
+    const buffUrl = `https://docs.google.com/spreadsheets/d/${sheet.sheetId}/export?format=csv&gid=${sheet.buffGid}`;
+    const ordered = workingProxy ? [workingProxy, ...PROXIES.filter(p => p !== workingProxy)] : PROXIES;
+
+    // Fetch gear issues
+    let gearLoaded = false;
+    for (const proxy of ordered) {
+      try {
+        const res = await fetch(proxy(gearUrl));
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        if (!text.includes(',')) throw new Error('Response is not CSV');
+        try {
+          parseGearIssues(text, sheet.label);
+          gearLoaded = true;
+        } catch(parseErr) {
+          addError(`CLA "${sheet.label}" — Gear Issues (gid: ${sheet.gearGid})`, `Parse error: ${parseErr.message}`);
+        }
+        break;
+      } catch(e) { console.warn('Gear issues fetch failed:', e.message); }
+    }
+    if (!gearLoaded) addError(`CLA "${sheet.label}" — Gear Issues (gid: ${sheet.gearGid})`, 'All proxies failed — gear issue data unavailable');
+
+    // Fetch buff consumables
+    let buffLoaded = false;
+    for (const proxy of ordered) {
+      try {
+        const res = await fetch(proxy(buffUrl));
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        if (!text.includes(',')) throw new Error('Response is not CSV');
+        try {
+          parseBuffConsumables(text, sheet.label);
+          buffLoaded = true;
+        } catch(parseErr) {
+          addError(`CLA "${sheet.label}" — Buff Consumables (gid: ${sheet.buffGid})`, `Parse error: ${parseErr.message}`);
+        }
+        break;
+      } catch(e) { console.warn('Buff consumables fetch failed:', e.message); }
+    }
+    if (!buffLoaded) addError(`CLA "${sheet.label}" — Buff Consumables (gid: ${sheet.buffGid})`, 'All proxies failed — consumable data unavailable');
+  }
+}
+
+function parseCsvRows(text) {
+  const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').trim().split('\n');
+  return lines.map(line => {
+    const result = []; let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { result.push(cur.trim()); cur = ''; }
+      else { cur += ch; }
+    }
+    result.push(cur.trim());
+    return result;
+  });
+}
+
+function parseGearIssues(text, label) {
+  const rows = parseCsvRows(text);
+  const FLAGGED = /\[no (gem|enchant)/i;
+  for (const row of rows) {
+    const player = row[4]?.trim();
+    if (!player) continue;
+    // Filter to only [no gem] or [no enchant] issues, skip dashes
+    const issues = row.slice(5)
+      .map(v => v.trim())
+      .filter(v => v && FLAGGED.test(v));
+    const key = normalizeName(player);
+    if (!claDataByPlayer[key]) claDataByPlayer[key] = { gearIssues: [], buffConsumables: [] };
+    // Store all for expand panel (now removed, but keep structure)
+    if (issues.length) claDataByPlayer[key].gearIssues.push({ label, issues });
+    // Always overwrite with this CLA's issues — last CLA fetched = most recent
+    latestGearIssuesByPlayer[key] = { label, issues };
+  }
+}
+
+function parseBuffConsumables(text, label) {
+  const rows = parseCsvRows(text);
+  // Header row is row index 4 (0-based), data starts at row 5
+  const headers = rows[4]?.slice(2) || []; // col C onwards
+  const normLabel = normalizeDate(label);
+  for (let i = 5; i < rows.length; i++) {
+    const row = rows[i];
+    const player = row[1]?.trim();
+    if (!player) continue;
+    const values = row.slice(2);
+    const cols = {};
+    headers.forEach((h, idx) => {
+      if (h.trim()) cols[h.trim()] = values[idx]?.trim() || '0%';
+    });
+    const key = normalizeName(player);
+    if (!claDataByPlayer[key]) claDataByPlayer[key] = { gearIssues: [], buffConsumables: [] };
+    claDataByPlayer[key].buffConsumables.push({ label, cols });
+
+    // Store total average + scrolls score keyed by normalized date for dot colouring
+    const totalAvg = values[0]?.trim() || '0%'; // col C = index 0 of slice(2) = total average
+    const scrollsVal = values[6]?.trim() || '0%'; // col I = index 6 of slice(2) = Scrolls
+    const pct = parseInt(totalAvg);
+    const scrollsPct = parseInt(scrollsVal);
+    if (!buffScoreByPlayerDate[key]) buffScoreByPlayerDate[key] = {};
+    const elixirVal  = parseInt(values[1]?.trim()) || 0;  // Elixir or Flask
+    const foodVal     = parseInt(values[5]?.trim()) || 0;  // Food Buff
+    const wepOilVal   = parseInt(values[7]?.trim()) || 0;  // Weapon Enhancement
+    buffScoreByPlayerDate[key][normLabel] = {
+      total: isNaN(pct) ? null : pct,
+      scrolls: isNaN(scrollsPct) ? 0 : scrollsPct,
+      elixir: elixirVal,
+      food: foodVal,
+      wepOil: wepOilVal
+    };
+  }
+}
+
+// Initialise CLA list on load (after all functions defined)
+claSheets = loadClaSheets();
+renderClaList();
+
+// ── Custom Tooltip System ───────────────────────────────────────
+// Works on desktop (hover) and mobile (long-press)
+// Replaces native title= tooltips with a styled custom tooltip
+
+const tooltipEl = document.createElement('div');
+tooltipEl.id = 'custom-tooltip';
+document.body.appendChild(tooltipEl);
+
+let longPressTimer = null;
+let activeTooltipTarget = null;
+
+function showTooltip(text, x, y) {
+  if (!text) return;
+  tooltipEl.textContent = text.replace(/&#10;/g, '\n');
+  tooltipEl.classList.add('visible');
+  positionTooltip(x, y);
+}
+
+function positionTooltip(x, y) {
+  const pad = 12;
+  const tw = tooltipEl.offsetWidth;
+  const th = tooltipEl.offsetHeight;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  let left = x + pad;
+  let top  = y + pad;
+  if (left + tw > vw - pad) left = x - tw - pad;
+  if (top  + th > vh - pad) top  = y - th - pad;
+  tooltipEl.style.left = Math.max(pad, left) + 'px';
+  tooltipEl.style.top  = Math.max(pad, top)  + 'px';
+}
+
+function hideTooltip() {
+  tooltipEl.classList.remove('visible');
+}
+
+function getTitleText(el) {
+  let cur = el;
+  while (cur && cur !== document.body) {
+    // Check both real title and our stashed data attribute
+    const stashed = cur.getAttribute('data-title-stash');
+    if (stashed) return stashed;
+    const t = cur.getAttribute('title');
+    if (t) return t;
+    cur = cur.parentElement;
+  }
+  return null;
+}
+
+// Track which element we stripped title from so we can restore it
+let strippedEl = null;
+let strippedTitle = '';
+
+function getTitleEl(el) {
+  let cur = el;
+  while (cur && cur !== document.body) {
+    if (cur.hasAttribute('title') && cur.getAttribute('title')) return cur;
+    cur = cur.parentElement;
+  }
+  return null;
+}
+
+// Desktop: hover
+document.addEventListener('mouseover', e => {
+  const el = getTitleEl(e.target);
+  if (el) {
+    // Strip title to prevent native tooltip overlapping
+    if (strippedEl && strippedEl !== el) {
+      strippedEl.setAttribute('title', strippedTitle);
+    }
+    strippedTitle = el.getAttribute('title');
+    strippedEl = el;
+    el.setAttribute('data-title-stash', strippedTitle);
+    el.setAttribute('title', '');
+    showTooltip(strippedTitle, e.clientX, e.clientY);
+  } else {
+    hideTooltip();
+  }
+});
+document.addEventListener('mousemove', e => {
+  if (tooltipEl.classList.contains('visible')) positionTooltip(e.clientX, e.clientY);
+});
+document.addEventListener('mouseout', e => {
+  const el = getTitleEl(e.relatedTarget);
+  if (!el) {
+    hideTooltip();
+    // Restore stripped title
+    if (strippedEl) {
+      strippedEl.setAttribute('title', strippedTitle);
+      strippedEl.removeAttribute('data-title-stash');
+      strippedEl = null;
+      strippedTitle = '';
+    }
+  }
+});
+
+// Mobile: long-press (500ms)
+document.addEventListener('touchstart', e => {
+  const text = getTitleText(e.target);
+  if (!text) return;
+  const touch = e.touches[0];
+  longPressTimer = setTimeout(() => {
+    showTooltip(text, touch.clientX, touch.clientY);
+    activeTooltipTarget = e.target;
+  }, 500);
+}, { passive: true });
+
+document.addEventListener('touchend', () => {
+  clearTimeout(longPressTimer);
+  // Keep tooltip visible briefly so user can read it
+  setTimeout(hideTooltip, 5000);
+}, { passive: true });
+
+document.addEventListener('touchmove', () => {
+  clearTimeout(longPressTimer);
+  hideTooltip();
+}, { passive: true });
+
+
+// ── Loot Panel ───────────────────────────────────────────────────
+
+function renderLootDropdowns() {
+  if (groupingMode !== 'loot') return;
+  const raidSel = document.getElementById('lootRaid');
+  const cur = raidSel.value;
+  const raids = [...new Set(glossaryData.map(r => r.raid))].sort();
+  raidSel.innerHTML = '<option value="">— Select Raid —</option>' +
+    raids.map(r => `<option value="${r}" ${r === cur ? 'selected' : ''}>${r}</option>`).join('');
+  if (cur) onRaidChange(true);
+}
+
+function onRaidChange(preserveBoss = false) {
+  const raid = document.getElementById('lootRaid').value;
+  const bossSel = document.getElementById('lootBoss');
+  const itemSel = document.getElementById('lootItem');
+  bossSel.innerHTML = '<option value="">— Select Boss —</option>';
+  itemSel.innerHTML = '<option value="">— Select Item —</option>';
+  itemSel.disabled = true;
+  document.getElementById('lootEligible').innerHTML = '';
+  if (!raid) { bossSel.disabled = true; return; }
+  const bosses = [...new Set(glossaryData.filter(r => r.raid === raid).map(r => r.boss))];
+  bossSel.innerHTML = '<option value="">— Select Boss —</option>' +
+    bosses.map(b => `<option value="${b}">${b}</option>`).join('');
+  bossSel.disabled = false;
+  if (bosses.length) {
+    bossSel.value = bosses[0];
+    onBossChange();
+  }
+}
+
+function onBossChange() {
+  const raid = document.getElementById('lootRaid').value;
+  const boss = document.getElementById('lootBoss').value;
+  const itemSel = document.getElementById('lootItem');
+  itemSel.innerHTML = '<option value="">— Select Item —</option>';
+  document.getElementById('lootEligible').innerHTML = '';
+  if (!boss) { itemSel.disabled = true; return; }
+  const items = [...new Set(glossaryData.filter(r => r.raid === raid && r.boss === boss).map(r => r.item))];
+  itemSel.innerHTML = '<option value="">— Select Item —</option>' +
+    items.map(i => `<option value="${i}">${i}</option>`).join('');
+  itemSel.disabled = false;
+}
+
+function onItemChange() {
+  const raid = document.getElementById('lootRaid').value;
+  const boss = document.getElementById('lootBoss').value;
+  const item = document.getElementById('lootItem').value;
+  const el = document.getElementById('lootEligible');
+  if (!item) { el.innerHTML = ''; return; }
+
+  const entry = glossaryData.find(r => r.raid === raid && r.boss === boss && r.item === item);
+  if (!entry) { el.innerHTML = '<p style="color:var(--text-dim);font-style:italic;">No data found for this item.</p>'; return; }
+
+  // Get all players across all roles
+  const allPlayers = lastRenderData.roles.flatMap(r => r.players);
+
+  // Filter to eligible players by class AND role
+  const eligible = allPlayers.filter(p => {
+    if (!p.name) return false;
+    const cls = classMap[normalizeName(p.name)];
+    if (!cls) return false;
+    // Class check
+    const classOk = entry.eligibleClasses.length === 0 ||
+      entry.eligibleClasses.some(ec => ec.toLowerCase() === cls.toLowerCase());
+    if (!classOk) return false;
+    // Role check — find player's role from original role grouping
+    const playerRole = lastRenderData.roles.find(r =>
+      r.players.some(rp => normalizeName(rp.name) === normalizeName(p.name))
+    )?.name;
+    const roleOk = !entry.eligibleRoles || entry.eligibleRoles.length === 0 ||
+      (playerRole && entry.eligibleRoles.includes(playerRole));
+    return roleOk;
+  });
+
+  if (!eligible.length) {
+    el.innerHTML = '<p style="color:var(--text-dim);font-style:italic;padding:16px 0;">No eligible players found for this item.</p>';
+    return;
+  }
+
+  // Check who has already received this item
+  const hasItem = p => (lootByPlayer[normalizeName(p.name)] || []).some(l => l.toLowerCase() === item.toLowerCase());
+
+  const haveIt = eligible.filter(p => hasItem(p));
+  const needIt = eligible.filter(p => !hasItem(p) && !p.inactive);
+  const inactiveNeedIt = eligible.filter(p => !hasItem(p) && p.inactive);
+
+  // Get thresholds for all eligible players combined (treat as one group)
+  const eligThreshPts = eligible
+    .filter(p => p.pct !== null && !p.inactive && p.attended > 2)
+    .map(p => pointsByPlayer[normalizeName(p.name)] ?? 0)
+    .sort((a, b) => a - b);
+  const eligBottom20 = eligThreshPts.length ? eligThreshPts[Math.floor(eligThreshPts.length * 0.2)] : 0;
+  const eligTop20 = eligThreshPts.length ? eligThreshPts[Math.floor(eligThreshPts.length * 0.8)] : Infinity;
+
+  // Normalise priority scores within active eligible players only
+  const prScores = needIt.map(p => calculatePriority(p, eligBottom20, eligTop20, eligThreshPts).score * prioMultiplier(p).mult);
+  const maxPr = prScores.filter(s => s > 0).length ? Math.max(...prScores.filter(s => s > 0)) : 1;
+  const prNormFactor = maxPr > 0 ? 100 / maxPr : 1;
+
+  // Prio multiplier helper
+  function prioMultiplier(p) {
+    const cls = classMap[normalizeName(p.name)] || '';
+    const role = lastRenderData.roles.find(r => r.players.some(rp => normalizeName(rp.name) === normalizeName(p.name)))?.name || '';
+    const inList = (list) => list.some(v => v.toLowerCase() === cls.toLowerCase() || v.toLowerCase() === role.toLowerCase());
+    const hard = entry.hardPrio && inList(entry.hardPrio);
+    const soft = entry.softPrio && inList(entry.softPrio);
+    return { mult: (hard ? 1.75 : 1) * (soft ? 1.25 : 1), hard, soft };
+  }
+
+  function lootPriorityScore(p) {
+    const base = calculatePriority(p, eligBottom20, eligTop20, eligThreshPts).score;
+    return base * prioMultiplier(p).mult;
+  }
+
+  // Sort needIt by selected column
+  function getLootSortVal(p, col) {
+    if (col === 'priority') return lootPriorityScore(p);
+    if (col === 'points')   return pointsByPlayer[normalizeName(p.name)] ?? 0;
+    if (col === 'consumes') {
+      const sc = Object.values(buffScoreByPlayerDate[normalizeName(p.name)] || {}).map(v => v?.total).filter(v => v !== null);
+      return sc.length ? sc.reduce((a,b)=>a+b,0)/sc.length : -1;
+    }
+    if (col === 'attendance') return p.attended;
+    if (col === 'pct')      return p.pct ?? -1;
+    if (col === 'player')   return p.name.toLowerCase();
+    return 0;
+  }
+  needIt.sort((a, b) => {
+    const av = getLootSortVal(a, lootSortCol);
+    const bv = getLootSortVal(b, lootSortCol);
+    if (av < bv) return lootSortDir === 'asc' ? -1 : 1;
+    if (av > bv) return lootSortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+
+  function lootPlayerRow(p, dimmed, badge) {
+    const key = normalizeName(p.name);
+    const cc = classColor(p.name);
+    const nameStyle = cc ? `color:${cc};` : '';
+    const pts = pointsByPlayer[key] ?? 0;
+
+    // Priority
+    const { score: prScore, tooltip: prTooltip } = calculatePriority(p, eligBottom20, eligTop20, eligThreshPts);
+    const { mult, hard, soft } = prioMultiplier(p);
+    const adjScore = prScore * mult;
+    const normPr = adjScore * prNormFactor;
+    const displayPr = normPr % 1 === 0 ? normPr.toFixed(0) : normPr.toFixed(1);
+    const prStr = prScore > 0 ? displayPr : '—';
+    const prCol = prScore > 0 ? priorityColor(normPr) : 'var(--text-dim)';
+    const prioLines = [];
+    if (hard) prioLines.push('Hard Prio (×1.75)');
+    if (soft) prioLines.push('Soft Prio (×1.25)');
+    const fullTooltip = prTooltip + (prioLines.length ? '&#10;' + prioLines.join('&#10;') : '') + `&#10;Score: ${adjScore.toFixed(2)}`;
+
+    // Gear flag
+    const gi = latestGearIssuesByPlayer[key];
+    const gearHtml = (gi && gi.issues.length) ? `<span class="gear-flag" style="color:${gearColor(gi.issues.length)};filter:drop-shadow(0 0 4px ${gearColor(gi.issues.length)}88);" title="${gi.issues.join('&#10;')}">⚠</span>` : '';
+
+    // Loot Score colour
+    const maxP = eligThreshPts.length ? eligThreshPts[eligThreshPts.length - 1] : 0;
+    const nzP = eligThreshPts.filter(v => v > 0);
+    const minNzP = nzP.length ? nzP[0] : null;
+    const hiPts = eligThreshPts.length && pts === maxP && pts > 0;
+    const zloPts = pts === 0 || (minNzP !== null && pts === minNzP);
+    const t20pts = !hiPts && !zloPts && pts >= eligTop20 && eligThreshPts.length > 0;
+    const b20pts = !hiPts && !zloPts && pts <= eligBottom20 && eligThreshPts.length > 0;
+    const ptsCol = hiPts ? C5 : t20pts ? C4 : b20pts ? C2 : zloPts ? C1 : C3;
+
+    // Consumes
+    const consumeScores = Object.values(buffScoreByPlayerDate[key] || {}).map(v => v?.total).filter(v => v !== null);
+    const avgCon = consumeScores.length ? Math.round(consumeScores.reduce((a,b)=>a+b,0)/consumeScores.length) : null;
+    const conStr = avgCon !== null ? `<span style="color:${pctColor(avgCon)};">${avgCon}%</span>` : '<span style="color:var(--text-dim);font-style:italic;">—</span>';
+
+    // Attendance
+    const pctStr = p.pct !== null ? (p.pct % 1 === 0 ? p.pct.toFixed(0) : p.pct.toFixed(1)) + '%' : 'N/A';
+    const attCol = p.pct !== null ? pctColor(p.pct) : 'var(--text-dim)';
+    const barW = p.pct !== null ? p.pct : 0;
+
+    // Dots (last 10)
+    const playerBuffScores = buffScoreByPlayerDate[key] || {};
+    const MAX_DOTS = 10;
+    const dates = lastRenderData.dates;
+    const dotStart = Math.max(0, p.n - MAX_DOTS);
+    let dotsHtml = '<div class="raid-dots">';
+    for (let i = dotStart; i < p.n; i++) {
+      const dateLabel = normalizeDate(dates[i]);
+      if (p.pct === null) {
+        dotsHtml += `<div class="raid-dot absent" title="${dates[i]}"></div>`;
+      } else if (i < p.first || i > p.last) {
+        dotsHtml += `<div class="raid-dot inactive"></div>`;
+      } else if (!p.flags[i]) {
+        dotsHtml += `<div class="raid-dot absent" title="${dates[i]}: Absent"></div>`;
+      } else {
+        const bs = playerBuffScores[dateLabel] ?? null;
+        const bpct = bs?.total ?? null;
+        const sp = bs?.scrolls ?? 0;
+        const isPerfect = bpct === 100 && sp === 100;
+        let dotTitle = `${dates[i]}: Present`;
+        if (bpct !== null) {
+          dotTitle += ` | Buffs: ${bpct}%`;
+          const missing = [];
+          if ((bs.elixir ?? 100) < 100) missing.push(`Elixir/Flask: ${bs.elixir}%`);
+          if ((bs.food   ?? 100) < 100) missing.push(`Food: ${bs.food}%`);
+          if ((bs.wepOil ?? 100) < 100) missing.push(`Wep Oil: ${bs.wepOil}%`);
+          if (missing.length) dotTitle += '&#10;Missing: ' + missing.join(', ');
+        }
+        if (isPerfect) {
+          dotsHtml += `<span class="raid-star" style="color:#4caa6e;" title="${dotTitle}">★</span>`;
+        } else {
+          const col = bpct !== null ? pctColor(bpct) : null;
+          const bgStyle = col ? `background:${col};border-color:${col};` : '';
+          dotsHtml += `<div class="raid-dot present" style="${bgStyle}" title="${dotTitle}"></div>`;
+        }
+      }
+    }
+    dotsHtml += '</div>';
+
+    const rowBg = !dimmed && prScore > 0 ? (() => {
+      const n = normPr;
+      return n >= 100 ? 'rgba(76,170,110,0.08)' : n >= 90 ? 'rgba(138,191,80,0.07)' : n >= 60 ? 'rgba(212,200,74,0.06)' : n >= 30 ? 'rgba(224,120,48,0.06)' : 'rgba(201,76,76,0.06)';
+    })() : '';
+
+    return `<tr style="${dimmed ? 'opacity:0.35;' : ''}${rowBg ? 'background:' + rowBg + ';' : ''}" class="${dimmed ? 'na-row' : ''}">
+      <td class="player-name" onclick="toggleLoot(this, '${p.name}')" style="cursor:pointer;" title="Click to view loot"><span style="${nameStyle}">${p.name}</span>${badge ? ` <span class="inactive-badge" style="font-size:9px;letter-spacing:0.1em;">${badge}</span>` : ''} <span class="loot-arrow">▸</span></td>
+      <td class="priority-cell" style="color:${prCol};" title="${fullTooltip}">${prStr !== '—' ? `<span class="priority-score" style="color:${prCol};">${prStr}</span>` : '<span style="color:var(--text-dim);font-style:italic;font-size:12px;">—</span>'}</td>
+      <td class="gear-flag-cell">${gearHtml}</td>
+      <td class="points-cell" style="color:${ptsCol};text-align:center;">${pts}</td>
+      <td class="consumes-cell" style="text-align:center;">${conStr}</td>
+      <td>${dotsHtml}</td>
+      <td class="att-count" style="text-align:right;">${p.attended}</td>
+      <td>
+        <div class="att-cell">
+          <div class="att-bar-bg"><div class="att-bar-fill ${attCol === '#4caa6e' ? 'exact100' : attCol === '#8abf50' ? 'high' : attCol === '#d4c84a' ? 'mid' : 'low'}" style="width:${barW}%"></div></div>
+          <span class="att-pct" style="color:${attCol};">${pctStr}</span>
+        </div>
+      </td>
+    </tr>`;
+  }
+
+  // Loot table sort helper
+  function lootSortArrow(col) {
+    return lootSortCol === col ? (lootSortDir === 'desc' ? ' ▾' : ' ▴') : ' ⬦';
+  }
+  function setLootSort(col) {
+    lootSortDir = lootSortCol === col ? (lootSortDir === 'desc' ? 'asc' : 'desc') : 'desc';
+    lootSortCol = col;
+    onItemChange(); // re-render
+  }
+
+  const thS = (label, col, align='center') =>
+    `<th onclick="setLootSort('${col}')" style="cursor:pointer;text-align:${align};padding:6px 12px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);" title="${col === 'priority' ? 'Loot priority recommendation based on raid attendance, consume usage, and loot received.' : col === 'points' ? 'Amount of loot received relative to raids attended.' : col === 'consumes' ? 'Uptime of all required consumables.' : col === 'attendance' ? 'Raids attended.' : ''}">${label}<span class="sort-arrow">${lootSortArrow(col)}</span></th>`;
+
+  el.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;margin-top:24px;">
+      <colgroup>
+        <col style="width:160px;"> <!-- Player -->
+        <col style="width:70px;">  <!-- Priority -->
+        <col style="width:24px;">  <!-- Gear flag -->
+        <col style="width:64px;">  <!-- Loot Score -->
+        <col style="width:80px;">  <!-- Consumes -->
+        <col>                      <!-- Raids (dots) -->
+        <col style="width:50px;">  <!-- # -->
+        <col style="width:140px;"> <!-- Attendance % -->
+      </colgroup>
+      <thead>
+        <tr style="border-bottom:1px solid var(--border);">
+          ${thS('Player','player','left')}
+          ${thS('Priority','priority')}
+          <th style="padding:6px 12px;"></th>
+          ${thS('Loot Score','points')}
+          ${thS('Consumes','consumes')}
+          <th style="padding:6px 12px;text-align:center;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);" title="Raids attended. Color indicates consumable usage.">Raids</th>
+          ${thS('#','attendance')}
+          ${thS('Attendance %','pct','left')}
+        </tr>
+      </thead>
+      <tbody>
+        ${needIt.map(p => lootPlayerRow(p, false, null)).join('')}
+        ${inactiveNeedIt.map(p => lootPlayerRow(p, true, 'Inactive')).join('')}
+        ${haveIt.map(p => lootPlayerRow(p, true, 'Received')).join('')}
+      </tbody>
+    </table>
+    <p style="margin-top:12px;font-size:13px;color:var(--text-dim);font-style:italic;">${needIt.length} eligible · ${haveIt.length} already received · ${inactiveNeedIt.length} inactive</p>
+  `;
+}
+
+</script>
+</body>
+</html>
