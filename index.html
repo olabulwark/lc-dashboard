@@ -1087,8 +1087,8 @@
         <input class="cla-input" id="claLabel" placeholder="Label (e.g. 2/26)" />
         <input class="cla-input wide" id="claUrl" placeholder="Google Sheet URL" />
         <input class="cla-input" id="claGearGid" placeholder="Gear Issues GID" />
-        <input class="cla-input" id="claBuffGid" placeholder="Buff Consumables GID" />
         <input class="cla-input" id="claGearListingGid" placeholder="Gear Listing GID (optional)" />
+        <input class="cla-input" id="claBuffGid" placeholder="Buff Consumables GID" />
         <input class="cla-input wide" id="claToken" type="password" placeholder="GitHub Token (optional — saves to repo)" />
         <button class="btn" onclick="addCla()">+ Add</button>
       </div>
@@ -1753,21 +1753,21 @@ function wclColor(pct) {
   return '#666666'; // grey
 }
 
+let _githubSaveTimer = null;
 async function saveClaSheetsToGitHub() {
-  if (!githubToken) return; // no token, skip silently
+  if (!githubToken) return;
+  // Debounce: cancel pending save and wait 600ms to batch rapid calls
+  if (_githubSaveTimer) clearTimeout(_githubSaveTimer);
+  await new Promise(resolve => { _githubSaveTimer = setTimeout(resolve, 600); });
+  _githubSaveTimer = null;
   try {
     const apiUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
-    // Get current file SHA (needed for update)
+    // Always fetch fresh SHA immediately before PUT to avoid conflicts
     let sha = null;
-    try {
-      const getRes = await fetch(apiUrl, {
-        headers: { Authorization: `token ${githubToken}`, Accept: 'application/vnd.github.v3+json' }
-      });
-      if (getRes.ok) {
-        const fileData = await getRes.json();
-        sha = fileData.sha;
-      }
-    } catch(e) {}
+    const getRes = await fetch(apiUrl, {
+      headers: { Authorization: `token ${githubToken}`, Accept: 'application/vnd.github.v3+json' }
+    });
+    if (getRes.ok) sha = (await getRes.json()).sha;
 
     const body = {
       message: `Update CLA sheets - ${new Date().toLocaleDateString()}`,
