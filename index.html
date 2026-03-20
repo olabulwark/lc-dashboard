@@ -1697,7 +1697,9 @@ async function fetchWclAllStars(realm) {
       try {
         const charData = await wclGraphQL(charQuery, token).catch(e => { console.warn('Char query failed for', p.name, e); return null; });
         if (!charData) return;
-        const rankings = charData?.data?.characterData?.character?.zoneRankings;
+        const char = charData?.data?.characterData?.character;
+        console.log('Raw char data for', p.name, ':', JSON.stringify(charData)?.slice(0, 400));
+        const rankings = char?.zoneRankings;
         if (!rankings) { console.warn('No rankings for', p.name, JSON.stringify(charData)?.slice(0, 200)); return; }
         const key = normalizeName(p.name);
         wclData[key] = {
