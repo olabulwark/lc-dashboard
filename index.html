@@ -999,7 +999,7 @@
     vertical-align: middle;
   }
 </style>
-<script>const whTooltips = {colorLinks: true, iconizeLinks: true, iconSize: 'small', rename: true, hide: {molt: true}, defaultZone: 'tbc'};</script>
+<script>const whTooltips = {colorLinks: true, iconizeLinks: false, iconSize: 'small', rename: true, hide: {molt: true}, defaultZone: 'tbc'};</script>
 <script src="https://wow.zamimg.com/widgets/power.js"></script>
 </head>
 <body>
@@ -1752,10 +1752,9 @@ function wclCellHtml(wcl, playerName) {
   if (wcl === null) return '<span style="color:var(--text-dim);font-size:11px;">—</span>'; // explicit failure
   if (!wcl || wcl.medianPerf === null || wcl.medianPerf === undefined) return '<span style="color:var(--text-dim);font-size:11px;">—</span>';
   const col = wclColor(wcl.medianPerf);
-  const tip = `Median: ${Math.round(wcl.medianPerf)}%${wcl.bestPerf !== null ? ` | Best: ${Math.round(wcl.bestPerf)}%` : ''}${wcl.points !== null ? ` | All Stars: ${Math.round(wcl.points)}` : ''}`;
   const wclName = (playerName ? (canonicalNames[normalizeName(playerName)] || playerName) : '').toLowerCase();
   const href = `https://fresh.warcraftlogs.com/character/us/dreamscythe/${encodeURIComponent(wclName)}`;
-  return `<a href="${href}" target="_blank" rel="noopener" style="color:${col};font-family:'Cinzel',serif;font-size:12px;font-weight:600;text-decoration:none;" title="${tip}">${Math.round(wcl.medianPerf)}%</a>`;
+  return `<a href="${href}" target="_blank" rel="noopener" style="color:${col};font-family:'Cinzel',serif;font-size:12px;font-weight:600;text-decoration:none;">${Math.round(wcl.medianPerf)}%</a>`;
 }
 
 function updateWclCell(key, entry) {
@@ -2445,21 +2444,7 @@ function toggleLoot(td, playerName) {
 
   const cla = claDataByPlayer[key] || { gearIssues: [], buffConsumables: [] };
 
-  const wclInfo = wclData[key];
   let html = `<td colspan="${colspan}" class="loot-cell">`;
-
-  // WCL All Stars section
-  if (wclInfo?.points !== null && wclInfo?.points !== undefined) {
-    const pct = wclInfo.rank && wclInfo.outOf ? Math.round((1 - (wclInfo.rank - 1) / wclInfo.outOf) * 100) : null;
-    const col = wclColor(pct);
-    html += `<div class="expand-section-title">WarcraftLogs All Stars</div>`;
-    html += `<div style="margin-bottom:10px;font-size:13px;">
-      <span style="color:${col};font-family:'Cinzel',serif;font-size:15px;font-weight:600;">${Math.round(wclInfo.points)} pts</span>
-      ${wclInfo.rank ? `<span style="color:var(--text-dim);font-size:12px;margin-left:8px;">Rank ${wclInfo.rank} / ${wclInfo.outOf}</span>` : ''}
-      ${wclInfo.bestPerf ? `<span style="color:var(--text-dim);font-size:12px;margin-left:8px;">Best: <span style="color:${col};">${Math.round(wclInfo.bestPerf)}%</span></span>` : ''}
-      ${wclInfo.medianPerf ? `<span style="color:var(--text-dim);font-size:12px;margin-left:8px;">Median: <span style="color:${wclColor(wclInfo.medianPerf)};">${Math.round(wclInfo.medianPerf)}%</span></span>` : ''}
-    </div>`;
-  }
 
   // Loot section
   html += `<div class="expand-section-title">Loot Received</div>`;
