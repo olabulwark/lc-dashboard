@@ -1064,25 +1064,10 @@
       <div class="cla-add-form">
         <div id="wclSettings" style="margin-bottom:12px;padding:10px 12px;border:1px solid var(--border);background:rgba(0,0,0,0.2);">
           <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);margin-bottom:8px;">WARCRAFTLOGS</div>
-
-          <!-- Unlock with password (for regular users) -->
-          <div id="wclUnlockRow" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px;">
-            <input class="cla-input" id="wclPassword" type="password" placeholder="Guild password to unlock WCL" style="flex:2;min-width:180px;" />
-            <button class="btn" onclick="unlockWcl()">Unlock</button>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+            <input class="cla-input" id="wclRealm" placeholder="Realm (e.g. Dreamscythe)" style="flex:2;min-width:180px;" />
+            <button class="btn" onclick="connectWcl()">Connect via WarcraftLogs</button>
           </div>
-
-          <!-- Admin section: save new credentials (shown when GitHub token present) -->
-          <div id="wclAdminRow" style="display:none;border-top:1px solid var(--border);padding-top:8px;margin-top:4px;">
-            <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;letter-spacing:0.1em;">ADMIN — Save new credentials to repo</div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
-              <input class="cla-input" id="wclClientId" type="password" placeholder="WCL Client ID" style="flex:1;min-width:150px;" />
-              <input class="cla-input" id="wclClientSecret" type="password" placeholder="WCL Client Secret" style="flex:1;min-width:150px;" />
-              <input class="cla-input" id="wclRealm" placeholder="Realm (e.g. Whitemane)" style="flex:1;min-width:130px;" />
-              <input class="cla-input" id="wclNewPassword" type="password" placeholder="Encryption password" style="flex:1;min-width:130px;" />
-              <button class="btn" onclick="saveWclAdmin()">Save to Repo</button>
-            </div>
-          </div>
-
           <div id="wclStatus" style="font-size:12px;color:var(--text-dim);margin-top:6px;font-style:italic;"></div>
         </div>
         <input class="cla-input" id="claLabel" placeholder="Label (e.g. 2/26)" />
@@ -1513,10 +1498,7 @@ async function encryptData(password, data) {
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const enc = new TextEncoder();
   const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(JSON.stringify(data)));
-  return {
-    iv: Array.from(iv),
-    data: Array.from(new Uint8Array(ciphertext))
-  };
+  return { iv: Array.from(iv), data: Array.from(new Uint8Array(ciphertext)) };
 }
 
 async function decryptData(password, encrypted) {
@@ -1528,6 +1510,80 @@ async function decryptData(password, encrypted) {
   return JSON.parse(dec.decode(plain));
 }
 
+// ── PKCE helpers ──────────────────────────────────────────────────
+function generateRandomString(length = 64) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+  const arr = crypto.getRandomValues(new Uint8Array(length));
+  return Array.from(arr).map(b => chars[b % chars.length]).join('');
+}
+
+async function generateCodeChallenge(verifier) {
+  const enc = new TextEncoder();
+  const digest = await crypto.subtle.digest('SHA-256', enc.encode(verifier));
+  return btoa(String.fromCharCode(...new Uint8Array(digest)))
+    .replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+}
+
+async function startWclPkce() {
+  const verifier = generateRandomString(64);
+  const challenge = await generateCodeChallenge(verifier);
+  sessionStorage.setItem('wclVerifier', verifier);
+  const params = new URLSearchParams({
+    client_id: WCL_CLIENT_ID,
+    redirect_uri: WCL_REDIRECT_URI,
+    response_type: 'code',
+    scope: 'view:user-private-profile',
+    code_challenge: challenge,
+    code_challenge_method: 'S256',
+    state: 'wclauth'
+  });
+  window.location.href = WCL_AUTH_URL + '?' + params.toString();
+}
+
+async function exchangeWclCode(code) {
+  const verifier = sessionStorage.getItem('wclVerifier');
+  if (!verifier) return null;
+  const params = new URLSearchParams({
+    grant_type: 'authorization_code',
+    client_id: WCL_CLIENT_ID,
+    redirect_uri: WCL_REDIRECT_URI,
+    code,
+    code_verifier: verifier
+  });
+  try {
+    const res = await fetch(WCL_TOKEN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: params.toString()
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    sessionStorage.removeItem('wclVerifier');
+    return data;
+  } catch(e) { return null; }
+}
+
+async function handleWclCallback() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('state') !== 'wclauth' || !params.get('code')) return false;
+  setWclStatus('Exchanging auth code...', '');
+  const data = await exchangeWclCode(params.get('code'));
+  // Clean URL
+  window.history.replaceState({}, document.title, window.location.pathname);
+  if (!data?.access_token) { setWclStatus('Auth failed — try again.', 'error'); return false; }
+  wclToken = data.access_token;
+  wclTokenExpiry = Date.now() + ((data.expires_in || 3600) - 60) * 1000;
+  sessionStorage.setItem('wclToken', wclToken);
+  sessionStorage.setItem('wclTokenExpiry', String(wclTokenExpiry));
+  setWclStatus('✓ Connected to WarcraftLogs!', 'success');
+  const realm = sessionStorage.getItem('wclRealm') || '';
+  if (realm) fetchWclAllStars(realm);
+  return true;
+}
+
+const WCL_CLIENT_ID = 'a157742c-4a4e-410c-9da2-f907e1893268';
+const WCL_REDIRECT_URI = 'https://bunzosteele.github.io/dbs-lc/';
+const WCL_AUTH_URL = 'https://www.warcraftlogs.com/oauth/authorize';
 const WCL_TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
 const WCL_API_URL = 'https://www.warcraftlogs.com/api/v2/client';
 const WCL_REGION = 'US';
@@ -1595,20 +1651,24 @@ function setWclStatus(msg, type = '') {
 }
 
 async function getWclToken() {
+  // Check in-memory token
   if (wclToken && Date.now() < wclTokenExpiry) return wclToken;
-  const clientId = sessionStorage.getItem('wclClientId');
-  const clientSecret = sessionStorage.getItem('wclClientSecret');
-  if (!clientId || !clientSecret) return null;
-  try {
-    const res = await fetch(APPS_SCRIPT + '?wclAuth=1&clientId=' + encodeURIComponent(clientId) + '&clientSecret=' + encodeURIComponent(clientSecret));
-    if (!res.ok) return null;
-    const data = await res.json();
-    if (!data.access_token) { console.warn('WCL token error:', JSON.stringify(data)); return null; }
-    wclToken = data.access_token;
-    wclTokenExpiry = Date.now() + ((data.expires_in || 3600) - 60) * 1000;
+  // Check sessionStorage (survives page reload from PKCE redirect)
+  const stored = sessionStorage.getItem('wclToken');
+  const storedExpiry = parseInt(sessionStorage.getItem('wclTokenExpiry') || '0');
+  if (stored && Date.now() < storedExpiry) {
+    wclToken = stored;
+    wclTokenExpiry = storedExpiry;
     return wclToken;
-  } catch(e) { console.warn('WCL token fetch failed:', e.message); return null; }
+  }
+  return null; // Need to re-authenticate via PKCE
 }
+async function wclFetch(url) {
+  // Apps Script redirects to googleusercontent.com — fetch the redirect target directly
+  const res = await fetch(url, { redirect: 'follow' });
+  return res;
+}
+
 async function fetchWclAllStars(realm) {
   const token = await getWclToken();
   if (!token) return;
@@ -1624,7 +1684,11 @@ async function fetchWclAllStars(realm) {
   }`;
   try {
     // First get the current TBC phase zone ID
-    const zoneRes = await fetch(APPS_SCRIPT + '?wclQuery=' + encodeURIComponent(btoa(query)) + '&token=' + encodeURIComponent(token));
+    const zoneRes = await fetch(WCL_API_URL, {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query })
+    });
     if (!zoneRes.ok) return;
     const zoneData = await zoneRes.json();
     const zones = zoneData?.data?.worldData?.expansion?.zones || [];
@@ -1643,7 +1707,11 @@ async function fetchWclAllStars(realm) {
         }
       }`;
       try {
-        const charRes = await fetch(APPS_SCRIPT + '?wclQuery=' + encodeURIComponent(btoa(charQuery)) + '&token=' + encodeURIComponent(token));
+        const charRes = await fetch(WCL_API_URL, {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: charQuery })
+        });
         if (!charRes.ok) return;
         const charData = await charRes.json();
         const rankings = charData?.data?.characterData?.character?.zoneRankings;
@@ -1717,7 +1785,7 @@ async function saveClaSheetsToGitHub() {
   }
 }
 
-const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbxckXECXYW1xcKlETi7txJ80sx3dN9TNXwSGY1pGsc7VAPVTGR-gjwFz6B0KZzpHvAF/exec';
+const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbwjpTD-0ad2PFO8s8C7M6mzdVn8VJQ61SeQ60enwINaLzJmlVg_F64QN-oscPts7Q/exec';
 const ICON_SCRIPT = 'https://script.google.com/macros/s/AKfycbyBs6sgRoX6Zy3a3lq9q6fR4o0spLHRfKc-G63Vy8JUBTQa2HFWhnP8MxFGm8JxjNo/exec';
 
 // Fetch a Google Sheet tab via Apps Script proxy
@@ -2395,46 +2463,20 @@ function extractSheetId(url) {
   return m ? m[1] : null;
 }
 
-async function unlockWcl() {
-  const password = document.getElementById('wclPassword').value.trim();
-  if (!password) { setWclStatus('Enter the guild password.', 'error'); return; }
-  setWclStatus('Decrypting...', '');
-  const config = await loadWclConfigFromRepo(password);
-  if (!config) {
-    setWclStatus('Incorrect password or no WCL config saved yet.', 'error');
-    return;
-  }
-  document.getElementById('wclPassword').value = '';
-  setWclStatus(`✓ Unlocked — fetching All Stars for ${config.realm}...`, 'success');
-  fetchWclAllStars(config.realm);
-}
-
-async function saveWclAdmin() {
-  const id = document.getElementById('wclClientId').value.trim();
-  const secret = document.getElementById('wclClientSecret').value.trim();
+function connectWcl() {
   const realm = document.getElementById('wclRealm').value.trim();
-  const password = document.getElementById('wclNewPassword').value.trim();
-  if (!id || !secret || !realm || !password) {
-    setWclStatus('Please fill in all admin fields.', 'error'); return;
-  }
-  setWclStatus('Encrypting and saving...', '');
-  await saveWclConfigToGitHub(password, id, secret, realm);
-  document.getElementById('wclClientId').value = '';
-  document.getElementById('wclClientSecret').value = '';
-  document.getElementById('wclNewPassword').value = '';
+  if (!realm) { setWclStatus('Enter your realm name first.', 'error'); return; }
+  sessionStorage.setItem('wclRealm', realm);
+  startWclPkce();
 }
 
 function initWclIfSaved() {
-  // Show admin row if GitHub token is in session (officer/admin)
-  if (githubToken) {
-    const adminRow = document.getElementById('wclAdminRow');
-    if (adminRow) adminRow.style.display = 'block';
-  }
-  // If already unlocked this session, show status
-  const id = sessionStorage.getItem('wclClientId');
   const realm = sessionStorage.getItem('wclRealm');
-  if (id && realm) {
-    setWclStatus(`✓ WCL active for ${realm} (unlocked this session)`, 'success');
+  if (realm) document.getElementById('wclRealm').value = realm;
+  const stored = sessionStorage.getItem('wclToken');
+  const storedExpiry = parseInt(sessionStorage.getItem('wclTokenExpiry') || '0');
+  if (stored && Date.now() < storedExpiry && realm) {
+    setWclStatus(`✓ Connected to WarcraftLogs (${realm})`, 'success');
   }
 }
 
@@ -2676,14 +2718,18 @@ async function loadClaSheetsFromRepo() {
     // Not on GitHub Pages or file missing — ignore
   }
 }
-loadClaSheetsFromRepo().then(() => {
-  fetchData().then(() => {
-    // Auto-fetch WCL All Stars if credentials saved in session
+loadClaSheetsFromRepo().then(async () => {
+  // Handle PKCE callback first (page may have been redirected back from WarcraftLogs)
+  const wasCallback = await handleWclCallback();
+  await fetchData();
+  // Auto-fetch WCL if token already in session
+  if (!wasCallback) {
+    const token = await getWclToken();
     const realm = sessionStorage.getItem('wclRealm');
-    if (realm && sessionStorage.getItem('wclClientId')) {
+    if (token && realm) {
       fetchWclAllStars(realm);
     }
-  });
+  }
 });
 
 // ── Custom Tooltip System ───────────────────────────────────────
