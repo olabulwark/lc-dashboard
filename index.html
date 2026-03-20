@@ -3730,7 +3730,7 @@ function onItemChange() {
     const html = items.map(name => {
       const id = getItemId(name);
       const icon = id && itemIcons[id]
-        ? \`<img src="https://wow.zamimg.com/images/wow/icons/medium/\${itemIcons[id]}.jpg" style="width:18px;height:18px;border:1px solid #555;border-radius:2px;vertical-align:middle;flex-shrink:0;" />\`
+        ? `<img src="https://wow.zamimg.com/images/wow/icons/medium/${itemIcons[id]}.jpg" style="width:18px;height:18px;border:1px solid #555;border-radius:2px;vertical-align:middle;flex-shrink:0;" />`
         : '';
 
       let bisIndicator = '';
@@ -3740,34 +3740,34 @@ function onItemChange() {
 
         if (candidateEpv === null) {
           // Candidate is on BiS for others but not this player's spec — red stop
-          bisIndicator = \`<span style="font-size:15px;flex-shrink:0;" title="This item is not on the BiS list for this player's spec">🛑</span>\`;
+          bisIndicator = `<span style="font-size:15px;flex-shrink:0;" title="This item is not on the BiS list for this player's spec">🛑</span>`;
         } else if (currentRank === null) {
           // Candidate is on their BiS, but current item is not — gold warning
-          bisIndicator = \`<span style="font-size:13px;color:#d4a017;flex-shrink:0;" title="Current item is not on the BiS list for this player's spec">⚠</span>\`;
+          bisIndicator = `<span style="font-size:13px;color:#d4a017;flex-shrink:0;" title="Current item is not on the BiS list for this player's spec">⚠</span>`;
         } else if (currentEpv !== null) {
           // Both on BiS — directional arrow based on EPV delta
           const delta = candidateEpv - currentEpv;
-          const tip = \`Candidate EPV: \${candidateEpv.toFixed(1)} | Current EPV: \${currentEpv.toFixed(1)} | Delta: \${delta >= 0 ? '+' : ''}\${delta.toFixed(1)}\`;
+          const tip = `Candidate EPV: ${candidateEpv.toFixed(1)} | Current EPV: ${currentEpv.toFixed(1)} | Delta: ${delta >= 0 ? '+' : ''}${delta.toFixed(1)}`;
           if (delta >= 20) {
-            bisIndicator = \`<span style="font-size:16px;color:#4caa6e;flex-shrink:0;" title="\${tip}">⇑</span>\`;
+            bisIndicator = `<span style="font-size:16px;color:#4caa6e;flex-shrink:0;" title="${tip}">⇑</span>`;
           } else if (delta >= 5) {
-            bisIndicator = \`<span style="font-size:16px;color:#8abf50;flex-shrink:0;" title="\${tip}">↑</span>\`;
+            bisIndicator = `<span style="font-size:16px;color:#8abf50;flex-shrink:0;" title="${tip}">↑</span>`;
           } else if (delta <= -20) {
-            bisIndicator = \`<span style="font-size:16px;color:#c94c4c;flex-shrink:0;" title="\${tip}">⇓</span>\`;
+            bisIndicator = `<span style="font-size:16px;color:#c94c4c;flex-shrink:0;" title="${tip}">⇓</span>`;
           } else if (delta <= -5) {
-            bisIndicator = \`<span style="font-size:16px;color:#e07040;flex-shrink:0;" title="\${tip}">↓</span>\`;
+            bisIndicator = `<span style="font-size:16px;color:#e07040;flex-shrink:0;" title="${tip}">↓</span>`;
           } else {
-            bisIndicator = \`<span style="font-size:16px;color:var(--text-dim);flex-shrink:0;" title="\${tip}">→</span>\`;
+            bisIndicator = `<span style="font-size:16px;color:var(--text-dim);flex-shrink:0;" title="${tip}">→</span>`;
           }
         }
       }
 
       return id
-        ? \`<span style="display:inline-flex;align-items:center;gap:5px;">\${bisIndicator}<a href="https://www.wowhead.com/tbc/item=\${id}" data-wowhead="item=\${id}&dataset=tbc" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--gold-light);font-size:15px;white-space:nowrap;">\${icon}\${name}</a></span>\`
-        : \`<span style="display:inline-flex;align-items:center;gap:5px;">\${bisIndicator}<span style="font-size:15px;color:var(--gold-light);">\${name}</span></span>\`;
+        ? `<span style="display:inline-flex;align-items:center;gap:5px;">${bisIndicator}<a href="https://www.wowhead.com/tbc/item=${id}" data-wowhead="item=${id}&dataset=tbc" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--gold-light);font-size:15px;white-space:nowrap;">${icon}${name}</a></span>`
+        : `<span style="display:inline-flex;align-items:center;gap:5px;">${bisIndicator}<span style="font-size:15px;color:var(--gold-light);">${name}</span></span>`;
     }).join('<br style="margin:2px 0;">');
 
-    return \`<td style="padding:3px 8px;vertical-align:middle;text-align:left;">\${html}</td>\`;
+    return `<td style="padding:3px 8px;vertical-align:middle;text-align:left;">${html}</td>`;
   }
 
     const relevantSlots = getRelevantSlots(item);
