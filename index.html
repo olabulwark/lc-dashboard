@@ -3332,21 +3332,20 @@ function onItemChange() {
   }
 
   function currentItemCellHtml(playerKey, slots) {
-    if (!slots || !slots.length) return '<td style="text-align:center;color:var(--text-dim);font-style:italic;">—</td>';
+    const dimCell = '<td style="text-align:center;color:var(--text-dim);font-style:italic;">—</td>';
+    if (!slots || !slots.length) return dimCell;
     const gear = gearListingByPlayer[playerKey]?.slots;
-    if (!gear) return '<td style="text-align:center;color:var(--text-dim);font-style:italic;font-size:11px;">—</td>';
-    if (slots[0] === '__unknown__') return '<td style="text-align:center;color:var(--text-dim);font-style:italic;font-size:11px;">—</td>';
+    if (!gear || slots[0] === '__unknown__') return dimCell;
     const items = slots.map(slot => gear[slot]).filter(Boolean);
-    if (!items.length) return '<td style="text-align:center;color:var(--text-dim);font-style:italic;">—</td>';
+    if (!items.length) return dimCell;
     const html = items.map(name => {
       const id = getItemId(name);
-      const icon = id && itemIcons[id] ? `<img src="https://wow.zamimg.com/images/wow/icons/small/${itemIcons[id]}.jpg" style="width:15px;height:15px;border:1px solid #444;border-radius:2px;vertical-align:middle;flex-shrink:0;" />` : '';
-      const link = id
-        ? `<a href="https://www.wowhead.com/tbc/item=${id}" data-wowhead="item=${id}&dataset=tbc" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;text-decoration:none;color:var(--text-muted);font-size:12px;">${icon}${name}</a>`
-        : `<span style="font-size:12px;color:var(--text-muted);">${name}</span>`;
-      return link;
-    }).join('<br>');
-    return `<td style="padding:4px 8px;vertical-align:middle;">${html}</td>`;
+      const icon = id && itemIcons[id] ? `<img src="https://wow.zamimg.com/images/wow/icons/medium/${itemIcons[id]}.jpg" style="width:18px;height:18px;border:1px solid #555;border-radius:2px;vertical-align:middle;flex-shrink:0;" />` : '';
+      return id
+        ? `<a href="https://www.wowhead.com/tbc/item=${id}" data-wowhead="item=${id}&dataset=tbc" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--gold-light);font-size:15px;background:rgba(201,168,76,0.07);border:1px solid var(--gold-dim);padding:2px 8px;white-space:nowrap;">${icon}${name}</a>`
+        : `<span style="font-size:15px;color:var(--gold-light);background:rgba(201,168,76,0.07);border:1px solid var(--gold-dim);padding:2px 8px;display:inline-block;">${name}</span>`;
+    }).join('<br style="margin:2px 0;">');
+    return `<td style="padding:3px 8px;vertical-align:middle;text-align:right;">${html}</td>`;
   }
 
   const relevantSlots = getRelevantSlots(item);
@@ -3465,10 +3464,10 @@ function onItemChange() {
     <table style="width:100%;border-collapse:collapse;margin-top:24px;">
       <colgroup>
         <col style="width:16ch;min-width:16ch;"> <!-- Player -->
-        ${relevantSlots ? '<col style="width:140px;"> <!-- Current -->' : ''}
-        <col style="width:70px;">  <!-- Priority -->
+        ${relevantSlots ? '<col style="width:180px;"> <!-- Current -->' : ''}
+        <col style="width:55px;">  <!-- Prio -->
         <col style="width:24px;">  <!-- Gear flag -->
-        <col style="width:80px;">  <!-- Loot Score -->
+        <col style="width:55px;">  <!-- LS -->
         <col style="width:70px;" class="wcl-col">  <!-- WCL -->
         <col style="width:80px;">  <!-- Consumes -->
         <col>                      <!-- Raids (dots) -->
@@ -3479,9 +3478,9 @@ function onItemChange() {
         <tr style="border-bottom:1px solid var(--border);">
           ${thS('Player','player','left')}
           ${relevantSlots ? '<th style=\"padding:6px 12px;font-family:\'Cinzel\',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);white-space:nowrap;\">Current</th>' : ''}
-          ${thS('Priority','priority')}
+          ${thS('Prio','priority')}
           <th style="padding:6px 12px;"></th>
-          ${thS('Loot Score','points')}
+          ${thS('LS','points')}
           ${thS('WCL','wcl','center','wcl-col')}
           ${thS('Consumes','consumes')}
           <th style="padding:6px 12px;text-align:center;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);" title="Raids attended. Color indicates consumable usage.">Raids</th>
