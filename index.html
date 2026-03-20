@@ -994,7 +994,7 @@
 <div class="container">
   <header>
     <h1>Don't Be Suspicious</h1>
-    <div style="font-size:10px;color:var(--text-dim);letter-spacing:0.15em;font-family:'Cinzel',serif;margin-top:2px;"></div>
+    <div style="font-size:10px;color:var(--text-dim);letter-spacing:0.15em;font-family:'Cinzel',serif;margin-top:2px;">v' + VERSION + '</div>
     <p class="subtitle">Loot Council Summary</p>
   </header>
 
@@ -1552,7 +1552,8 @@ async function exchangeWclCode(code) {
     code,
     code_verifier: verifier
   }));
-  const url = APPS_SCRIPT + '?action=wclAuth&payload=' + encodeURIComponent(payload);
+  const rawUrl = APPS_SCRIPT + '?action=wclAuth&payload=' + encodeURIComponent(payload);
+  const url = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(rawUrl)}`;
   try {
     const res = await fetch(url);
     if (!res.ok) { console.warn('Token exchange HTTP error:', res.status); return null; }
@@ -1673,6 +1674,16 @@ async function wclFetch(url) {
   return res;
 }
 
+async function wclGraphQL(query, token) {
+  const q = btoa(unescape(encodeURIComponent(query)));
+  const rawUrl = APPS_SCRIPT + '?action=wclQuery&q=' + encodeURIComponent(q) + '&token=' + encodeURIComponent(token);
+  const proxyUrl = 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(rawUrl);
+  const res = await fetch(proxyUrl);
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const text = await res.text();
+  return JSON.parse(text);
+}
+
 async function fetchWclAllStars(realm) {
   const token = await getWclToken();
   if (!token) return;
@@ -1688,13 +1699,8 @@ async function fetchWclAllStars(realm) {
   }`;
   try {
     // First get the current TBC phase zone ID
-    const zoneRes = await fetch(WCL_API_URL, {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query })
-    });
-    if (!zoneRes.ok) return;
-    const zoneData = await zoneRes.json();
+    const zoneData = await wclGraphQL(query, token).catch(() => null);
+    if (!zoneData) return;
     const zones = zoneData?.data?.worldData?.expansion?.zones || [];
     if (!zones.length) return;
     // Use most recent zone (highest id)
@@ -1711,13 +1717,8 @@ async function fetchWclAllStars(realm) {
         }
       }`;
       try {
-        const charRes = await fetch(WCL_API_URL, {
-          method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: charQuery })
-        });
-        if (!charRes.ok) return;
-        const charData = await charRes.json();
+        const charData = await wclGraphQL(charQuery, token).catch(() => null);
+        if (!charData) return;
         const rankings = charData?.data?.characterData?.character?.zoneRankings;
         if (!rankings) return;
         const key = normalizeName(p.name);
