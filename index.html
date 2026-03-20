@@ -2660,7 +2660,7 @@ async function processGearListingForItemIds(sheetId, gearListingGid) {
     const allItems = new Set();
     Object.values(gearData).forEach(slots => Object.values(slots).forEach(name => allItems.add(name)));
 
-    const unknown = [...allItems].filter(name => !gearItemIds[name.toLowerCase()]);
+    const unknown = [...allItems].filter(name => !gearItemIds[normalizeName(name)]);
     if (!unknown.length) {
       setHint('All gear items already in map!', 'success');
       return;
@@ -2676,7 +2676,7 @@ async function processGearListingForItemIds(sheetId, gearListingGid) {
       await Promise.all(batch.map(async name => {
         const id = await lookupItemId(name);
         if (id) {
-          gearItemIds[name.toLowerCase()] = id;
+          gearItemIds[normalizeName(name)] = id;
           found++;
         }
       }));
