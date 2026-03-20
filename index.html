@@ -994,7 +994,7 @@
 <div class="container">
   <header>
     <h1>Don't Be Suspicious</h1>
-    <div style="font-size:10px;color:var(--text-dim);letter-spacing:0.15em;font-family:'Cinzel',serif;margin-top:2px;">v' + VERSION + '</div>
+    <div style="font-size:10px;color:var(--text-dim);letter-spacing:0.15em;font-family:'Cinzel',serif;margin-top:2px;"></div>
     <p class="subtitle">Loot Council Summary</p>
   </header>
 
@@ -1556,7 +1556,9 @@ async function exchangeWclCode(code) {
   try {
     const res = await fetch(url);
     if (!res.ok) { console.warn('Token exchange HTTP error:', res.status); return null; }
-    const data = await res.json();
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch(e) { console.warn('Token parse error:', text); return null; }
     if (data.error) { console.warn('Token exchange error:', data); return null; }
     localStorage.removeItem('wclVerifier');
     return data;
@@ -1787,7 +1789,7 @@ async function saveClaSheetsToGitHub() {
   }
 }
 
-const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbxHCGdYVCrd6oQtANWM3vDq_2xhZXrUiL_264oorNThkYWKdwmyPYMafnemmamYmuEo/exec';
+const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbzbZfJgF_nNR3-l0faoezmuMtFMgG-yy9PsecdFU5ylwOXVmsWax4mO334o5ox-2QyT/exec';
 const ICON_SCRIPT = 'https://script.google.com/macros/s/AKfycbyBs6sgRoX6Zy3a3lq9q6fR4o0spLHRfKc-G63Vy8JUBTQa2HFWhnP8MxFGm8JxjNo/exec';
 
 // Fetch a Google Sheet tab via Apps Script proxy
