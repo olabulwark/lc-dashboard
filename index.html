@@ -1541,25 +1541,22 @@ async function startWclPkce() {
 
 async function exchangeWclCode(code) {
   const verifier = sessionStorage.getItem('wclVerifier');
-  if (!verifier) return null;
-  const params = new URLSearchParams({
-    grant_type: 'authorization_code',
-    client_id: WCL_CLIENT_ID,
-    redirect_uri: WCL_REDIRECT_URI,
-    code,
-    code_verifier: verifier
-  });
+  if (!verifier) { console.warn('No PKCE verifier found in session'); return null; }
+  // Route through Apps Script to avoid CORS on token endpoint
+  const url = APPS_SCRIPT + '?action=wclAuth'
+    + '&grant_type=authorization_code'
+    + '&client_id=' + encodeURIComponent(WCL_CLIENT_ID)
+    + '&redirect_uri=' + encodeURIComponent(WCL_REDIRECT_URI)
+    + '&code=' + encodeURIComponent(code)
+    + '&code_verifier=' + encodeURIComponent(verifier);
   try {
-    const res = await fetch(WCL_TOKEN_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: params.toString()
-    });
-    if (!res.ok) return null;
+    const res = await fetch(url);
+    if (!res.ok) { console.warn('Token exchange HTTP error:', res.status); return null; }
     const data = await res.json();
+    if (data.error) { console.warn('Token exchange error:', data); return null; }
     sessionStorage.removeItem('wclVerifier');
     return data;
-  } catch(e) { return null; }
+  } catch(e) { console.warn('Token exchange failed:', e.message); return null; }
 }
 
 async function handleWclCallback() {
@@ -1784,7 +1781,7 @@ async function saveClaSheetsToGitHub() {
   }
 }
 
-const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbwjpTD-0ad2PFO8s8C7M6mzdVn8VJQ61SeQ60enwINaLzJmlVg_F64QN-oscPts7Q/exec';
+const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbxtimyZnxTFRxiU1tRaAA_6XHQyrf3u4KcsS-cBnKEzWiEXwpTCdJzgDqEgYiaVbKd8/exec';
 const ICON_SCRIPT = 'https://script.google.com/macros/s/AKfycbyBs6sgRoX6Zy3a3lq9q6fR4o0spLHRfKc-G63Vy8JUBTQa2HFWhnP8MxFGm8JxjNo/exec';
 
 // Fetch a Google Sheet tab via Apps Script proxy
