@@ -1600,19 +1600,16 @@ async function getWclToken() {
   const clientSecret = sessionStorage.getItem('wclClientSecret');
   if (!clientId || !clientSecret) return null;
   try {
-    const res = await fetch(WCL_TOKEN_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `grant_type=client_credentials&client_id=${encodeURIComponent(clientId)}&client_secret=${encodeURIComponent(clientSecret)}`
-    });
+    const url = ICON_SCRIPT + '?wclAuth=1&clientId=' + encodeURIComponent(clientId) + '&clientSecret=' + encodeURIComponent(clientSecret);
+    const res = await fetch(url);
     if (!res.ok) return null;
     const data = await res.json();
+    if (!data.access_token) { console.warn('WCL token error:', JSON.stringify(data)); return null; }
     wclToken = data.access_token;
-    wclTokenExpiry = Date.now() + (data.expires_in - 60) * 1000;
+    wclTokenExpiry = Date.now() + ((data.expires_in || 3600) - 60) * 1000;
     return wclToken;
-  } catch(e) { return null; }
+  } catch(e) { console.warn('WCL token fetch failed:', e.message); return null; }
 }
-
 async function fetchWclAllStars(realm) {
   const token = await getWclToken();
   if (!token) return;
@@ -1628,11 +1625,7 @@ async function fetchWclAllStars(realm) {
   }`;
   try {
     // First get the current TBC phase zone ID
-    const zoneRes = await fetch(WCL_API_URL, {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query })
-    });
+    const zoneRes = await fetch(ICON_SCRIPT + '?wclQuery=' + encodeURIComponent(query) + '&token=' + encodeURIComponent(token));
     if (!zoneRes.ok) return;
     const zoneData = await zoneRes.json();
     const zones = zoneData?.data?.worldData?.expansion?.zones || [];
@@ -1651,11 +1644,7 @@ async function fetchWclAllStars(realm) {
         }
       }`;
       try {
-        const charRes = await fetch(WCL_API_URL, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query: charQuery })
-        });
+        const charRes = await fetch(ICON_SCRIPT + '?wclQuery=' + encodeURIComponent(charQuery) + '&token=' + encodeURIComponent(token));
         if (!charRes.ok) return;
         const charData = await charRes.json();
         const rankings = charData?.data?.characterData?.character?.zoneRankings;
@@ -1730,7 +1719,7 @@ async function saveClaSheetsToGitHub() {
 }
 
 const APPS_SCRIPT = 'https://script.google.com/macros/s/AKfycbwewgQ14fY_34nK0HpKRt2YuVy2FLQZmfu-FrjraGQa55I5oKmYk7p_X3zsswxZAPU4/exec';
-const ICON_SCRIPT = 'https://script.google.com/macros/s/AKfycbxMFJ-uhIb7zGj4foau4i6c2MLXM2y9L5joCP1rcw1aeKLCY9jHESlbtPeWnW8Mg0GH/exec';
+const ICON_SCRIPT = 'https://script.google.com/macros/s/AKfycbw-ijl1Qzx3eopIKkC5eFKbA0siMdwSz6onfZi6gDl95RrEgHqUsdqgPp1jUjknFTOL/exec';
 
 // Fetch a Google Sheet tab via Apps Script proxy
 async function fetchSheet(sheetId, gid) {
