@@ -1072,6 +1072,7 @@
       <span class="cla-toggle" id="claToggle">▸</span>
     </div>
     <div class="cla-body" id="claBody" style="display:none;">
+      <div id="claTokenStatus" style="margin-bottom:8px;font-size:12px;"></div>
       <div id="claList"></div>
       <div class="cla-io-row">
         <button class="btn" onclick="exportCla()">↑ Export</button>
@@ -1555,7 +1556,7 @@ const GITHUB_REPO = 'bunzosteele/dbs-lc';
 const GITHUB_FILE = 'cla-sheets.json';
 const GEAR_IDS_FILE = 'gear-item-ids.json';
 let gearItemIds = {}; // item name (lowercase) -> wowhead item ID
-let githubToken = sessionStorage.getItem('ghToken') || '';
+let githubToken = localStorage.getItem('ghToken') || '';
 
 async function saveWclConfigToGitHub(password, clientId, clientSecret, realm) {
   if (!githubToken) { setWclStatus('GitHub token required to save credentials.', 'error'); return; }
@@ -2544,10 +2545,28 @@ function setHint(msg, type) {
   setTimeout(() => { el.textContent = ''; }, 4000);
 }
 
+function clearGithubToken() {
+  githubToken = '';
+  try { localStorage.removeItem('ghToken'); } catch(e) {}
+  document.getElementById('claToken').value = '';
+  updateTokenStatus();
+}
+
+function updateTokenStatus() {
+  const el = document.getElementById('claTokenStatus');
+  if (!el) return;
+  if (githubToken) {
+    el.innerHTML = '<span style="color:var(--gold);">&#128273; GitHub token saved</span> &mdash; <a href="#" onclick="clearGithubToken();return false;" style="color:var(--text-dim);font-size:11px;text-decoration:underline;">clear</a>';
+  } else {
+    el.innerHTML = '<span style="color:var(--text-dim);font-style:italic;">No GitHub token saved</span>';
+  }
+}
+
 function renderClaList() {
   const list = document.getElementById('claList');
   const count = document.getElementById('claCount');
   count.textContent = claSheets.length + ' sheet' + (claSheets.length !== 1 ? 's' : '');
+  updateTokenStatus();
   if (!claSheets.length) {
     list.innerHTML = '<div style="color:var(--text-dim);font-size:13px;font-style:italic;padding:4px 0 10px;">No CLA sheets added yet.</div>';
     return;
@@ -2713,7 +2732,8 @@ function addCla() {
   // Store token in session if provided
   if (token) {
     githubToken = token;
-    try { sessionStorage.setItem('ghToken', token); } catch(e) {}
+    try { localStorage.setItem('ghToken', token); } catch(e) {}
+    updateTokenStatus();
   }
 
   const entry = { label, url, sheetId, gearGid, buffGid };
@@ -3342,10 +3362,10 @@ function onItemChange() {
       const id = getItemId(name);
       const icon = id && itemIcons[id] ? `<img src="https://wow.zamimg.com/images/wow/icons/medium/${itemIcons[id]}.jpg" style="width:18px;height:18px;border:1px solid #555;border-radius:2px;vertical-align:middle;flex-shrink:0;" />` : '';
       return id
-        ? `<a href="https://www.wowhead.com/tbc/item=${id}" data-wowhead="item=${id}&dataset=tbc" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--gold-light);font-size:15px;background:rgba(201,168,76,0.07);border:1px solid var(--gold-dim);padding:2px 8px;white-space:nowrap;">${icon}${name}</a>`
-        : `<span style="font-size:15px;color:var(--gold-light);background:rgba(201,168,76,0.07);border:1px solid var(--gold-dim);padding:2px 8px;display:inline-block;">${name}</span>`;
+        ? `<a href="https://www.wowhead.com/tbc/item=${id}" data-wowhead="item=${id}&dataset=tbc" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;text-decoration:none;color:var(--gold-light);font-size:15px;white-space:nowrap;">${icon}${name}</a>`
+        : `<span style="font-size:15px;color:var(--gold-light);">${name}</span>`;
     }).join('<br style="margin:2px 0;">');
-    return `<td style="padding:3px 8px;vertical-align:middle;text-align:right;">${html}</td>`;
+    return `<td style="padding:3px 8px;vertical-align:middle;text-align:left;">${html}</td>`;
   }
 
   const relevantSlots = getRelevantSlots(item);
