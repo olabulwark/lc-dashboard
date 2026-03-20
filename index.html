@@ -1062,6 +1062,29 @@
         <button class="btn primary" onclick="importCla()" style="margin-top:6px;">Import</button>
       </div>
       <div class="cla-add-form">
+        <div id="wclSettings" style="margin-bottom:12px;padding:10px 12px;border:1px solid var(--border);background:rgba(0,0,0,0.2);">
+          <div style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);margin-bottom:8px;">WARCRAFTLOGS</div>
+
+          <!-- Unlock with password (for regular users) -->
+          <div id="wclUnlockRow" style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:6px;">
+            <input class="cla-input" id="wclPassword" type="password" placeholder="Guild password to unlock WCL" style="flex:2;min-width:180px;" />
+            <button class="btn" onclick="unlockWcl()">Unlock</button>
+          </div>
+
+          <!-- Admin section: save new credentials (shown when GitHub token present) -->
+          <div id="wclAdminRow" style="display:none;border-top:1px solid var(--border);padding-top:8px;margin-top:4px;">
+            <div style="font-size:11px;color:var(--text-dim);margin-bottom:6px;letter-spacing:0.1em;">ADMIN — Save new credentials to repo</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+              <input class="cla-input" id="wclClientId" type="password" placeholder="WCL Client ID" style="flex:1;min-width:150px;" />
+              <input class="cla-input" id="wclClientSecret" type="password" placeholder="WCL Client Secret" style="flex:1;min-width:150px;" />
+              <input class="cla-input" id="wclRealm" placeholder="Realm (e.g. Whitemane)" style="flex:1;min-width:130px;" />
+              <input class="cla-input" id="wclNewPassword" type="password" placeholder="Encryption password" style="flex:1;min-width:130px;" />
+              <button class="btn" onclick="saveWclAdmin()">Save to Repo</button>
+            </div>
+          </div>
+
+          <div id="wclStatus" style="font-size:12px;color:var(--text-dim);margin-top:6px;font-style:italic;"></div>
+        </div>
         <input class="cla-input" id="claLabel" placeholder="Label (e.g. 2/26)" />
         <input class="cla-input wide" id="claUrl" placeholder="Google Sheet URL" />
         <input class="cla-input" id="claGearGid" placeholder="Gear Issues GID" />
@@ -1473,9 +1496,195 @@ function parseLoot(text) {
 
 const ITEM_SHEET_ID = '1bt-0NVkheMGvWl2FgCcHZH86ZzQxIMuzK_cxPEAsr0A';
 const ITEM_SHEET_GIDS = [170506057, 461402221, 1447687848, 962096481, 1520599598];
+const WCL_CONFIG_FILE = 'wcl-config.json';
+
+// ── Crypto helpers (AES-GCM via Web Crypto API) ──────────────────
+async function deriveKey(password) {
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+  return crypto.subtle.deriveKey(
+    { name: 'PBKDF2', salt: enc.encode('dbs-lc-salt'), iterations: 100000, hash: 'SHA-256' },
+    keyMaterial, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+  );
+}
+
+async function encryptData(password, data) {
+  const key = await deriveKey(password);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const enc = new TextEncoder();
+  const ciphertext = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, enc.encode(JSON.stringify(data)));
+  return {
+    iv: Array.from(iv),
+    data: Array.from(new Uint8Array(ciphertext))
+  };
+}
+
+async function decryptData(password, encrypted) {
+  const key = await deriveKey(password);
+  const iv = new Uint8Array(encrypted.iv);
+  const data = new Uint8Array(encrypted.data);
+  const dec = new TextDecoder();
+  const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+  return JSON.parse(dec.decode(plain));
+}
+
+const WCL_TOKEN_URL = 'https://www.warcraftlogs.com/oauth/token';
+const WCL_API_URL = 'https://www.warcraftlogs.com/api/v2/client';
+const WCL_REGION = 'US';
+let wclToken = null;
+let wclTokenExpiry = 0;
+let wclData = {}; // normalized name -> { points, rank, outOf }
+
 const GITHUB_REPO = 'bunzosteele/dbs-lc';
 const GITHUB_FILE = 'cla-sheets.json';
 let githubToken = sessionStorage.getItem('ghToken') || '';
+
+async function saveWclConfigToGitHub(password, clientId, clientSecret, realm) {
+  if (!githubToken) { setWclStatus('GitHub token required to save credentials.', 'error'); return; }
+  try {
+    const encrypted = await encryptData(password, { clientId, clientSecret, realm });
+    const apiUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${WCL_CONFIG_FILE}`;
+    let sha = null;
+    try {
+      const getRes = await fetch(apiUrl, {
+        headers: { Authorization: `token ${githubToken}`, Accept: 'application/vnd.github.v3+json' }
+      });
+      if (getRes.ok) sha = (await getRes.json()).sha;
+    } catch(e) {}
+    const body = {
+      message: 'Update WCL config',
+      content: btoa(JSON.stringify(encrypted, null, 2)),
+      ...(sha ? { sha } : {})
+    };
+    const putRes = await fetch(apiUrl, {
+      method: 'PUT',
+      headers: { Authorization: `token ${githubToken}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (putRes.ok) {
+      setWclStatus('✓ Credentials encrypted and saved to repo!', 'success');
+    } else {
+      setWclStatus('Failed to save to GitHub — check your GitHub token.', 'error');
+    }
+  } catch(e) {
+    setWclStatus(`Encryption error: ${e.message}`, 'error');
+  }
+}
+
+async function loadWclConfigFromRepo(password) {
+  try {
+    const res = await fetch(`./wcl-config.json?t=${Date.now()}`);
+    if (!res.ok) return false;
+    const encrypted = await res.json();
+    const config = await decryptData(password, encrypted);
+    if (!config.clientId || !config.clientSecret || !config.realm) return false;
+    sessionStorage.setItem('wclClientId', config.clientId);
+    sessionStorage.setItem('wclClientSecret', config.clientSecret);
+    sessionStorage.setItem('wclRealm', config.realm);
+    return config;
+  } catch(e) {
+    return false; // wrong password or no file
+  }
+}
+
+function setWclStatus(msg, type = '') {
+  const el = document.getElementById('wclStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.color = type === 'error' ? 'var(--red)' : type === 'success' ? '#4caa6e' : 'var(--text-dim)';
+}
+
+async function getWclToken() {
+  if (wclToken && Date.now() < wclTokenExpiry) return wclToken;
+  const clientId = sessionStorage.getItem('wclClientId');
+  const clientSecret = sessionStorage.getItem('wclClientSecret');
+  if (!clientId || !clientSecret) return null;
+  try {
+    const res = await fetch(WCL_TOKEN_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `grant_type=client_credentials&client_id=${encodeURIComponent(clientId)}&client_secret=${encodeURIComponent(clientSecret)}`
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    wclToken = data.access_token;
+    wclTokenExpiry = Date.now() + (data.expires_in - 60) * 1000;
+    return wclToken;
+  } catch(e) { return null; }
+}
+
+async function fetchWclAllStars(realm) {
+  const token = await getWclToken();
+  if (!token) return;
+  const query = `{
+    worldData {
+      expansion(id: 16) {
+        zones {
+          id name
+          brackets { min max bucket type }
+        }
+      }
+    }
+  }`;
+  try {
+    // First get the current TBC phase zone ID
+    const zoneRes = await fetch(WCL_API_URL, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query })
+    });
+    if (!zoneRes.ok) return;
+    const zoneData = await zoneRes.json();
+    const zones = zoneData?.data?.worldData?.expansion?.zones || [];
+    if (!zones.length) return;
+    // Use most recent zone (highest id)
+    const zone = zones[zones.length - 1];
+
+    // Now fetch all stars for each player
+    const players = lastRenderData.roles.flatMap(r => r.players).filter(p => p.name && p.pct !== null);
+    await Promise.all(players.map(async p => {
+      const charQuery = `{
+        characterData {
+          character(name: "${p.name}", serverSlug: "${realm}", serverRegion: "${WCL_REGION}") {
+            zoneRankings(zoneID: ${zone.id}, difficulty: 4)
+          }
+        }
+      }`;
+      try {
+        const charRes = await fetch(WCL_API_URL, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: charQuery })
+        });
+        if (!charRes.ok) return;
+        const charData = await charRes.json();
+        const rankings = charData?.data?.characterData?.character?.zoneRankings;
+        if (!rankings) return;
+        const key = normalizeName(p.name);
+        wclData[key] = {
+          points: rankings.allStars?.[0]?.points ?? null,
+          rank: rankings.allStars?.[0]?.rank ?? null,
+          outOf: rankings.allStars?.[0]?.total ?? null,
+          bestPerf: rankings.bestPerformanceAverage ?? null,
+          medianPerf: rankings.medianPerformanceAverage ?? null,
+        };
+      } catch(e) {}
+    }));
+
+    // Re-render to show WCL data
+    if (lastRenderData.roles.length) render(lastRenderData);
+  } catch(e) { console.warn('WCL fetch failed:', e.message); }
+}
+
+function wclColor(pct) {
+  if (pct === null) return 'var(--text-dim)';
+  if (pct >= 99) return '#e268a8'; // pink
+  if (pct >= 95) return '#ff8000'; // orange
+  if (pct >= 75) return '#a335ee'; // purple
+  if (pct >= 50) return '#0070ff'; // blue
+  if (pct >= 25) return '#1eff00'; // green
+  return '#666666'; // grey
+}
 
 async function saveClaSheetsToGitHub() {
   if (!githubToken) return; // no token, skip silently
@@ -1734,6 +1943,9 @@ function getSortedPlayers(role, players, bottom20threshold, top20threshold, poin
       bv = calculatePriority(b, bottom20threshold, top20threshold, pointValues).score;
     } else if (col === 'pct') {
       av = a.pct ?? -1; bv = b.pct ?? -1;
+    } else if (col === 'wcl') {
+      av = wclData[normalizeName(a.name)]?.points ?? -1;
+      bv = wclData[normalizeName(b.name)]?.points ?? -1;
     } else { // attendance (count)
       av = a.attended; bv = b.attended;
     }
@@ -1967,6 +2179,14 @@ function getRoleRowsHtml(sorted, dates, bottom20threshold, top20threshold, point
               <span class="att-pct ${cls}">${pctStr}</span>
             </div>
           </td>
+          <td style="text-align:center;">${(() => {
+            const wcl = wclData[normalizeName(p.name)];
+            if (!wcl || wcl.points === null) return '<span style="color:var(--text-dim);font-size:11px;">—</span>';
+            const pct = wcl.rank && wcl.outOf ? Math.round((1 - (wcl.rank - 1) / wcl.outOf) * 100) : null;
+            const col = wclColor(pct);
+            const tip = `Points: ${Math.round(wcl.points)}${wcl.rank ? ` | Rank: ${wcl.rank}/${wcl.outOf}` : ''}${wcl.bestPerf ? ` | Best: ${Math.round(wcl.bestPerf)}%` : ''}`;
+            return `<span style="color:${col};font-family:'Cinzel',serif;font-size:12px;font-weight:600;" title="${tip}">${Math.round(wcl.points)}</span>`;
+          })()}</td>
         </tr>
       `;
   }
@@ -2057,6 +2277,7 @@ function render({ dates, roles }) {
           <col>                      <!-- Raids (dots) -->
           <col style="width:50px;">  <!-- # -->
           <col style="width:140px;"> <!-- Attendance % -->
+          <col style="width:70px;">  <!-- WCL -->
         </colgroup>
         <thead id="thead-${roleSafeId}">
           <tr>
@@ -2068,6 +2289,7 @@ function render({ dates, roles }) {
             <th style="text-align:center;" title="Raids attended. Color indicates consumable usage.">Raids</th>
             <th data-col="attendance" onclick="setSort('${roleSafeId}', '${role.name}', 'attendance')" style="cursor:pointer;text-align:center;">#<span class="sort-arrow">${state.col==='attendance' ? (state.dir==='desc' ? ' ▾' : ' ▴') : ' ⬦'}</span></th>
             <th data-col="pct" onclick="setSort('${roleSafeId}', '${role.name}', 'pct')" style="cursor:pointer;">Attendance %<span class="sort-arrow">${state.col==='pct' ? (state.dir==='desc' ? ' ▾' : ' ▴') : ' ⬦'}</span></th>
+            <th data-col="wcl" onclick="setSort('${roleSafeId}', '${role.name}', 'wcl')" style="cursor:pointer;text-align:center;" title="WarcraftLogs All Stars points for current tier.">WCL<span class="sort-arrow">${state.col==='wcl' ? (state.dir==='desc' ? ' ▾' : ' ▴') : ' ⬦'}</span></th>
           </tr>
         </thead>
         <tbody id="table-${roleSafeId}">
@@ -2122,7 +2344,21 @@ function toggleLoot(td, playerName) {
 
   const cla = claDataByPlayer[key] || { gearIssues: [], buffConsumables: [] };
 
+  const wclInfo = wclData[key];
   let html = `<td colspan="${colspan}" class="loot-cell">`;
+
+  // WCL All Stars section
+  if (wclInfo?.points !== null && wclInfo?.points !== undefined) {
+    const pct = wclInfo.rank && wclInfo.outOf ? Math.round((1 - (wclInfo.rank - 1) / wclInfo.outOf) * 100) : null;
+    const col = wclColor(pct);
+    html += `<div class="expand-section-title">WarcraftLogs All Stars</div>`;
+    html += `<div style="margin-bottom:10px;font-size:13px;">
+      <span style="color:${col};font-family:'Cinzel',serif;font-size:15px;font-weight:600;">${Math.round(wclInfo.points)} pts</span>
+      ${wclInfo.rank ? `<span style="color:var(--text-dim);font-size:12px;margin-left:8px;">Rank ${wclInfo.rank} / ${wclInfo.outOf}</span>` : ''}
+      ${wclInfo.bestPerf ? `<span style="color:var(--text-dim);font-size:12px;margin-left:8px;">Best: <span style="color:${col};">${Math.round(wclInfo.bestPerf)}%</span></span>` : ''}
+      ${wclInfo.medianPerf ? `<span style="color:var(--text-dim);font-size:12px;margin-left:8px;">Median: <span style="color:${wclColor(wclInfo.medianPerf)};">${Math.round(wclInfo.medianPerf)}%</span></span>` : ''}
+    </div>`;
+  }
 
   // Loot section
   html += `<div class="expand-section-title">Loot Received</div>`;
@@ -2169,6 +2405,49 @@ function loadClaSheets() {
 function extractSheetId(url) {
   const m = url.match(/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
   return m ? m[1] : null;
+}
+
+async function unlockWcl() {
+  const password = document.getElementById('wclPassword').value.trim();
+  if (!password) { setWclStatus('Enter the guild password.', 'error'); return; }
+  setWclStatus('Decrypting...', '');
+  const config = await loadWclConfigFromRepo(password);
+  if (!config) {
+    setWclStatus('Incorrect password or no WCL config saved yet.', 'error');
+    return;
+  }
+  document.getElementById('wclPassword').value = '';
+  setWclStatus(`✓ Unlocked — fetching All Stars for ${config.realm}...`, 'success');
+  fetchWclAllStars(config.realm);
+}
+
+async function saveWclAdmin() {
+  const id = document.getElementById('wclClientId').value.trim();
+  const secret = document.getElementById('wclClientSecret').value.trim();
+  const realm = document.getElementById('wclRealm').value.trim();
+  const password = document.getElementById('wclNewPassword').value.trim();
+  if (!id || !secret || !realm || !password) {
+    setWclStatus('Please fill in all admin fields.', 'error'); return;
+  }
+  setWclStatus('Encrypting and saving...', '');
+  await saveWclConfigToGitHub(password, id, secret, realm);
+  document.getElementById('wclClientId').value = '';
+  document.getElementById('wclClientSecret').value = '';
+  document.getElementById('wclNewPassword').value = '';
+}
+
+function initWclIfSaved() {
+  // Show admin row if GitHub token is in session (officer/admin)
+  if (githubToken) {
+    const adminRow = document.getElementById('wclAdminRow');
+    if (adminRow) adminRow.style.display = 'block';
+  }
+  // If already unlocked this session, show status
+  const id = sessionStorage.getItem('wclClientId');
+  const realm = sessionStorage.getItem('wclRealm');
+  if (id && realm) {
+    setWclStatus(`✓ WCL active for ${realm} (unlocked this session)`, 'success');
+  }
 }
 
 function toggleClaManager() {
@@ -2390,6 +2669,7 @@ function parseBuffConsumables(text, label) {
 // Initialise CLA list on load (after all functions defined)
 claSheets = loadClaSheets();
 renderClaList();
+initWclIfSaved();
 
 // Auto-load CLA sheets from repo JSON if no sheets saved locally
 async function loadClaSheetsFromRepo() {
@@ -2409,8 +2689,13 @@ async function loadClaSheetsFromRepo() {
   }
 }
 loadClaSheetsFromRepo().then(() => {
-  // Auto-fetch data once page and CLA sheets are ready
-  fetchData();
+  fetchData().then(() => {
+    // Auto-fetch WCL All Stars if credentials saved in session
+    const realm = sessionStorage.getItem('wclRealm');
+    if (realm && sessionStorage.getItem('wclClientId')) {
+      fetchWclAllStars(realm);
+    }
+  });
 });
 
 // ── Custom Tooltip System ───────────────────────────────────────
