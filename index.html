@@ -3931,11 +3931,13 @@ function onItemChange() {
 
   // Get candidate item id and EPV once for use in all rows
   const candidateItemId = getItemId(item);
+  console.log('[BiS] item:', item, '| candidateItemId:', candidateItemId);
 
   // Check if candidate is on BiS for anyone (any phase) — if not, hide all indicators
   const candidateOnBisForAnyone = candidateItemId
     ? Object.values(bisData).some(slots => Object.values(slots).some(items => items.some(([id]) => id === candidateItemId)))
     : false;
+  console.log('[BiS] candidateOnBisForAnyone:', candidateOnBisForAnyone);
 
   // Detect if candidate is a two-handed weapon
   const candidateIsTwoHand = candidateItemId && Object.values(bisData).some(slots =>
