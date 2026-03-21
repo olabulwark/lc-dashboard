@@ -3827,10 +3827,24 @@ function onItemChange() {
     // Candidate not on this player's BiS list but on others' — .5x
     if (candidateEpv === null) return { mult: 0.5, reason: 'Not on BiS list for spec (×0.5)' };
 
-    // Get current item(s) in relevant slots
+    // Get current item(s) in relevant slots — inline slot lookup to avoid TDZ
     const gear = gearListingByPlayer[key]?.slots;
-    const _slots = getRelevantSlots(item);
-    if (!gear || !_slots || _slots[0] === '__unknown__') return { mult: 1, reason: null };
+    const _entry = gearItemIds[normalizeName(item)];
+    const _entrySlot = _entry && typeof _entry === 'object' ? _entry.slot : null;
+    const _SLOT_MAP = {
+      'Head': ['Head'], 'Neck': ['Neck'], 'Shoulder': ['Shoulders'],
+      'Back': ['Cloak'], 'Chest': ['Chest'], 'Wrist': ['Bracers'],
+      'Hands': ['Hands'], 'Waist': ['Waist'], 'Legs': ['Legs'],
+      'Feet': ['Feet'], 'Finger': ['Ring1','Ring2'], 'Trinket': ['Trinket1','Trinket2'],
+      'One-Hand': ['Weapon','Off-Hand'], 'Two-Hand': ['Weapon','Off-Hand'],
+      'Off Hand': ['Weapon','Off-Hand'], 'Held In Off-hand': ['Off-Hand'],
+      'Shield': ['Off-Hand'], 'Main Hand': ['Weapon','Off-Hand'],
+      'Ranged': ['Wand/Idol/Relic etc.'], 'Relic': ['Wand/Idol/Relic etc.'],
+    };
+    // Shield detection
+    const _isShield = _entrySlot === 'Off Hand' && _entry?.icon?.startsWith('inv_shield');
+    const _slots = _isShield ? ['Off-Hand'] : (_entrySlot ? _SLOT_MAP[_entrySlot] : null);
+    if (!gear || !_slots) return { mult: 1, reason: null };
 
     const currentNames = _slots.map(slot => gear[slot]).filter(Boolean);
     if (!currentNames.length) return { mult: 1, reason: null };
