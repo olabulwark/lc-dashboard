@@ -1557,8 +1557,33 @@ function lootValueColor(value) {
   return C5;                    // red
 }
 
-function getItemId(itemName) {
+// Items where the same display name maps to different IDs depending on player spec
+// Format: normalizedName -> { specCode: itemId, ... }
+const SPEC_DISAMBIGUATED_ITEMS = {
+  'violetsignet': {
+    // Tanks
+    Tank: 29279, Prot: 29279,
+    // Physical DPS / melee
+    Fury: 29283, Arms: 29283, Rog: 29283, Cat: 29283,
+    Bear: 29283, Enh: 29283, BM: 29283, SV: 29283, Ret: 29283,
+    // Caster DPS
+    Arc: 29287, Fire: 29287, Ele: 29287, Aff: 29287,
+    Dest: 29287, Shad: 29287, Owl: 29287,
+    // Healers
+    Holy: 29290, Heal: 29290, Resto: 29290, Tree: 29290,
+  },
+};
+
+function getItemId(itemName, playerName) {
   const key = normalizeName(itemName);
+  // Check if this item needs spec disambiguation
+  if (playerName && SPEC_DISAMBIGUATED_ITEMS[key]) {
+    const specs = getPlayerBisSpecs(playerName);
+    for (const spec of specs) {
+      const id = SPEC_DISAMBIGUATED_ITEMS[key][spec];
+      if (id) return id;
+    }
+  }
   const entry = gearItemIds[key];
   if (!entry) return itemMap[key]?.id || null;
   return typeof entry === 'object' ? entry.id : entry;
@@ -3385,19 +3410,19 @@ const TOKEN_REWARDS = {
   // Pauldrons of the Fallen Champion (Shoulder)
   29763: { Heal: 30127, Tank: 30133, Ret: 30138, Rog: 29047, Ele: 29031, Enh: 29031, Resto: 29037 },
   // Pauldrons of the Fallen Defender (Shoulder)
-  29764: { Bear: 29089, Cat: 29095, Owl: 29095, Tree: 29095, Holy: 29054, Shad: 29060, Prot: 30194, Fury: 30168, Arms: 30168 },
+  29764: { Bear: 29089, Cat: 29089, Owl: 29095, Tree: 29089, Holy: 29054, Shad: 29060, Prot: 30194, Fury: 30168, Arms: 30168 },
   // Pauldrons of the Fallen Hero (Shoulder)
   29762: { BM: 30143, SV: 30143, Arc: 30154, Fire: 30154, Aff: 30163, Dest: 30163 },
   // Chestguard of the Fallen Champion (Chest)
   29754: { Heal: 30123, Tank: 30129, Ret: 30134, Rog: 29045, Ele: 29029, Enh: 29038, Resto: 29033 },
   // Chestguard of the Fallen Defender (Chest)
-  29753: { Bear: 29087, Cat: 29091, Owl: 29091, Tree: 29096, Holy: 29050, Shad: 29056, Prot: 30185, Fury: 30164, Arms: 30164 },
+  29753: { Bear: 29096, Cat: 29096, Owl: 29091, Tree: 29087, Holy: 29050, Shad: 29056, Prot: 30185, Fury: 30164, Arms: 30164 },
   // Chestguard of the Fallen Hero (Chest)
   29755: { BM: 30139, SV: 30139, Arc: 30150, Fire: 30150, Aff: 28964, Dest: 28964 },
   // Leggings of the Fallen Champion (Legs)
   29766: { Heal: 30126, Tank: 30132, Ret: 30137, Rog: 29046, Ele: 29030, Enh: 29036, Resto: 29030 },
   // Leggings of the Fallen Defender (Legs)
-  29767: { Bear: 29088, Cat: 29094, Owl: 29094, Tree: 29099, Holy: 29059, Shad: 29053, Prot: 30192, Fury: 30167, Arms: 30167 },
+  29767: { Bear: 29088, Cat: 29088, Owl: 29094, Tree: 29088, Holy: 29059, Shad: 29053, Prot: 30192, Fury: 30167, Arms: 30167 },
   // Leggings of the Fallen Hero (Legs)
   29765: { BM: 30142, SV: 30142, Arc: 30153, Fire: 30153, Aff: 28966, Dest: 28966 },
   // Magtheridon's Head (Finger)
@@ -4242,9 +4267,9 @@ function onItemChange() {
 
     if (_isTwoHand && currentNames.length > 1) {
       // Two-hand: sum MH+OH EPVs, skip if MH not on BiS
-      const mhEpv = getPlayerItemEpv(playerName, getItemId(currentNames[0]));
+      const mhEpv = getPlayerItemEpv(playerName, getItemId(currentNames[0], playerName));
       if (mhEpv === null) return { mult: 1, reason: null };
-      const epvs = currentNames.map(n => getPlayerItemEpv(playerName, getItemId(n))).filter(e => e !== null);
+      const epvs = currentNames.map(n => getPlayerItemEpv(playerName, getItemId(n, playerName))).filter(e => e !== null);
       const currentEpv = epvs.reduce((a, b) => a + b, 0);
       const pct = currentEpv > 0 ? ((candidateEpv - currentEpv) / currentEpv) * 100 : 0;
       return _pctToResult(pct);
@@ -4253,7 +4278,7 @@ function onItemChange() {
       // and take the best (highest mult) result across all that are on BiS
       let bestResult = null;
       for (const name of currentNames) {
-        const epv = getPlayerItemEpv(playerName, getItemId(name));
+        const epv = getPlayerItemEpv(playerName, getItemId(name, playerName));
         if (epv === null) continue; // this slot item not on BiS — skip it, try next
         const pct = epv > 0 ? ((candidateEpv - epv) / epv) * 100 : 0;
         const result = _pctToResult(pct);
@@ -4414,24 +4439,23 @@ function onItemChange() {
   );
 
   function makeBisIndicator(candidateEpv, currentEpv, currentRank, candidateRank, rewardItemId) {
-    const iw = 'display:inline-flex;align-items:center;justify-content:center;width:20px;flex-shrink:0;';
+    const iw = 'display:inline-flex;align-items:center;justify-content:center;width:20px;flex-shrink:0;position:relative;';
     // Helper: wrap arrow in wowhead link if we have a token reward item ID
     const wrapArrow = (arrow, color, title) => {
       const spanStyle = `${iw}font-size:16px;color:${color};text-decoration:none;`;
       if (rewardItemId) {
-        // color:inherit prevents Wowhead from overriding our arrow color
-        // anchor=cursor positions the tooltip relative to the cursor rather than the element
-        return `<a href="https://www.wowhead.com/tbc/item=${rewardItemId}" data-wowhead="item=${rewardItemId}&dataset=tbc&anchor=cursor" target="_blank" rel="noopener" style="${spanStyle}color:inherit;" title="${title}">${arrow}</a>`;
+        // Wrap in a span to preserve color — the <a> is invisible, the span shows the arrow
+        return `<span style="${spanStyle}" title="${title}"><a href="https://www.wowhead.com/tbc/item=${rewardItemId}" data-wowhead="item=${rewardItemId}&dataset=tbc&anchor=top-right" target="_blank" rel="noopener" style="position:absolute;inset:0;"></a>${arrow}</span>`;
       }
       return `<span style="${spanStyle}" title="${title}">${arrow}</span>`;
     };
     if (candidateRank === null) {
       return rewardItemId
-        ? `<a href="https://www.wowhead.com/tbc/item=${rewardItemId}" data-wowhead="item=${rewardItemId}&dataset=tbc&anchor=cursor" target="_blank" rel="noopener" style="${iw}font-size:14px;color:inherit;text-decoration:none;" title="Considered item is not on the BiS list for this player's spec">🛑</a>`
+        ? `<span style="${iw}font-size:14px;position:relative;" title="Considered item is not on the BiS list for this player's spec"><a href="https://www.wowhead.com/tbc/item=${rewardItemId}" data-wowhead="item=${rewardItemId}&dataset=tbc&anchor=top-right" target="_blank" rel="noopener" style="position:absolute;inset:0;"></a>🛑</span>`
         : `<span style="${iw}font-size:14px;" title="Considered item is not on the BiS list for this player's spec">🛑</span>`;
     } else if (currentRank === null) {
       return rewardItemId
-        ? `<a href="https://www.wowhead.com/tbc/item=${rewardItemId}" data-wowhead="item=${rewardItemId}&dataset=tbc&anchor=cursor" target="_blank" rel="noopener" style="${iw}font-size:14px;color:inherit;text-decoration:none;" title="Current item is not on the BiS list for this player's spec">⚠</a>`
+        ? `<span style="${iw}font-size:14px;color:#d4a017;position:relative;" title="Current item is not on the BiS list for this player's spec"><a href="https://www.wowhead.com/tbc/item=${rewardItemId}" data-wowhead="item=${rewardItemId}&dataset=tbc&anchor=top-right" target="_blank" rel="noopener" style="position:absolute;inset:0;"></a>⚠</span>`
         : `<span style="${iw}font-size:14px;color:#d4a017;" title="Current item is not on the BiS list for this player's spec">⚠</span>`;
     } else if (candidateEpv !== null && currentEpv !== null) {
       const delta = candidateEpv - currentEpv;
@@ -4467,8 +4491,8 @@ function onItemChange() {
     let combinedCurrentEpv = null;
     let combinedCurrentRank = null;
     if (candidateIsTwoHand && items.length > 1 && candidateOnBisForAnyone) {
-      const epvs = items.map(name => getPlayerItemEpv(playerName, getItemId(name))).filter(e => e !== null);
-      const ranks = items.map(name => getPlayerItemBisRank(playerName, getItemId(name)));
+      const epvs = items.map(name => getPlayerItemEpv(playerName, getItemId(name, playerName))).filter(e => e !== null);
+      const ranks = items.map(name => getPlayerItemBisRank(playerName, getItemId(name, playerName)));
       combinedCurrentEpv = epvs.length ? epvs.reduce((a,b) => a+b, 0) : null;
       // For combined rank: only warn (null) if the FIRST item (main hand/weapon slot) is off-list.
       // Off-hand being off-list is expected when a two-hander candidate is being evaluated.
@@ -4476,7 +4500,7 @@ function onItemChange() {
     }
 
     const html = items.map((name, idx) => {
-      const id = getItemId(name);
+      const id = getItemId(name, playerName);
       const icon = id && itemIcons[id]
         ? `<img src="https://wow.zamimg.com/images/wow/icons/medium/${itemIcons[id]}.jpg" style="width:18px;height:18px;border:1px solid #555;border-radius:2px;vertical-align:middle;flex-shrink:0;" />`
         : '';
@@ -4488,7 +4512,7 @@ function onItemChange() {
           if (idx === 0) {
             bisIndicator = makeBisIndicator(candidateEpv, combinedCurrentEpv, combinedCurrentRank, candidateRank, _rewardItemId);
           } else {
-            const iw = 'display:inline-flex;align-items:center;justify-content:center;width:20px;flex-shrink:0;';
+            const iw = 'display:inline-flex;align-items:center;justify-content:center;width:20px;flex-shrink:0;position:relative;';
             bisIndicator = `<span style="${iw}"></span>`;
           }
         } else if (id) {
