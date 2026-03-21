@@ -1,2049 +1,2049 @@
 {
   "abacusofviolentodds": {
     "id": 28288,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_enggizmos_18",
+    "slot": "Trinket",
+    "name": "Abacus of Violent Odds"
   },
   "adalscommand": {
     "id": 29177,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_48naxxramas",
+    "slot": "Finger",
+    "name": "A'dal's Command"
   },
   "adamantinechainoftheunbroken": {
     "id": 29349,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_necklace_06",
+    "slot": "Neck",
+    "name": "Adamantine Chain of the Unbroken"
   },
   "aegisofthevindicator": {
     "id": 29458,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shield_33",
+    "slot": "Off Hand",
+    "name": "Aegis of the Vindicator"
   },
   "aldorilegacydefender": {
     "id": 28825,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shield_30",
+    "slot": "Off Hand",
+    "name": "Aldori Legacy Defender"
   },
   "anchoritesrobes": {
     "id": 29129,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_cloth_19",
+    "slot": "Chest",
+    "name": "Anchorite's Robes"
   },
   "ancientdraeneiwartalisman": {
     "id": 31617,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_talisman_14",
+    "slot": "Trinket",
+    "name": "Ancient Draenei War Talisman"
   },
   "archmagebelt": {
     "id": 24677,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_02",
+    "slot": "Waist",
+    "name": "Archmage Belt"
   },
   "ashyensgift": {
     "id": 29172,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_51naxxramas",
+    "slot": "Finger",
+    "name": "Ashyen's Gift"
   },
   "auchenaideathshroud": {
     "id": 27878,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_21",
+    "slot": "Back",
+    "name": "Auchenai Death Shroud"
   },
   "ausleseslightchanneler": {
     "id": 24390,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_qiraj_jewelencased",
+    "slot": "Trinket",
+    "name": "Auslese's Light Channeler"
   },
   "aviancloakoffeathers": {
     "id": 27946,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_16",
+    "slot": "Back",
+    "name": "Avian Cloak of Feathers"
   },
   "axeofthegronnlords": {
     "id": 28794,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_axe_64",
+    "slot": "Two-Hand",
+    "name": "Axe of the Gronn Lords"
   },
   "azureshieldofcoldarra": {
     "id": 29266,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shield_33",
+    "slot": "Off Hand",
+    "name": "Azure-Shield of Coldarra"
   },
   "bandofanguish": {
     "id": 30973,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_44",
+    "slot": "Finger",
+    "name": "Band of Anguish"
   },
   "bandoftheexorcist": {
     "id": 28553,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_60",
+    "slot": "Finger",
+    "name": "Band of the Exorcist"
   },
   "bandoftheinevitable": {
     "id": 23031,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_53naxxramas",
+    "slot": "Finger",
+    "name": "Band of the Inevitable"
   },
   "bandofunnaturalforces": {
     "id": 23038,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_48naxxramas",
+    "slot": "Finger",
+    "name": "Band of Unnatural Forces"
   },
   "bandsofsyth": {
     "id": 27918,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_10",
+    "slot": "Wrist",
+    "name": "Bands of Syth"
   },
   "beastlordcuirass": {
     "id": 28228,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_chain_03",
+    "slot": "Chest",
+    "name": "Beast Lord Cuirass"
   },
   "beastlordhandguards": {
     "id": 27474,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_10",
+    "slot": "Hands",
+    "name": "Beast Lord Handguards"
   },
   "beastlordhelm": {
     "id": 28275,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_19",
+    "slot": "Head",
+    "name": "Beast Lord Helm"
   },
   "beastlordleggings": {
     "id": 27874,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_03",
+    "slot": "Legs",
+    "name": "Beast Lord Leggings"
   },
   "beastlordmantle": {
     "id": 27801,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_23",
+    "slot": "Shoulder",
+    "name": "Beast Lord Mantle"
   },
   "beltofdivineinsipration": {
     "id": 28799,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_03",
+    "slot": "Waist",
+    "name": "Belt of Divine Inspiration"
   },
   "beltofdivineinspiration": {
     "id": 28799,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_03",
+    "slot": "Waist",
+    "name": "Belt of Divine Inspiration"
   },
   "bindingsoffaith": {
     "id": 22519,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_13",
+    "slot": "Wrist",
+    "name": "Bindings of Faith"
   },
   "bindingsofthetimewalker": {
     "id": 29183,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_10",
+    "slot": "Wrist",
+    "name": "Bindings of the Timewalker"
   },
   "bladedshoulderpadsofthemerciless": {
     "id": 28755,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_29",
+    "slot": "Shoulder",
+    "name": "Bladed Shoulderpads of the Merciless"
   },
   "bladeofthearchmage": {
     "id": 29153,
-    "icon": null,
+    "icon": "inv_weapon_shortblade_37",
     "slot": null,
-    "name": null
+    "name": "Blade of the Archmage"
   },
   "bladespirewarbands": {
     "id": 28795,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_15",
+    "slot": "Wrist",
+    "name": "Bladespire Warbands"
   },
   "bloodknightwarcloak": {
     "id": 29382,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_18",
+    "slot": "Back",
+    "name": "Blood Knight War Cloak"
   },
   "bloodlustbrooch": {
     "id": 29383,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_monsterscales_15",
+    "slot": "Trinket",
+    "name": "Bloodlust Brooch"
   },
   "bloodmawmagusblade": {
     "id": 28802,
-    "icon": null,
+    "icon": "inv_sword_65",
     "slot": null,
-    "name": null
+    "name": "Bloodmaw Magus-Blade"
   },
   "bogstrokscalecloak": {
     "id": 24379,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_06",
+    "slot": "Back",
+    "name": "Bogstrok Scale Cloak"
   },
   "bootsofetherealmanipulation": {
     "id": 29258,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_cloth_06",
+    "slot": "Feet",
+    "name": "Boots of Ethereal Manipulation"
   },
   "bootsofthecolossus": {
     "id": 27813,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_chain_11",
+    "slot": "Feet",
+    "name": "Boots of the Colossus"
   },
   "bootsofthegladekeeper": {
     "id": 28251,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_05",
+    "slot": "Feet",
+    "name": "Boots of the Glade-Keeper"
   },
   "bootsoftherighteouspath": {
     "id": 29254,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_chain_05",
+    "slot": "Feet",
+    "name": "Boots of the Righteous Path"
   },
   "bracersofarcaneaccuracy": {
     "id": 19374,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_07",
+    "slot": "Wrist",
+    "name": "Bracers of Arcane Accuracy"
   },
   "bracersofdignity": {
     "id": 29252,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_02",
+    "slot": "Wrist",
+    "name": "Bracers of Dignity"
   },
   "bracersofhavok": {
     "id": 24250,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_10",
+    "slot": "Wrist",
+    "name": "Bracers of Havok"
   },
   "breastplateofannihilation": {
     "id": 21814,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_plate02",
+    "slot": "Chest",
+    "name": "Breastplate of Annihilation"
   },
   "breastplateofthebold": {
     "id": 28205,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_chain_15",
+    "slot": "Chest",
+    "name": "Breastplate of the Bold"
   },
   "brilliantpearlband": {
     "id": 32772,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_05",
+    "slot": "Finger",
+    "name": "Brilliant Pearl Band"
   },
   "broochofheightenedpotential": {
     "id": 28134,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_necklace_27",
+    "slot": "Neck",
+    "name": "Brooch of Heightened Potential"
   },
   "brutecloakoftheogremagi": {
     "id": 28797,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_16",
+    "slot": "Back",
+    "name": "Brute Cloak of the Ogre-Magi"
   },
   "burnooseofshiftingages": {
     "id": 27988,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_15",
+    "slot": "Back",
+    "name": "Burnoose of Shifting Ages"
   },
   "charlottesivy": {
     "id": 31338,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_necklace_36",
+    "slot": "Neck",
+    "name": "Charlotte's Ivy"
   },
   "chestgaurdofthefalledhero": {
     "id": 29755,
-    "icon": null,
+    "icon": "inv_chest_chain_03",
     "slot": null,
-    "name": null
+    "name": "Chestguard of the Fallen Hero"
   },
   "chestgaurdofthefallenchampion": {
     "id": 29754,
-    "icon": null,
+    "icon": "inv_chest_chain_03",
     "slot": null,
-    "name": null
+    "name": "Chestguard of the Fallen Champion"
   },
   "chestgaurdofthefallendefender": {
     "id": 29753,
-    "icon": null,
+    "icon": "inv_chest_chain_03",
     "slot": null,
-    "name": null
+    "name": "Chestguard of the Fallen Defender"
   },
   "chestguardofnoremorse": {
     "id": 27787,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_plate11",
+    "slot": "Chest",
+    "name": "Chestguard of No Remorse"
   },
   "chestguardofthefallenchampion": {
     "id": 29754,
-    "icon": null,
+    "icon": "inv_chest_chain_03",
     "slot": null,
-    "name": null
+    "name": "Chestguard of the Fallen Champion"
   },
   "chestguardofthefallendefender": {
     "id": 29753,
-    "icon": null,
+    "icon": "inv_chest_chain_03",
     "slot": null,
-    "name": null
+    "name": "Chestguard of the Fallen Defender"
   },
   "chestguardofthefallenhero": {
     "id": 29755,
-    "icon": null,
+    "icon": "inv_chest_chain_03",
     "slot": null,
-    "name": null
+    "name": "Chestguard of the Fallen Hero"
   },
   "chokerofvileintent": {
     "id": 29381,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_necklace_04",
+    "slot": "Neck",
+    "name": "Choker of Vile Intent"
   },
   "chromaticboots": {
     "id": 19387,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_plate_04",
+    "slot": "Feet",
+    "name": "Chromatic Boots"
   },
   "circletoffaith": {
     "id": 22514,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_crown_01",
+    "slot": "Head",
+    "name": "Circlet of Faith"
   },
   "clefthoofhideleggings": {
     "id": 31544,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_14",
+    "slot": "Legs",
+    "name": "Clefthoof Hide Leggings"
   },
   "cloakofhealingrays": {
     "id": 24459,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_06",
+    "slot": "Back",
+    "name": "Cloak of Healing Rays"
   },
   "cloakofthecraft": {
     "id": 31255,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_20",
+    "slot": "Back",
+    "name": "Cloak of the Craft"
   },
   "cloakofthedevoured": {
     "id": 22731,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_18",
+    "slot": "Back",
+    "name": "Cloak of the Devoured"
   },
   "cloakoftheinciter": {
     "id": 27892,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_08",
+    "slot": "Back",
+    "name": "Cloak of the Inciter"
   },
   "cloakofthenecropolis": {
     "id": 23050,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_naxxramas_03",
+    "slot": "Back",
+    "name": "Cloak of the Necropolis"
   },
   "cloakofthepitstalker": {
     "id": 28777,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_14",
+    "slot": "Back",
+    "name": "Cloak of the Pit Stalker"
   },
   "cobaltbandoftyrigosa": {
     "id": 29352,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_57",
+    "slot": "Finger",
+    "name": "Cobalt Band of Tyrigosa"
   },
   "collarofchogall": {
     "id": 28804,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_27",
+    "slot": "Head",
+    "name": "Collar of Cho'gall"
   },
   "cordofnaturessustenance": {
     "id": 28655,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_22",
+    "slot": "Waist",
+    "name": "Cord of Nature's Sustenance"
   },
   "cosmiclifeband": {
     "id": 28259,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_62",
+    "slot": "Finger",
+    "name": "Cosmic Lifeband"
   },
   "cowlofnaarublessings": {
     "id": 32090,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_30",
+    "slot": "Head",
+    "name": "Cowl of Naaru Blessings"
   },
   "cowlofnaturesbreath": {
     "id": 28803,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_15",
+    "slot": "Head",
+    "name": "Cowl of Nature's Breath"
   },
   "crestoftheshatar": {
     "id": 29176,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shield_30",
+    "slot": "Off Hand",
+    "name": "Crest of the Sha'tar"
   },
   "crownoftheforestlord": {
     "id": 27763,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_17",
+    "slot": "Head",
+    "name": "Crown of the Forest Lord"
   },
   "cryomitts": {
     "id": 29327,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_22",
+    "slot": "Hands",
+    "name": "Cryo-mitts"
   },
   "cryptstalkergirdle": {
     "id": 22442,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_22",
+    "slot": "Waist",
+    "name": "Cryptstalker Girdle"
   },
   "cryptstalkerlegguards": {
     "id": 22437,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_mail_15",
+    "slot": "Legs",
+    "name": "Cryptstalker Legguards"
   },
   "crystalbandofvalor": {
     "id": 27822,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_54",
+    "slot": "Finger",
+    "name": "Crystal Band of Valor"
   },
   "crystalheartpulsestaff": {
     "id": 28782,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_staff_53",
+    "slot": "Two-Hand",
+    "name": "Crystalheart Pulse-Staff"
   },
   "crystalpulseshield": {
     "id": 31292,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shield_35",
+    "slot": "Off Hand",
+    "name": "Crystal Pulse Shield"
   },
   "curatesboots": {
     "id": 25792,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_05",
+    "slot": "Feet",
+    "name": "Curate's Boots"
   },
   "darkcloakofthemarsh": {
     "id": 25540,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_20",
+    "slot": "Back",
+    "name": "Dark Cloak of the Marsh"
   },
   "deathforgegirdle": {
     "id": 27985,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_23",
+    "slot": "Waist",
+    "name": "Deathforge Girdle"
   },
   "delicategreenponcho": {
     "id": 28032,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_05",
+    "slot": "Back",
+    "name": "Delicate Green Poncho"
   },
   "doomfinger": {
     "id": 22821,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_wand_1h_stratholme_d_02",
+    "slot": "Ranged",
+    "name": "Doomfinger"
   },
   "draeneicrystalrod": {
     "id": 25099,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_orb_01",
+    "slot": "Held In Off-hand",
+    "name": "Draenei Crystal Rod"
   },
   "dragonhawkbelt": {
     "id": 24798,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_02",
+    "slot": "Waist",
+    "name": "Dragonhawk Belt"
   },
   "dragonscalewand": {
     "id": 25294,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_wand_06",
+    "slot": "Ranged",
+    "name": "Dragonscale Wand"
   },
   "dragonspinetrophy": {
     "id": 28830,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_bone_03",
+    "slot": "Trinket",
+    "name": "Dragonspine Trophy"
   },
   "drakefangtalisman": {
     "id": 19406,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_bone_06",
+    "slot": "Trinket",
+    "name": "Drake Fang Talisman"
   },
   "drapeofunyieldingstrength": {
     "id": 21394,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_20",
+    "slot": "Back",
+    "name": "Drape of Unyielding Strength"
   },
   "earthenmarkofrazing": {
     "id": 25562,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_necklace_06",
+    "slot": "Neck",
+    "name": "Earthen Mark of Razing"
   },
   "earthwarden": {
     "id": 29171,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_hammer_10",
+    "slot": "Two-Hand",
+    "name": "Earthwarden"
   },
   "ebonyflamegloves": {
     "id": 19407,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_27",
+    "slot": "Hands",
+    "name": "Ebony Flame Gloves"
   },
   "energisarmwraps": {
     "id": 28317,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_19",
+    "slot": "Hands",
+    "name": "Energis Armwraps"
   },
   "enigmaticband": {
     "id": 31929,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_46",
+    "slot": "Finger",
+    "name": "Enigmatic Band"
   },
   "eredarwandofobliteration": {
     "id": 28783,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_wand_20",
+    "slot": "Ranged",
+    "name": "Eredar Wand of Obliteration"
   },
   "essenceofthemartyr": {
     "id": 29376,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_valentineperfumebottle",
+    "slot": "Trinket",
+    "name": "Essence of the Martyr"
   },
   "eterniumrunedblade": {
     "id": 23554,
-    "icon": null,
+    "icon": "inv_weapon_shortblade_05",
     "slot": null,
-    "name": null
+    "name": "Eternium Runed Blade"
   },
   "exorcistssilkhood": {
     "id": 28760,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_30",
+    "slot": "Head",
+    "name": "Exorcist's Silk Hood"
   },
   "extravagantbootsofmalice": {
     "id": 27821,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_cloth_12",
+    "slot": "Feet",
+    "name": "Extravagant Boots of Malice"
   },
   "eyeofgruul": {
     "id": 28823,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "spell_shadow_unholyfrenzy",
+    "slot": "Trinket",
+    "name": "Eye of Gruul"
   },
   "eyeofmagtheridon": {
     "id": 28789,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_elemental_mote_life01",
+    "slot": "Trinket",
+    "name": "Eye of Magtheridon"
   },
   "eyeofthedead": {
     "id": 23047,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_trinket_naxxramas01",
+    "slot": "Trinket",
+    "name": "Eye of the Dead"
   },
   "faceguardofdetermination": {
     "id": 32083,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_01",
+    "slot": "Head",
+    "name": "Faceguard of Determination"
   },
   "fathomheartgauntlets": {
     "id": 27806,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_10",
+    "slot": "Hands",
+    "name": "Fathomheart Gauntlets"
   },
   "felleatherboots": {
     "id": 25686,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_cloth_05",
+    "slot": "Feet",
+    "name": "Fel Leather Boots"
   },
   "felleathergloves": {
     "id": 25685,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_22",
+    "slot": "Hands",
+    "name": "Fel Leather Gloves"
   },
   "felstalkerbracers": {
     "id": 25697,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_14",
+    "slot": "Wrist",
+    "name": "Felstalker Bracers"
   },
   "fieldmarshalsplateshoulderguards": {
     "id": 16480,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_20",
+    "slot": "Shoulder",
+    "name": "Field Marshal's Plate Shoulderguards"
   },
   "figurinedawnstonecrab": {
     "id": 24125,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelcrafting_truesilvercrab",
+    "slot": "Trinket",
+    "name": "Figurine - Dawnstone Crab"
   },
   "firemawsclutch": {
     "id": 19400,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_10",
+    "slot": "Waist",
+    "name": "Firemaw's Clutch"
   },
   "fleshhandlersgauntlets": {
     "id": 30341,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_23",
+    "slot": "Hands",
+    "name": "Flesh Handler's Gauntlets"
   },
   "forestheartbracers": {
     "id": 29263,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_02",
+    "slot": "Wrist",
+    "name": "Forestheart Bracers"
   },
   "frostfirecirclet": {
     "id": 22498,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_crown_01",
+    "slot": "Head",
+    "name": "Frostfire Circlet"
   },
   "frostfirering": {
     "id": 23062,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_51naxxramas",
+    "slot": "Finger",
+    "name": "Frostfire Ring"
   },
   "frostfiresandals": {
     "id": 22500,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_fabric_01",
+    "slot": "Feet",
+    "name": "Frostfire Sandals"
   },
   "frozenshadoweaveboots": {
     "id": 21870,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_cloth_03",
+    "slot": "Feet",
+    "name": "Frozen Shadoweave Boots"
   },
   "frozenshadoweaverobe": {
     "id": 21871,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_cloth_08",
+    "slot": "Chest",
+    "name": "Frozen Shadoweave Robe"
   },
   "frozenshadoweaveshoulders": {
     "id": 21869,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_25",
+    "slot": "Shoulder",
+    "name": "Frozen Shadoweave Shoulders"
   },
   "gauntletsofannihilation": {
     "id": 21581,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_31",
+    "slot": "Hands",
+    "name": "Gauntlets of Annihilation"
   },
   "gauntletsofmartialperfection": {
     "id": 28824,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_31",
+    "slot": "Hands",
+    "name": "Gauntlets of Martial Perfection"
   },
   "gauntletsofthedragonslayer": {
     "id": 28827,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_25",
+    "slot": "Hands",
+    "name": "Gauntlets of the Dragonslayer"
   },
   "gauntletsoftherighteous": {
     "id": 27535,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_29",
+    "slot": "Hands",
+    "name": "Gauntlets of the Righteous"
   },
   "gavelofpurelight": {
     "id": 29175,
-    "icon": null,
+    "icon": "inv_hammer_04",
     "slot": null,
-    "name": null
+    "name": "Gavel of Pure Light"
   },
   "girdleofdivineblessing": {
     "id": 31202,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_08",
+    "slot": "Waist",
+    "name": "Girdle of Divine Blessing"
   },
   "girdleofruination": {
     "id": 24256,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_13",
+    "slot": "Waist",
+    "name": "Girdle of Ruination"
   },
   "girdleoftheendlesspit": {
     "id": 28779,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_22",
+    "slot": "Waist",
+    "name": "Girdle of the Endless Pit"
   },
   "girdleoftheimmovable": {
     "id": 27672,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_26",
+    "slot": "Waist",
+    "name": "Girdle of the Immovable"
   },
   "girdleofthementor": {
     "id": 23219,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_13",
+    "slot": "Waist",
+    "name": "Girdle of the Mentor"
   },
   "glaiveofthepit": {
     "id": 28774,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_weapon_halberd16",
+    "slot": "Two-Hand",
+    "name": "Glaive of the Pit"
   },
   "glovesofenforcement": {
     "id": 21672,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_17",
+    "slot": "Hands",
+    "name": "Gloves of Enforcement"
   },
   "glovesoffaith": {
     "id": 22517,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_17",
+    "slot": "Hands",
+    "name": "Gloves of Faith"
   },
   "glovesofpandemonium": {
     "id": 31149,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_15",
+    "slot": "Hands",
+    "name": "Gloves of Pandemonium"
   },
   "glovesofpreservation": {
     "id": 25791,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_15",
+    "slot": "Hands",
+    "name": "Gloves of Preservation"
   },
   "gnomereganautododger600": {
     "id": 29387,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_battery_02",
+    "slot": "Trinket",
+    "name": "Gnomeregan Auto-Blocker 600"
   },
   "goldenvinewraps": {
     "id": 28029,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_12",
+    "slot": "Wrist",
+    "name": "Goldenvine Wraps"
   },
   "grandmarshalsclaymore": {
     "id": 18876,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_sword_39",
+    "slot": "Two-Hand",
+    "name": "Grand Marshal's Claymore"
   },
   "grandmarshalshandaxe": {
     "id": 18827,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_axe_24",
+    "slot": "One-Hand",
+    "name": "Grand Marshal's Handaxe"
   },
   "gressildawnofruin": {
     "id": 23054,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_sword_61",
+    "slot": "One-Hand",
+    "name": "Gressil, Dawn of Ruin"
   },
   "gronnstitchedgirdle": {
     "id": 28828,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_26",
+    "slot": "Waist",
+    "name": "Gronn-Stitched Girdle"
   },
   "hallowedgarments": {
     "id": 28230,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_cloth_39",
+    "slot": "Chest",
+    "name": "Hallowed Garments"
   },
   "hallowedpauldrons": {
     "id": 27775,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_22",
+    "slot": "Shoulder",
+    "name": "Hallowed Pauldrons"
   },
   "hallowedtrousers": {
     "id": 27875,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_cloth_18",
+    "slot": "Legs",
+    "name": "Hallowed Trousers"
   },
   "hammerofthenaaru": {
     "id": 28800,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_hammer_28",
+    "slot": "Two-Hand",
+    "name": "Hammer of the Naaru"
   },
   "hammerofthepenitent": {
     "id": 28257,
-    "icon": null,
+    "icon": "inv_mace_13",
     "slot": null,
-    "name": null
+    "name": "Hammer of the Penitent"
   },
   "haramadsbargain": {
     "id": 29119,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_necklace_29naxxramas",
+    "slot": "Neck",
+    "name": "Haramad's Bargain"
   },
   "harnessofthedeepcurrents": {
     "id": 27912,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_leather_05",
+    "slot": "Chest",
+    "name": "Harness of the Deep Currents"
   },
   "heavyclefthoofboots": {
     "id": 25691,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_07",
+    "slot": "Feet",
+    "name": "Heavy Clefthoof Boots"
   },
   "heavyclefthoofleggings": {
     "id": 25690,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_12",
+    "slot": "Legs",
+    "name": "Heavy Clefthoof Leggings"
   },
   "heavyclefthoofvest": {
     "id": 25689,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_leather_06",
+    "slot": "Chest",
+    "name": "Heavy Clefthoof Vest"
   },
   "hellforgedhalberd": {
     "id": 29166,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_weapon_halberd_12",
+    "slot": "Two-Hand",
+    "name": "Hellforged Halberd"
   },
   "helmoftheclaw": {
     "id": 28182,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_15",
+    "slot": "Head",
+    "name": "Helm of the Claw"
   },
   "holyhealingband": {
     "id": 25713,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_35",
+    "slot": "Finger",
+    "name": "Holy Healing Band"
   },
   "hoodofoblivion": {
     "id": 28415,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_30",
+    "slot": "Head",
+    "name": "Hood of Oblivion"
   },
   "hoodofprimallife": {
     "id": 29505,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_32",
+    "slot": "Head",
+    "name": "Hood of Primal Life"
   },
   "hourglassoftheunraveller": {
     "id": 28034,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gizmo_khoriumpowercore",
+    "slot": "Trinket",
+    "name": "Hourglass of the Unraveller"
   },
   "iblisbladeofthefallenseraph": {
     "id": 23014,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_sword_07",
+    "slot": "One-Hand",
+    "name": "Iblis, Blade of the Fallen Seraph"
   },
   "iconofthesilvercrescent": {
     "id": 29370,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_weapon_shortblade_23",
+    "slot": "Trinket",
+    "name": "Icon of the Silver Crescent"
   },
   "iconofunyieldingcourage": {
     "id": 28121,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_brd_banner",
+    "slot": "Trinket",
+    "name": "Icon of Unyielding Courage"
   },
   "idolofbrutality": {
     "id": 23198,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_relics_idolofferocity",
+    "slot": "Relic",
+    "name": "Idol of Brutality"
   },
   "idoloftheemeraldqueen": {
     "id": 27886,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "spell_nature_natureresistancetotem",
+    "slot": "Relic",
+    "name": "Idol of the Emerald Queen"
   },
   "ironbandoftheunbreakable": {
     "id": 27436,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_30",
+    "slot": "Finger",
+    "name": "Iron Band of the Unbreakable"
   },
   "jadeskullbreastplate": {
     "id": 28262,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_plate07",
+    "slot": "Chest",
+    "name": "Jade-Skull Breastplate"
   },
   "jeweledbootsofsanctification": {
     "id": 27525,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_cloth_12",
+    "slot": "Feet",
+    "name": "Jeweled Boots of Sanctification"
   },
   "jindosevileye": {
     "id": 19885,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_45",
+    "slot": "Neck",
+    "name": "Jin'do's Evil Eye"
   },
   "karaboriantalisman": {
     "id": 28781,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_offhand_draenei_a_01",
+    "slot": "Held In Off-hand",
+    "name": "Karaborian Talisman"
   },
   "kaylaanssignet": {
     "id": 30860,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_34",
+    "slot": "Finger",
+    "name": "Kaylaan's Signet"
   },
   "keepersringofpiety": {
     "id": 29322,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_38",
+    "slot": "Finger",
+    "name": "Keeper's Ring of Piety"
   },
   "khadgarskiltofabjuration": {
     "id": 28185,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_leather_05",
+    "slot": "Legs",
+    "name": "Khadgar's Kilt of Abjuration"
   },
   "khadgarsknapsack": {
     "id": 29273,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_bag_10_green",
+    "slot": "Held In Off-hand",
+    "name": "Khadgar's Knapsack"
   },
   "kiltoflivinggrowth": {
     "id": 31335,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_mail_08",
+    "slot": "Legs",
+    "name": "Pants of Living Growth"
   },
   "kissofthespider": {
     "id": 22954,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_trinket_naxxramas04",
+    "slot": "Trinket",
+    "name": "Kiss of the Spider"
   },
   "lampofpeacefulradiance": {
     "id": 28412,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_offhand_outlandraid_03white",
+    "slot": "Held In Off-hand",
+    "name": "Lamp of Peaceful Radiance"
   },
   "latrosshiftingsword": {
     "id": 28189,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_sword_76",
+    "slot": "One-Hand",
+    "name": "Latro's Shifting Sword"
   },
   "leggingsofpolarity": {
     "id": 23070,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_08",
+    "slot": "Legs",
+    "name": "Leggings of Polarity"
   },
   "leggingsofthefallenchampion": {
     "id": 29766,
-    "icon": null,
+    "icon": "inv_pants_plate_17",
     "slot": null,
-    "name": null
+    "name": "Leggings of the Fallen Champion"
   },
   "leggingsofthefallendefender": {
     "id": 29767,
-    "icon": null,
+    "icon": "inv_pants_plate_17",
     "slot": null,
-    "name": null
+    "name": "Leggings of the Fallen Defender"
   },
   "leggingsofthefallenhero": {
     "id": 29765,
-    "icon": null,
+    "icon": "inv_pants_plate_17",
     "slot": null,
-    "name": null
+    "name": "Leggings of the Fallen Hero"
   },
   "liarstonguegloves": {
     "id": 28776,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_19",
+    "slot": "Hands",
+    "name": "Liar's Tongue Gloves"
   },
   "libramofavengement": {
     "id": 27484,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_stonetablet_05",
+    "slot": "Relic",
+    "name": "Libram of Avengement"
   },
   "libramofrepentance": {
     "id": 29388,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_relics_libramofhope",
+    "slot": "Relic",
+    "name": "Libram of Repentance"
   },
   "libramofthelightbringer": {
     "id": 28296,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_book_12",
+    "slot": "Relic",
+    "name": "Libram of the Lightbringer"
   },
   "lightbearersfaithshield": {
     "id": 29267,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shield_33",
+    "slot": "Off Hand",
+    "name": "Light-Bearer's Faith Shield"
   },
   "lightswornhammer": {
     "id": 27538,
-    "icon": null,
+    "icon": "inv_hammer_23",
     "slot": null,
-    "name": null
+    "name": "Lightsworn Hammer"
   },
   "lightwovenslippers": {
     "id": 27919,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_cloth_02",
+    "slot": "Feet",
+    "name": "Light-Woven Slippers"
   },
   "lionheartchampion": {
     "id": 28429,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_sword_2h_blacksmithing_02",
+    "slot": "Two-Hand",
+    "name": "Lionheart Champion"
   },
   "lionhearthelm": {
     "id": 12640,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_36",
+    "slot": "Head",
+    "name": "Lionheart Helm"
   },
   "lolaseve": {
     "id": 31339,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_56",
+    "slot": "Finger",
+    "name": "Lola's Eve"
   },
   "lowercityprayerbook": {
     "id": 30841,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_book_11",
+    "slot": "Trinket",
+    "name": "Lower City Prayerbook"
   },
   "luciddreambracers": {
     "id": 27827,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_06",
+    "slot": "Wrist",
+    "name": "Lucid Dream Bracers"
   },
   "magtheridonshead": {
     "id": 32385,
-    "icon": null,
+    "icon": "inv_misc_head_tauren_01",
     "slot": null,
-    "name": null
+    "name": "Magtheridon's Head"
   },
   "maleficmaskoftheshadows": {
     "id": 28796,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_58",
+    "slot": "Head",
+    "name": "Malefic Mask of the Shadows"
   },
   "maleficmastoftheshadows": {
     "id": 28796,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_58",
+    "slot": "Head",
+    "name": "Malefic Mask of the Shadows"
   },
   "manaetchedcrown": {
     "id": 28193,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_56",
+    "slot": "Head",
+    "name": "Mana-Etched Crown"
   },
   "manaetchedgloves": {
     "id": 27465,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_15",
+    "slot": "Hands",
+    "name": "Mana-Etched Gloves"
   },
   "manaetchedspaulders": {
     "id": 27796,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_22",
+    "slot": "Shoulder",
+    "name": "Mana-Etched Spaulders"
   },
   "manimalscinch": {
     "id": 30942,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_17",
+    "slot": "Waist",
+    "name": "Manimal's Cinch"
   },
   "mantleofautumn": {
     "id": 28340,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_18",
+    "slot": "Shoulder",
+    "name": "Mantle of Autumn"
   },
   "markofthechampion": {
     "id": 23206,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_token_argentdawn2",
+    "slot": "Trinket",
+    "name": "Mark of the Champion"
   },
   "markoftheravenguard": {
     "id": 29336,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_necklace_34",
+    "slot": "Neck",
+    "name": "Mark of the Ravenguard"
   },
   "marshalsleatherbracers": {
     "id": 28988,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_07",
+    "slot": "Wrist",
+    "name": "Marshal's Leather Bracers"
   },
   "marshalsplatebelt": {
     "id": 28995,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_14",
+    "slot": "Waist",
+    "name": "Marshal's Plate Belt"
   },
   "marshalsplategreaves": {
     "id": 28997,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_plate_04",
+    "slot": "Feet",
+    "name": "Marshal's Plate Greaves"
   },
   "marshalsplatelegguards": {
     "id": 16479,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_04",
+    "slot": "Legs",
+    "name": "Marshal's Plate Legguards"
   },
   "marshalssilkcuffs": {
     "id": 29002,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_07",
+    "slot": "Wrist",
+    "name": "Marshal's Silk Cuffs"
   },
   "maskofthedeceiver": {
     "id": 32087,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_73",
+    "slot": "Head",
+    "name": "Mask of the Deceiver"
   },
   "masterdragonslayersring": {
     "id": 19384,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_41",
+    "slot": "Finger",
+    "name": "Master Dragonslayer's Ring"
   },
   "maulgarswarhelm": {
     "id": 28801,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_23",
+    "slot": "Head",
+    "name": "Maulgar's Warhelm"
   },
   "medallionofthelightbearer": {
     "id": 29123,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_amulet_04",
+    "slot": "Neck",
+    "name": "Medallion of the Lightbearer"
   },
   "moongladeshoulders": {
     "id": 27737,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_24",
+    "slot": "Shoulder",
+    "name": "Moonglade Shoulders"
   },
   "myrmidonsheaddress": {
     "id": 28180,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_25",
+    "slot": "Head",
+    "name": "Myrmidon's Headdress"
   },
   "naarubeltofprecision": {
     "id": 31464,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_16",
+    "slot": "Waist",
+    "name": "Naaru Belt of Precision"
   },
   "natashasguardiancord": {
     "id": 31691,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_necklace_31",
+    "slot": "Neck",
+    "name": "Natasha's Guardian Cord"
   },
   "necklaceofthejuggernaut": {
     "id": 29386,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_necklace_ahnqiraj_03",
+    "slot": "Neck",
+    "name": "Necklace of the Juggernaut"
   },
   "neltharionstear": {
     "id": 19379,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_stone_15",
+    "slot": "Trinket",
+    "name": "Neltharion's Tear"
   },
   "nethekursesrodoftorment": {
     "id": 25806,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_wand_05",
+    "slot": "Ranged",
+    "name": "Nethekurse's Rod of Torment"
   },
   "nethercorescontrolrod": {
     "id": 28386,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_wand_17",
+    "slot": "Ranged",
+    "name": "Nether Core's Control Rod"
   },
   "nexusprincesringofbalance": {
     "id": 31919,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_53naxxramas",
+    "slot": "Finger",
+    "name": "Nexus-Prince's Ring of Balance"
   },
   "ogreslayersband": {
     "id": 25775,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_02",
+    "slot": "Finger",
+    "name": "Ogre Slayer's Band"
   },
   "ogreslayerscover": {
     "id": 25777,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_16",
+    "slot": "Back",
+    "name": "Ogre Slayer's Cover"
   },
   "orbofthesouleater": {
     "id": 29272,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_orb_04",
+    "slot": "Held In Off-hand",
+    "name": "Orb of the Soul-Eater"
   },
   "pathfindersband": {
     "id": 31277,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_ahnqiraj_01",
+    "slot": "Finger",
+    "name": "Pathfinder's Band"
   },
   "pauldronsofthefallenchampion": {
     "id": 29763,
-    "icon": null,
+    "icon": "inv_shoulder_22",
     "slot": null,
-    "name": null
+    "name": "Pauldrons of the Fallen Champion"
   },
   "pauldronsofthefallendefender": {
     "id": 29764,
-    "icon": null,
+    "icon": "inv_shoulder_22",
     "slot": null,
-    "name": null
+    "name": "Pauldrons of the Fallen Defender"
   },
   "pauldronsofthefallenhero": {
     "id": 29762,
-    "icon": null,
+    "icon": "inv_shoulder_22",
     "slot": null,
-    "name": null
+    "name": "Pauldrons of the Fallen Hero"
   },
   "pendantofbattlelust": {
     "id": 24385,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_necklace_17",
+    "slot": "Neck",
+    "name": "Pendant of Battle-Lust"
   },
   "pitlordssatchel": {
     "id": 34845,
-    "icon": null,
+    "icon": "inv_misc_bag_enchantedrunecloth",
     "slot": null,
-    "name": null
+    "name": "Pit Lord's Satchel"
   },
   "plagueheartbelt": {
     "id": 22510,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_03",
+    "slot": "Waist",
+    "name": "Plagueheart Belt"
   },
   "plagueheartcirclet": {
     "id": 22506,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_crown_01",
+    "slot": "Head",
+    "name": "Plagueheart Circlet"
   },
   "plagueheartrobe": {
     "id": 22504,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_cloth_43",
+    "slot": "Chest",
+    "name": "Plagueheart Robe"
   },
   "platedabominationribcage": {
     "id": 23000,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_chain_15",
+    "slot": "Chest",
+    "name": "Plated Abomination Ribcage"
   },
   "pontifexkilt": {
     "id": 30543,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_cloth_20",
+    "slot": "Legs",
+    "name": "Pontifex Kilt"
   },
   "primalmoonclothbelt": {
     "id": 21873,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_31",
+    "slot": "Waist",
+    "name": "Primal Mooncloth Belt"
   },
   "primalmoonclothrobe": {
     "id": 21875,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_cloth_04",
+    "slot": "Chest",
+    "name": "Primal Mooncloth Robe"
   },
   "primalmoonclothshoulders": {
     "id": 21874,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_02",
+    "slot": "Shoulder",
+    "name": "Primal Mooncloth Shoulders"
   },
   "primalstrikebracers": {
     "id": 29527,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_07",
+    "slot": "Wrist",
+    "name": "Primalstrike Bracers"
   },
   "primalstrikevest": {
     "id": 29525,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_cloth_45",
+    "slot": "Chest",
+    "name": "Primalstrike Vest"
   },
   "primalsurgebracers": {
     "id": 28194,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_12",
+    "slot": "Wrist",
+    "name": "Primal Surge Bracers"
   },
   "princelyreignleggings": {
     "id": 24359,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_cloth_16",
+    "slot": "Legs",
+    "name": "Princely Reign Leggings"
   },
   "prismaticmittensofmending": {
     "id": 28304,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_16",
+    "slot": "Hands",
+    "name": "Prismatic Mittens of Mending"
   },
   "quagmirranseye": {
     "id": 27683,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_gem_pearl_01",
+    "slot": "Trinket",
+    "name": "Quagmirran's Eye"
   },
   "ragesteelbreastplate": {
     "id": 23522,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_chain_16",
+    "slot": "Chest",
+    "name": "Ragesteel Breastplate"
   },
   "ragesteelshoulders": {
     "id": 33173,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_16",
+    "slot": "Shoulder",
+    "name": "Ragesteel Shoulders"
   },
   "ravenclawband": {
     "id": 27925,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_16",
+    "slot": "Finger",
+    "name": "Ravenclaw Band"
   },
   "rimecoveredmantle": {
     "id": 22983,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_05",
+    "slot": "Shoulder",
+    "name": "Rime Covered Mantle"
   },
   "ringofconvalescence": {
     "id": 29169,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_43",
+    "slot": "Finger",
+    "name": "Ring of Convalescence"
   },
   "ringofcrypticdreams": {
     "id": 29367,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_56",
+    "slot": "Finger",
+    "name": "Ring of Cryptic Dreams"
   },
   "ringoffaith": {
     "id": 23061,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_51naxxramas",
+    "slot": "Finger",
+    "name": "Ring of Faith"
   },
   "ringofthefallengod": {
     "id": 21709,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_ahnqiraj_02",
+    "slot": "Finger",
+    "name": "Ring of the Fallen God"
   },
   "ringofthemartyr": {
     "id": 21620,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_ahnqiraj_01",
+    "slot": "Finger",
+    "name": "Ring of the Martyr"
   },
   "robeoffaith": {
     "id": 22512,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_cloth_43",
+    "slot": "Chest",
+    "name": "Robe of Faith"
   },
   "robeofoblivion": {
     "id": 28232,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_cloth_29",
+    "slot": "Chest",
+    "name": "Robe of Oblivion"
   },
   "royalscepterofveklor": {
     "id": 21597,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_wand_10",
+    "slot": "Held In Off-hand",
+    "name": "Royal Scepter of Vek'lor"
   },
   "rubyslippers": {
     "id": 28585,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_cloth_09",
+    "slot": "Feet",
+    "name": "Ruby Slippers"
   },
   "runeengravedbelt": {
     "id": 25789,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_35",
+    "slot": "Waist",
+    "name": "Rune-Engraved Belt"
   },
   "runesongdagger": {
     "id": 27868,
-    "icon": null,
+    "icon": "inv_weapon_shortblade_52",
     "slot": null,
-    "name": null
+    "name": "Runesong Dagger"
   },
   "ryngosbandofingenuity": {
     "id": 28394,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_48naxxramas",
+    "slot": "Finger",
+    "name": "Ryngo's Band of Ingenuity"
   },
   "sapphironslefteye": {
     "id": 23049,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_offhand_naxxramas_03",
+    "slot": "Held In Off-hand",
+    "name": "Sapphiron's Left Eye"
   },
   "sashofarcanevisions": {
     "id": 29257,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_03",
+    "slot": "Waist",
+    "name": "Sash of Arcane Visions"
   },
   "sashofserpentra": {
     "id": 27795,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_13",
+    "slot": "Waist",
+    "name": "Sash of Serpentra"
   },
   "scaraboftheinfinitecycle": {
     "id": 28190,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_ahnqirajtrinket_06",
+    "slot": "Trinket",
+    "name": "Scarab of the Infinite Cycle"
   },
   "scintillatingcoralband": {
     "id": 27784,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_62",
+    "slot": "Finger",
+    "name": "Scintillating Coral Band"
   },
   "sealofthedamned": {
     "id": 23025,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_48naxxramas",
+    "slot": "Finger",
+    "name": "Seal of the Damned"
   },
   "sealoftheexorcist": {
     "id": 28555,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_60",
+    "slot": "Finger",
+    "name": "Seal of the Exorcist"
   },
   "sethekkoraclecloak": {
     "id": 27981,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_11",
+    "slot": "Back",
+    "name": "Sethekk Oracle Cloak"
   },
   "sethekkoraclesfocus": {
     "id": 29334,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_necklace_12",
+    "slot": "Neck",
+    "name": "Sethekk Oracle's Focus"
   },
   "shadowcloakofdalaran": {
     "id": 28570,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_20",
+    "slot": "Back",
+    "name": "Shadow-Cloak of Dalaran"
   },
   "shapeshifterssignet": {
     "id": 30834,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_41",
+    "slot": "Finger",
+    "name": "Shapeshifter's Signet"
   },
   "shatarivindicatorswaistguard": {
     "id": 31460,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_23",
+    "slot": "Waist",
+    "name": "Sha'tari Vindicator's Waistguard"
   },
   "shatariwroughtarmguards": {
     "id": 28167,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_17",
+    "slot": "Wrist",
+    "name": "Sha'tari Wrought Armguards"
   },
   "shattrathjumpers": {
     "id": 28179,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_fabric_01",
+    "slot": "Feet",
+    "name": "Shattrath Jumpers"
   },
   "shattrathleggings": {
     "id": 30257,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_leather_05",
+    "slot": "Legs",
+    "name": "Shattrath Leggings"
   },
   "shattrathwraps": {
     "id": 28174,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_07",
+    "slot": "Wrist",
+    "name": "Shattrath Wraps"
   },
   "shawlofshiftingprobabilities": {
     "id": 29369,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_16",
+    "slot": "Back",
+    "name": "Shawl of Shifting Probabilities"
   },
   "shiffarsnexushorn": {
     "id": 28418,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gizmo_elementalblastingpowder",
+    "slot": "Trinket",
+    "name": "Shiffar's Nexus-Horn"
   },
   "shockwavetruncheon": {
     "id": 29353,
-    "icon": null,
+    "icon": "inv_mace_54",
     "slot": null,
-    "name": null
+    "name": "Shockwave Truncheon"
   },
   "shoulderguardsofthebold": {
     "id": 27803,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_26",
+    "slot": "Shoulder",
+    "name": "Shoulderguards of the Bold"
   },
   "shoulderpadsofassassination": {
     "id": 27776,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_24",
+    "slot": "Shoulder",
+    "name": "Shoulderpads of Assassination"
   },
   "shurikenofnegation": {
     "id": 28826,
-    "icon": null,
+    "icon": "inv_misc_ahnqirajtrinket_03",
     "slot": null,
-    "name": null
+    "name": "Shuriken of Negation"
   },
   "slayersmarkoftheredemption": {
     "id": 31077,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_39",
+    "slot": "Finger",
+    "name": "Slayer's Mark of the Redemption"
   },
   "sonicspear": {
     "id": 27903,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_spear_08",
+    "slot": "Two-Hand",
+    "name": "Sonic Spear"
   },
   "souleatershandwraps": {
     "id": 28780,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_15",
+    "slot": "Hands",
+    "name": "Soul-Eater's Handwraps"
   },
   "soulwandofthealdor": {
     "id": 27885,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_wand_05",
+    "slot": "Ranged",
+    "name": "Soul-Wand of the Aldor"
   },
   "spauldersofoblivion": {
     "id": 27778,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_18",
+    "slot": "Shoulder",
+    "name": "Spaulders of Oblivion"
   },
   "spauldersoftherighteous": {
     "id": 27739,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_10",
+    "slot": "Shoulder",
+    "name": "Spaulders of the Righteous"
   },
   "spellfirebelt": {
     "id": 21846,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_04",
+    "slot": "Waist",
+    "name": "Spellfire Belt"
   },
   "spellfiregloves": {
     "id": 21847,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_19",
+    "slot": "Hands",
+    "name": "Spellfire Gloves"
   },
   "spellfirerobe": {
     "id": 21848,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_cloth_02",
+    "slot": "Chest",
+    "name": "Spellfire Robe"
   },
   "spellstrikehood": {
     "id": 24266,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_27",
+    "slot": "Head",
+    "name": "Spellstrike Hood"
   },
   "spellstrikepants": {
     "id": 24262,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_cloth_14",
+    "slot": "Legs",
+    "name": "Spellstrike Pants"
   },
   "spinesever": {
     "id": 34622,
-    "icon": null,
+    "icon": "inv_weapon_shortblade_24",
     "slot": null,
-    "name": null
+    "name": "Spinesever"
   },
   "spymistresswristguards": {
     "id": 28171,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_08",
+    "slot": "Wrist",
+    "name": "Spymistress's Wristguards"
   },
   "starlightdagger": {
     "id": 27543,
-    "icon": null,
+    "icon": "inv_weapon_shortblade_37",
     "slot": null,
-    "name": null
+    "name": "Starlight Dagger"
   },
   "steamhingechainofvalor": {
     "id": 27792,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "ability_rogue_nervesofsteel",
+    "slot": "Neck",
+    "name": "Steam-Hinge Chain of Valor"
   },
   "styleensimpedingscarab": {
     "id": 19431,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_armorkit_10",
+    "slot": "Trinket",
+    "name": "Styleen's Impeding Scarab"
   },
   "swampstonenecklace": {
     "id": 27766,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_necklace_29",
+    "slot": "Neck",
+    "name": "Swampstone Necklace"
   },
   "talismanofephemeralpower": {
     "id": 18820,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_stonetablet_11",
+    "slot": "Trinket",
+    "name": "Talisman of Ephemeral Power"
   },
   "talismanofkalecgos": {
     "id": 29271,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_offhand_outlandraid_02",
+    "slot": "Held In Off-hand",
+    "name": "Talisman of Kalecgos"
   },
   "tarrenmilldefenderscinch": {
     "id": 29319,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_24",
+    "slot": "Waist",
+    "name": "Tarren Mill Defender's Cinch"
   },
   "tearsofheaven": {
     "id": 29274,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_potion_75",
+    "slot": "Held In Off-hand",
+    "name": "Tears of Heaven"
   },
   "teethofgruul": {
     "id": 28822,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_bone_09",
+    "slot": "Neck",
+    "name": "Teeth of Gruul"
   },
   "terrorpitgirdle": {
     "id": 28778,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_belt_20",
+    "slot": "Waist",
+    "name": "Terror Pit Girdle"
   },
   "theessencefocuser": {
     "id": 31304,
-    "icon": null,
+    "icon": "inv_mace_34",
     "slot": null,
-    "name": null
+    "name": "The Essence Focuser"
   },
   "thesagaofterokk": {
     "id": 27634,
-    "icon": null,
+    "icon": "inv_relics_libramoftruth",
     "slot": null,
-    "name": null
+    "name": "The Saga of Terokk"
   },
   "thesoulharvestersbindings": {
     "id": 23021,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_07",
+    "slot": "Wrist",
+    "name": "The Soul Harvester's Bindings"
   },
   "thesuneater": {
     "id": 29362,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_sword_63",
+    "slot": "One-Hand",
+    "name": "The Sun Eater"
   },
   "thunderinggreathelm": {
     "id": 28775,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_58",
+    "slot": "Head",
+    "name": "Thundering Greathelm"
   },
   "timewardensleggings": {
     "id": 29184,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_plate_10",
+    "slot": "Legs",
+    "name": "Timewarden's Leggings"
   },
   "tomeofshadowforce": {
     "id": 19309,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_book_06",
+    "slot": "Held In Off-hand",
+    "name": "Tome of Shadow Force"
   },
   "totemofhealingrains": {
     "id": 28523,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "spell_nature_giftofthewaterspirit",
+    "slot": "Relic",
+    "name": "Totem of Healing Rains"
   },
   "totemofsustaining": {
     "id": 23200,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_relics_totemoflife",
+    "slot": "Relic",
+    "name": "Totem of Sustaining"
   },
   "totemoftheplains": {
     "id": 25645,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_relics_totemoflife",
+    "slot": "Relic",
+    "name": "Totem of the Plains"
   },
   "totemofthethunderhead": {
     "id": 24413,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "spell_nature_lightning",
+    "slot": "Relic",
+    "name": "Totem of the Thunderhead"
   },
   "trialfiretrousers": {
     "id": 28594,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_cloth_05",
+    "slot": "Legs",
+    "name": "Trial-Fire Trousers"
   },
   "trousersofoblivion": {
     "id": 27948,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_08",
+    "slot": "Legs",
+    "name": "Trousers of Oblivion"
   },
   "truestrikering": {
     "id": 31326,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_58",
+    "slot": "Finger",
+    "name": "Truestrike Ring"
   },
   "tunicofassassination": {
     "id": 28204,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_chain_17",
+    "slot": "Chest",
+    "name": "Tunic of Assassination"
   },
   "unitingcharm": {
     "id": 25633,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_talisman_04",
+    "slot": "Trinket",
+    "name": "Uniting Charm"
   },
   "valanoslongbow": {
     "id": 31303,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_weapon_bow_04",
+    "slot": "Ranged",
+    "name": "Valanos' Longbow"
   },
   "vermillionrobesofthedominant": {
     "id": 27799,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_cloth_18",
+    "slot": "Chest",
+    "name": "Vermillion Robes of the Dominant"
   },
   "vestiaspauldronsofinnergrace": {
     "id": 28250,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_35",
+    "slot": "Shoulder",
+    "name": "Vestia's Pauldrons of Inner Grace"
   },
   "veteransmusket": {
     "id": 29151,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_weapon_rifle_02",
+    "slot": "Ranged",
+    "name": "Veteran's Musket"
   },
   "vindicatorsbrand": {
     "id": 29124,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_sword_draenei_01",
+    "slot": "One-Hand",
+    "name": "Vindicator's Brand"
   },
   "violetsignet": {
     "id": 29285,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_jewelry_ring_62",
+    "slot": "Finger",
+    "name": "Violet Signet"
   },
   "voidfirewand": {
     "id": 25939,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_wand_06",
+    "slot": "Ranged",
+    "name": "Voidfire Wand"
   },
   "wandofthenetherwing": {
     "id": 27890,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_wand_19",
+    "slot": "Ranged",
+    "name": "Wand of the Netherwing"
   },
   "warbringerhandguards": {
     "id": 29017,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_gauntlets_28",
+    "slot": "Hands",
+    "name": "Warbringer Handguards"
   },
   "wastewalkerhelm": {
     "id": 28224,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_15",
+    "slot": "Head",
+    "name": "Wastewalker Helm"
   },
   "wastewalkerleggings": {
     "id": 27837,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_pants_mail_04",
+    "slot": "Legs",
+    "name": "Wastewalker Leggings"
   },
   "wastewalkershoulderpads": {
     "id": 27797,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_shoulder_15",
+    "slot": "Shoulder",
+    "name": "Wastewalker Shoulderpads"
   },
   "watcherscowl": {
     "id": 29174,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_helmet_34",
+    "slot": "Head",
+    "name": "Watcher's Cowl"
   },
   "whiteremedycape": {
     "id": 24254,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_cape_11",
+    "slot": "Back",
+    "name": "White Remedy Cape"
   },
   "windcallersorb": {
     "id": 29170,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_misc_orb_01",
+    "slot": "Held In Off-hand",
+    "name": "Windcaller's Orb"
   },
   "windchannellerstunic": {
     "id": 31554,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_chest_cloth_08",
+    "slot": "Chest",
+    "name": "Windchanneller's Tunic"
   },
   "windhawkbracers": {
     "id": 29523,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_bracer_07",
+    "slot": "Wrist",
+    "name": "Windhawk Bracers"
   },
   "windshearboots": {
     "id": 28810,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_chain_05",
+    "slot": "Feet",
+    "name": "Windshear Boots"
   },
   "wraithblade": {
     "id": 22807,
-    "icon": null,
+    "icon": "inv_sword_11",
     "slot": null,
-    "name": null
+    "name": "Wraith Blade"
   },
   "wrathfirehandcannon": {
     "id": 27898,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_weapon_rifle_20",
+    "slot": "Ranged",
+    "name": "Wrathfire Hand-Cannon"
   },
   "xavianstiletto": {
     "id": 28659,
-    "icon": null,
+    "icon": "inv_weapon_shortblade_35",
     "slot": null,
-    "name": null
+    "name": "Xavian Stiletto"
   },
   "zierhutslosttreads": {
     "id": 30674,
-    "icon": null,
-    "slot": null,
-    "name": null
+    "icon": "inv_boots_plate_06",
+    "slot": "Feet",
+    "name": "Zierhut's Lost Treads"
   },
   "antlersofmalorne": {
     "id": 29093,
