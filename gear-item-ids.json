@@ -18940,5 +18940,11 @@
     "icon": "inv_jewelry_talisman_09",
     "slot": "Trinket",
     "name": "Strength of the High Chief"
+  },
+  "flametongueseal": {
+    "id": 29270,
+    "icon": "spell_fire_sealoffire",
+    "slot": "Held In Off-hand",
+    "name": "Flametongue Seal"
   }
 }
