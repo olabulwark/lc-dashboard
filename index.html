@@ -4128,28 +4128,28 @@ function onItemChange() {
   // Build recommendation HTML (computed later, placeholder updated after algorithm runs)
   function buildRecommendationHtml(rec) {
     if (rec.type === 'open') {
-      return `<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
-        <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.18em;color:var(--text-dim);text-transform:uppercase;">Recommendation</div>
-        <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold-light);letter-spacing:0.08em;">Open Roll</div>
-        <div style="font-size:11px;color:var(--text-dim);">No active raiders have a &gt;5% upgrade</div>
+      return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+        <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.18em;color:var(--text-dim);text-transform:uppercase;">Recommendation</div>
+        <div style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold-light);letter-spacing:0.08em;">Open Roll</div>
+        <div style="font-size:13px;color:var(--text-dim);text-align:center;">No active raiders have a &gt;5% upgrade</div>
       </div>`;
     }
-    const names = rec.rollers.map(s => `<span style="color:${classColor(s.p.name)||'var(--gold-light)'};">${s.p.name}</span> <span style="color:var(--text-dim);font-size:10px;">(${s.normPr})</span>`);
+    const names = rec.rollers.map(s => `<span style="color:${classColor(s.p.name)||'var(--gold-light)'};">${s.p.name}</span><span style="color:var(--text-dim);font-size:11px;"> (${s.normPr})</span>`);
     const label = rec.rollers.length === 1 ? 'Awarded To' : 'Roll Off';
-    return `<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;">
-      <div style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.18em;color:var(--text-dim);text-transform:uppercase;">Recommendation</div>
-      <div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold-light);letter-spacing:0.08em;">${label}</div>
-      <div style="font-size:12px;text-align:right;line-height:1.6;">${names.join('<br>')}</div>
+    return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
+      <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.18em;color:var(--text-dim);text-transform:uppercase;">Recommendation</div>
+      <div style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold-light);letter-spacing:0.08em;">${label}</div>
+      <div style="font-size:13px;text-align:center;white-space:nowrap;">${names.join(' &nbsp;·&nbsp; ')}</div>
     </div>`;
   }
 
   const itemHeaderHtml = itemId
-    ? `<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;">
+    ? `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
         <div style="display:flex;align-items:center;gap:12px;">
           ${itemIconHtml}
           <a href="https://www.wowhead.com/tbc/item=${itemId}" data-wowhead="item=${itemId}&dataset=tbc" target="_blank" rel="noopener" style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold);text-decoration:none;">${item}</a>
         </div>
-        <div id="lootRecommendation" style="min-width:160px;"></div>
+        <div id="lootRecommendation" style="min-width:200px;"></div>
        </div>`
     : `<div style="margin-bottom:16px;font-family:'Cinzel',serif;font-size:16px;color:var(--gold);">${item}</div>`;
 
