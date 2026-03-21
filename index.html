@@ -3241,9 +3241,12 @@ function renderBisPanel() {
     return;
   }
 
-  const items = (bisData[spec]?.[slot] || [])
-    .filter(([id,rank,p]) => p === phase)
-    .sort((a,b) => b[3] - a[3]); // sort by EPV descending
+  // Filter, deduplicate by item ID, and sort by EPV descending
+  const _raw = (bisData[spec]?.[slot] || []).filter(([id,rank,p]) => p === phase);
+  const _seen = new Set();
+  const items = _raw
+    .sort((a,b) => b[3] - a[3])
+    .filter(([id]) => { if (_seen.has(id)) return false; _seen.add(id); return true; });
 
   let html = `<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
     <thead><tr style="border-bottom:1px solid var(--border);">
