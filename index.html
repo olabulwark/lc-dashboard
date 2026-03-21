@@ -1147,8 +1147,7 @@
   </div>
 
   <!-- Persistent auth status bar (always visible when authenticated) -->
-  <div class="divider"></div>
-  <div id="githubAuthBar" style="display:none;margin-top:24px;padding:8px 12px;border-top:1px solid var(--border);display:none;align-items:center;justify-content:space-between;">
+  <div id="githubAuthBar" style="display:none;padding:8px 12px;border-top:1px solid var(--border);display:none;align-items:center;justify-content:space-between;">
     <span style="font-size:12px;color:var(--text-dim);">&#128273; Authenticated via GitHub</span>
     <button class="btn" onclick="clearGithubToken()" style="font-size:11px;padding:3px 10px;">Disconnect</button>
   </div>
@@ -2136,8 +2135,8 @@ function getSortedPlayers(role, players, bottom20threshold, top20threshold, poin
       av = pointsByPlayer[normalizeName(a.name)] ?? 0;
       bv = pointsByPlayer[normalizeName(b.name)] ?? 0;
     } else if (col === 'consumes') {
-      const aScores = Object.values(buffScoreByPlayerDate[normalizeName(a.name)] || {}).map(v => v?.total).filter(v => v !== null);
-      const bScores = Object.values(buffScoreByPlayerDate[normalizeName(b.name)] || {}).map(v => v?.total).filter(v => v !== null);
+      const aScores = getAdjustedConsumeScores(a.name);
+      const bScores = getAdjustedConsumeScores(b.name);
       av = aScores.length ? aScores.reduce((x,y) => x+y,0) / aScores.length : -1;
       bv = bScores.length ? bScores.reduce((x,y) => x+y,0) / bScores.length : -1;
     } else if (col === 'priority') {
@@ -2218,6 +2217,92 @@ function gearColor(count) {
   return C5; // 4+
 }
 
+// ── Consume Score Helpers ───────────────────────────────────────────────────
+
+// Returns true if this player's role means weapon oil is often out of their control
+function isPhysicalRole(playerName) {
+  const role = lastRenderData.roles.find(r =>
+    r.players.some(p => normalizeName(p.name) === normalizeName(playerName))
+  )?.name || '';
+  return role === 'Tanks' || role === 'Physical DPS';
+}
+
+// For a given raid date, get all wepOil values for Physical DPS / Tank players
+// Returns a frequency map: {value -> count}
+function getRaidWepOilFrequency(dateLabel) {
+  const freq = {};
+  for (const [key, dates] of Object.entries(buffScoreByPlayerDate)) {
+    const score = dates[dateLabel];
+    if (!score || score.wepOil === undefined) continue;
+    // Find player name from key
+    const playerName = Object.keys(canonicalNames).includes(key) ? canonicalNames[key] : key;
+    if (!isPhysicalRole(playerName)) continue;
+    const val = score.wepOil;
+    freq[val] = (freq[val] || 0) + 1;
+  }
+  return freq;
+}
+
+// Compute adjusted per-raid consume score for a player, accounting for:
+// 1. Weapon oil forgiveness for Physical DPS / Tanks when it's a shared issue
+// 2. Per-raid outlier forgiveness based on player's track record
+function getAdjustedConsumeScores(playerName) {
+  const key = normalizeName(playerName);
+  const raidScores = buffScoreByPlayerDate[key] || {};
+  const physical = isPhysicalRole(playerName);
+  const attended = Object.keys(raidScores).length;
+
+  // Step 1: compute adjusted score per raid (weapon oil forgiveness)
+  const adjusted = {};
+  for (const [dateLabel, score] of Object.entries(raidScores)) {
+    if (score.total === null || score.total === undefined) continue;
+
+    let wepOilScore = score.wepOil ?? 100;
+
+    // If physical role, check if wepOil value is shared by 2+ others → raid buff issue
+    if (physical) {
+      const freq = getRaidWepOilFrequency(dateLabel);
+      const othersWithSameValue = (freq[wepOilScore] || 0) - 1; // subtract self
+      if (othersWithSameValue >= 2) {
+        wepOilScore = 100; // forgive — raid buff issue, not personal
+      }
+    }
+
+    // Recompute total from components: elixir + food + wepOil, equal weight
+    const elixir = score.elixir ?? 100;
+    const food = score.food ?? 100;
+    const adjTotal = (elixir + food + wepOilScore) / 3;
+    adjusted[dateLabel] = adjTotal;
+  }
+
+  const scores = Object.values(adjusted);
+  if (!scores.length) return [];
+
+  // Step 2: per-raid outlier forgiveness based on track record
+  // Sort to find median
+  const sorted = [...scores].sort((a, b) => a - b);
+  const median = sorted[Math.floor(sorted.length / 2)];
+
+  // Forgiveness increases with raids attended — same curve as attendance
+  const forgiveness = 1 - 1 / (1 + attended / 8);
+
+  return scores.map(s => {
+    const gap = median - s;
+    if (gap > 20) {
+      // Outlier low raid — blend toward median
+      return s + gap * forgiveness;
+    }
+    return s;
+  });
+}
+
+// Get a single adjusted average consume score for display / modifier use
+function getAdjustedConsumeAvg(playerName) {
+  const scores = getAdjustedConsumeScores(playerName);
+  if (!scores.length) return null;
+  return scores.reduce((a, b) => a + b, 0) / scores.length;
+}
+
 function calculatePriority(p, bottom20threshold, top20threshold, pointValues) {
   // Must have attended more than 2 raids
   if (!p.pct || p.attended < 2) return { score: 0, tooltip: 'Insufficient raids attended' };
@@ -2226,10 +2311,9 @@ function calculatePriority(p, bottom20threshold, top20threshold, pointValues) {
   const attFloor = Math.floor(p.pct / 10);
   const attScore = attFloor * p.attended;
 
-  // Consume modifier: 1 / (1 + missingConsumePct/100)
-  const playerBuffScores = buffScoreByPlayerDate[normalizeName(p.name)] || {};
-  const consumeScores = Object.values(playerBuffScores).map(v => v?.total).filter(v => v !== null);
-  const avgConsume = consumeScores.length ? consumeScores.reduce((a, b) => a + b, 0) / consumeScores.length : 100;
+  // Consume modifier: 1 / (1 + missingConsumePct/100) — uses adjusted scores
+  const _adjConsumeScores = getAdjustedConsumeScores(p.name);
+  const avgConsume = _adjConsumeScores.length ? _adjConsumeScores.reduce((a, b) => a + b, 0) / _adjConsumeScores.length : 100;
   const missingConsume = Math.max(0, 100 - avgConsume);
   const consumeMod = 1 / (1 + missingConsume / 100);
 
@@ -2255,7 +2339,7 @@ function calculatePriority(p, bottom20threshold, top20threshold, pointValues) {
 
   const tooltip = [
     `Attendance: floor(${p.pct.toFixed(1)}%/10)×${p.attended} = ${attScore}`,
-    `Consume mod: 1/(1+${missingConsume.toFixed(1)}%) = ×${consumeMod.toFixed(3)}`,
+    `Consume mod: 1/(1+${missingConsume.toFixed(1)}%) = ×${consumeMod.toFixed(3)} (adj)`,
     `Gear mod: 1/(1+0.1×${gearIssueCount}) = ×${gearMod.toFixed(3)}`,
     `Loot mod: ${lootTier}`,
   ].join('&#10;');
@@ -2374,7 +2458,7 @@ function getRoleRowsHtml(sorted, dates, bottom20threshold, top20threshold, point
             return wclCellHtml(wcl, p.name);
           })()}</td>
           <td class="consumes-cell">${(() => {
-            const scores = Object.values(buffScoreByPlayerDate[normalizeName(p.name)] || {}).map(v => v?.total).filter(v => v !== null);
+            const scores = getAdjustedConsumeScores(p.name);
             if (!scores.length) return '<span style="color:var(--text-dim);font-style:italic;font-size:13px;">—</span>';
             const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
             const avgRound = Math.round(avg);
@@ -2430,7 +2514,7 @@ function render({ dates, roles }) {
   // Avg consumes (weighted by raids attended)
   let _totalWeighted = 0, _totalWeight = 0;
   roles.flatMap(r => r.players).filter(p => p.pct !== null && !p.inactive && p.attended >= 2).forEach(p => {
-    const scores = Object.values(buffScoreByPlayerDate[normalizeName(p.name)] || {}).map(v => v?.total).filter(v => v !== null);
+    const scores = getAdjustedConsumeScores(p.name);
     if (!scores.length) return;
     const playerAvg = scores.reduce((a, b) => a + b, 0) / scores.length;
     _totalWeighted += playerAvg * p.attended;
@@ -3904,7 +3988,7 @@ function onItemChange() {
     if (col === 'points')   return pointsByPlayer[normalizeName(p.name)] ?? 0;
     if (col === 'wcl')      return wclData[normalizeName(p.name)]?.medianPerf ?? -1;
     if (col === 'consumes') {
-      const sc = Object.values(buffScoreByPlayerDate[normalizeName(p.name)] || {}).map(v => v?.total).filter(v => v !== null);
+      const sc = getAdjustedConsumeScores(p.name);
       return sc.length ? sc.reduce((a,b)=>a+b,0)/sc.length : -1;
     }
     if (col === 'attendance') return p.attended;
@@ -4149,7 +4233,7 @@ function onItemChange() {
     const ptsCol = hiPts ? C5 : t20pts ? C4 : b20pts ? C2 : zloPts ? C1 : C3;
 
     // Consumes
-    const consumeScores = Object.values(buffScoreByPlayerDate[key] || {}).map(v => v?.total).filter(v => v !== null);
+    const consumeScores = getAdjustedConsumeScores(p.name);
     const avgCon = consumeScores.length ? Math.round(consumeScores.reduce((a,b)=>a+b,0)/consumeScores.length) : null;
     const conStr = avgCon !== null ? `<span style="color:${pctColor(avgCon)};">${avgCon}%</span>` : '<span style="color:var(--text-dim);font-style:italic;">—</span>';
 
