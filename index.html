@@ -1107,6 +1107,7 @@
       <div class="loot-select-group">
         <label class="loot-select-label">Phase</label>
         <select class="loot-select" id="bisPhaseSelect" onchange="onBisSpecChange()">
+          <option value="0">All Phases</option>
           <option value="1">Phase 1 (T4)</option>
           <option value="2">Phase 2 (T5)</option>
           <option value="3">Phase 3 (ZA)</option>
@@ -1392,35 +1393,40 @@ function getBisEntriesForItem(itemId) {
   return entries;
 }
 
-// Get BiS rank for an item ID for a given spec and phase (null if not on list)
-function getBisRank(itemId, spec, phase) {
+// Get best BiS rank for an item across all phases for a given spec
+function getBisRank(itemId, spec) {
   if (!bisData[spec]) return null;
+  let best = null;
   for (const items of Object.values(bisData[spec])) {
-    for (const [id, rank, p] of items) {
-      if (id === itemId && p === phase) return rank;
+    for (const [id, rank] of items) {
+      if (id === itemId && (best === null || rank < best)) best = rank;
     }
   }
-  return null;
+  return best;
 }
 
-// Get the EPV for an item ID for a given spec and phase (null if not on list)
-function getBisEpv(itemId, spec, phase) {
+// Get best EPV for an item across all phases for a given spec
+function getBisEpv(itemId, spec) {
   if (!bisData[spec]) return null;
+  let best = null;
   for (const items of Object.values(bisData[spec])) {
     for (const [id, rank, p, epv100] of items) {
-      if (id === itemId && p === phase) return epv100 / 100;
+      if (id === itemId) {
+        const epv = epv100 / 100;
+        if (best === null || epv > best) best = epv;
+      }
     }
   }
-  return null;
+  return best;
 }
 
-// Get all specs that consider an item BiS rank 1-5 in a given phase
-function getBisSpecsForItem(itemId, phase) {
+// Get all specs that consider an item BiS (any phase)
+function getBisSpecsForItem(itemId) {
   const specs = [];
   for (const [spec, slots] of Object.entries(bisData)) {
     for (const items of Object.values(slots)) {
-      for (const [id, rank, p] of items) {
-        if (id === itemId && p === phase && rank <= 5) {
+      for (const [id, rank] of items) {
+        if (id === itemId) {
           specs.push({ spec, rank });
           break;
         }
@@ -3134,7 +3140,8 @@ function getPlayerBisSpecs(playerName) {
 }
 
 // Get the best EPV for an item ID for a player across all their applicable specs, for a given phase
-function getPlayerItemEpv(playerName, itemId, phase) {
+// Get the best EPV for an item across ALL phases for a player's applicable specs
+function getPlayerItemEpv(playerName, itemId) {
   const specs = getPlayerBisSpecs(playerName);
   if (!specs.length || !itemId) return null;
   let best = null;
@@ -3142,7 +3149,7 @@ function getPlayerItemEpv(playerName, itemId, phase) {
     if (!bisData[spec]) continue;
     for (const items of Object.values(bisData[spec])) {
       for (const [id, rank, p, epv100] of items) {
-        if (id === itemId && p === phase) {
+        if (id === itemId) {
           const epv = epv100 / 100;
           if (best === null || epv > best) best = epv;
         }
@@ -3152,8 +3159,8 @@ function getPlayerItemEpv(playerName, itemId, phase) {
   return best;
 }
 
-// Get the best BiS rank for an item ID for a player across all their applicable specs
-function getPlayerItemBisRank(playerName, itemId, phase) {
+// Get the best BiS rank for an item across ALL phases for a player's applicable specs
+function getPlayerItemBisRank(playerName, itemId) {
   const specs = getPlayerBisSpecs(playerName);
   if (!specs.length || !itemId) return null;
   let best = null;
@@ -3161,7 +3168,7 @@ function getPlayerItemBisRank(playerName, itemId, phase) {
     if (!bisData[spec]) continue;
     for (const items of Object.values(bisData[spec])) {
       for (const [id, rank, p] of items) {
-        if (id === itemId && p === phase) {
+        if (id === itemId) {
           if (best === null || rank < best) best = rank;
         }
       }
@@ -3202,15 +3209,16 @@ function initBisPanel() {
 
 function onBisSpecChange() {
   const spec = document.getElementById('bisSpecSelect').value;
-  const phase = parseInt(document.getElementById('bisPhaseSelect').value) || 1;
+  const phase = parseInt(document.getElementById('bisPhaseSelect').value); // 0 = all
   const slotSel = document.getElementById('bisSlotSelect');
   const prevSlot = slotSel.value;
 
-  // Repopulate slot dropdown for this spec/phase
   slotSel.innerHTML = '<option value="">— Select Slot —</option>';
   if (spec && bisData[spec]) {
     const availableSlots = Object.keys(bisData[spec])
-      .filter(slot => bisData[spec][slot].some(([id,rank,p]) => p === phase))
+      .filter(slot => phase === 0
+        ? bisData[spec][slot].length > 0
+        : bisData[spec][slot].some(([id,rank,p]) => p === phase))
       .sort((a,b) => {
         const ai = BIS_SLOT_ORDER.indexOf(a), bi = BIS_SLOT_ORDER.indexOf(b);
         return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
@@ -3222,7 +3230,6 @@ function onBisSpecChange() {
       slotSel.appendChild(opt);
     });
     slotSel.disabled = false;
-    // Restore previous slot if still valid
     if (prevSlot && availableSlots.includes(prevSlot)) slotSel.value = prevSlot;
   } else {
     slotSel.disabled = true;
@@ -3232,7 +3239,7 @@ function onBisSpecChange() {
 
 function renderBisPanel() {
   const spec = document.getElementById('bisSpecSelect').value;
-  const phase = parseInt(document.getElementById('bisPhaseSelect').value) || 1;
+  const phase = parseInt(document.getElementById('bisPhaseSelect').value); // 0 = all
   const slot = document.getElementById('bisSlotSelect').value;
   const el = document.getElementById('bisContent');
 
@@ -3241,17 +3248,19 @@ function renderBisPanel() {
     return;
   }
 
-  // Filter, deduplicate by item ID, and sort by EPV descending
-  const _raw = (bisData[spec]?.[slot] || []).filter(([id,rank,p]) => p === phase);
-  const _seen = new Set();
-  const items = _raw
-    .sort((a,b) => b[3] - a[3])
-    .filter(([id]) => { if (_seen.has(id)) return false; _seen.add(id); return true; });
+  // Filter by phase (0 = all), deduplicate by item ID keeping highest EPV, sort descending
+  const _raw = (bisData[spec]?.[slot] || []).filter(([id,rank,p]) => phase === 0 || p === phase);
+  const _best = new Map();
+  for (const entry of _raw) {
+    const [id,,, epv100] = entry;
+    if (!_best.has(id) || epv100 > _best.get(id)[3]) _best.set(id, entry);
+  }
+  const items = [..._best.values()].sort((a,b) => b[3] - a[3]);
 
-  let html = `<table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+  let html = `<table style="width:100%;border-collapse:collapse;margin-bottom:24px;" id="bisTable">
     <thead><tr style="border-bottom:1px solid var(--border);">
       <th style="text-align:left;padding:6px 12px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);">Item</th>
-      <th style="text-align:right;padding:6px 12px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);width:80px;">EPV</th>
+      <th style="text-align:right;padding:6px 12px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);width:120px;">EPV</th>
     </tr></thead><tbody>`;
 
   if (!items.length) {
@@ -3273,15 +3282,30 @@ function renderBisPanel() {
           ${icon}${displayName}
         </a>
       </td>
-      <td style="padding:6px 12px;text-align:right;font-size:12px;color:var(--text-dim);">${epv}</td>
+      <td style="padding:4px 12px;text-align:right;">
+        <input type="number" step="0.1" value="${epv}"
+          data-item-id="${id}" data-original="${epv}"
+          style="background:transparent;border:none;border-bottom:1px solid transparent;color:var(--gold-dim);font-size:16px;font-family:'Crimson Pro',serif;text-align:right;width:90px;outline:none;cursor:text;transition:border-color 0.15s;"
+          onfocus="this.style.borderBottomColor='var(--gold-dim)';this.style.background='var(--bg2)';"
+          onblur="this.style.borderBottomColor='transparent';this.style.background='transparent';bisMarkChanged(this);"
+          oninput="bisMarkChanged(this);" />
+      </td>
     </tr>`;
   }
   html += '</tbody></table>';
 
-  // Add item form (only shown when spec+slot are selected)
+  // Save overrides button — hidden until changes are made
+  html += `
+    <div id="bisOverrideSaveBar" style="display:none;border-top:1px solid var(--border);padding:12px 0;margin-bottom:16px;display:none;align-items:center;gap:12px;">
+      <button class="btn primary" onclick="bisSubmitOverrides('${spec}','${slot}')" style="padding:6px 18px;">Save EPV Changes</button>
+      <button class="btn" onclick="bisResetOverrides()" style="padding:6px 14px;">Reset</button>
+      <span id="bisOverrideHint" style="font-size:12px;color:var(--text-dim);"></span>
+    </div>`;
+
+  // Add item form
   html += `
     <div style="border-top:1px solid var(--border);padding-top:16px;">
-      <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.2em;color:var(--text-dim);margin-bottom:10px;">ADD ITEM TO ${spec.toUpperCase()} — ${slot.toUpperCase()} — PHASE ${phase}</div>
+      <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.2em;color:var(--text-dim);margin-bottom:10px;">ADD ITEM TO ${spec.toUpperCase()} — ${slot.toUpperCase()}${phase > 0 ? ' — PHASE ' + phase : ''}</div>
       <div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;">
         <div style="display:flex;flex-direction:column;gap:4px;">
           <label style="font-size:11px;color:var(--text-dim);">Wowhead Item ID</label>
@@ -3300,6 +3324,65 @@ function renderBisPanel() {
 
   if (typeof $WowheadPower !== 'undefined' && $WowheadPower.refreshLinks) {
     setTimeout(() => $WowheadPower.refreshLinks(), 100);
+  }
+}
+
+function bisMarkChanged(input) {
+  const original = parseFloat(input.dataset.original);
+  const current = parseFloat(input.value);
+  const changed = !isNaN(current) && Math.abs(current - original) > 0.01;
+  input.style.color = changed ? 'var(--gold)' : 'var(--gold-dim)';
+
+  // Show/hide save bar based on whether any field has changed
+  const anyChanged = [...document.querySelectorAll('#bisTable input[data-item-id]')]
+    .some(el => Math.abs(parseFloat(el.value) - parseFloat(el.dataset.original)) > 0.01);
+  const bar = document.getElementById('bisOverrideSaveBar');
+  if (bar) bar.style.display = anyChanged ? 'flex' : 'none';
+}
+
+function bisResetOverrides() {
+  document.querySelectorAll('#bisTable input[data-item-id]').forEach(el => {
+    el.value = el.dataset.original;
+    el.style.color = 'var(--gold-dim)';
+  });
+  const bar = document.getElementById('bisOverrideSaveBar');
+  if (bar) bar.style.display = 'none';
+}
+
+async function bisSubmitOverrides(spec, slot) {
+  const hint = document.getElementById('bisOverrideHint');
+  const inputs = [...document.querySelectorAll('#bisTable input[data-item-id]')];
+  const changed = inputs.filter(el => Math.abs(parseFloat(el.value) - parseFloat(el.dataset.original)) > 0.01);
+
+  if (!githubToken) { hint.textContent = 'GitHub token required.'; hint.style.color = '#c94c4c'; return; }
+  if (!changed.length) { hint.textContent = 'No changes to save.'; return; }
+
+  hint.textContent = 'Saving...'; hint.style.color = 'var(--text-dim)';
+
+  // Apply overrides to bisData — update all phase entries for this item in this spec/slot
+  for (const el of changed) {
+    const itemId = parseInt(el.dataset['item-id'] || el.getAttribute('data-item-id'));
+    const newEpv100 = Math.round(parseFloat(el.value) * 100);
+    if (!bisData[spec]?.[slot]) continue;
+    bisData[spec][slot] = bisData[spec][slot].map(entry => {
+      if (entry[0] === itemId) return [entry[0], entry[1], entry[2], newEpv100];
+      return entry;
+    });
+    el.dataset.original = el.value;
+    el.style.color = 'var(--gold-dim)';
+  }
+
+  try {
+    await saveJsonToGitHub('bis-data.json', bisData);
+    hint.textContent = `✓ Saved ${changed.length} change${changed.length > 1 ? 's' : ''}.`;
+    hint.style.color = '#4caa6e';
+    const bar = document.getElementById('bisOverrideSaveBar');
+    if (bar) bar.style.display = 'none';
+    // Re-render to reflect new sort order
+    renderBisPanel();
+  } catch(e) {
+    hint.textContent = 'Error: ' + e.message;
+    hint.style.color = '#c94c4c';
   }
 }
 
@@ -3816,11 +3899,10 @@ function onItemChange() {
 
   // Get candidate item id and EPV once for use in all rows
   const candidateItemId = getItemId(item);
-  const BIS_PHASE = 1; // hardcoded to phase 1 for now
 
-  // Check if candidate is on BiS for anyone — if not, hide all indicators
+  // Check if candidate is on BiS for anyone (any phase) — if not, hide all indicators
   const candidateOnBisForAnyone = candidateItemId
-    ? Object.values(bisData).some(slots => Object.values(slots).some(items => items.some(([id,,p]) => id === candidateItemId && p === BIS_PHASE)))
+    ? Object.values(bisData).some(slots => Object.values(slots).some(items => items.some(([id]) => id === candidateItemId)))
     : false;
 
   // Detect if candidate is a two-handed weapon
@@ -3854,8 +3936,8 @@ function onItemChange() {
 
     const playerName = lastRenderData.roles.flatMap(r => r.players)
       .find(p => normalizeName(p.name) === playerKey)?.name || playerKey;
-    const candidateEpv = candidateOnBisForAnyone ? getPlayerItemEpv(playerName, candidateItemId, BIS_PHASE) : null;
-    const candidateRank = candidateOnBisForAnyone ? getPlayerItemBisRank(playerName, candidateItemId, BIS_PHASE) : null;
+    const candidateEpv = candidateOnBisForAnyone ? getPlayerItemEpv(playerName, candidateItemId) : null;
+    const candidateRank = candidateOnBisForAnyone ? getPlayerItemBisRank(playerName, candidateItemId) : null;
 
     const items = slots.map(slot => gear[slot]).filter(Boolean);
     if (!items.length) return dimCell;
@@ -3864,8 +3946,8 @@ function onItemChange() {
     let combinedCurrentEpv = null;
     let combinedCurrentRank = null;
     if (candidateIsTwoHand && items.length > 1 && candidateOnBisForAnyone) {
-      const epvs = items.map(name => getPlayerItemEpv(playerName, getItemId(name), BIS_PHASE)).filter(e => e !== null);
-      const ranks = items.map(name => getPlayerItemBisRank(playerName, getItemId(name), BIS_PHASE));
+      const epvs = items.map(name => getPlayerItemEpv(playerName, getItemId(name))).filter(e => e !== null);
+      const ranks = items.map(name => getPlayerItemBisRank(playerName, getItemId(name)));
       combinedCurrentEpv = epvs.length ? epvs.reduce((a,b) => a+b, 0) : null;
       // For combined rank: use null if any item is off-list (warning), else use best rank found
       combinedCurrentRank = ranks.some(r => r === null) ? null : Math.min(...ranks.filter(r => r !== null));
@@ -3889,8 +3971,8 @@ function onItemChange() {
           }
         } else if (id) {
           // Normal case: per-item indicator
-          const currentEpv = getPlayerItemEpv(playerName, id, BIS_PHASE);
-          const currentRank = getPlayerItemBisRank(playerName, id, BIS_PHASE);
+          const currentEpv = getPlayerItemEpv(playerName, id);
+          const currentRank = getPlayerItemBisRank(playerName, id);
           bisIndicator = makeBisIndicator(candidateEpv, currentEpv, currentRank, candidateRank);
         }
       }
