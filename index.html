@@ -3721,10 +3721,6 @@ function renderBisPanel() {
 
   el.innerHTML = html;
 
-  // Populate recommendation (must be after el.innerHTML so lootRecommendation exists)
-  const _recEl = document.getElementById('lootRecommendation');
-  if (_recEl) _recEl.innerHTML = buildRecommendationHtml(recommendation);
-
   if (typeof $WowheadPower !== 'undefined' && $WowheadPower.refreshLinks) {
     setTimeout(() => $WowheadPower.refreshLinks(), 50);
     setTimeout(() => $WowheadPower.refreshLinks(), 500);
@@ -4746,6 +4742,10 @@ function onItemChange() {
     <p style="margin-top:12px;font-size:13px;color:var(--text-dim);font-style:italic;">${needIt.length} eligible · ${haveIt.length} already received · ${inactiveNeedIt.length} inactive</p>
 
   `;
+  // Populate recommendation now that lootRecommendation div is in the DOM
+  const _recEl = document.getElementById('lootRecommendation');
+  if (_recEl) _recEl.innerHTML = buildRecommendationHtml(recommendation);
+
   setTimeout(() => { if (typeof $WowheadPower !== 'undefined' && $WowheadPower.refreshLinks) $WowheadPower.refreshLinks(); }, 200);
 }
 
