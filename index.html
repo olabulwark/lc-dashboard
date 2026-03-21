@@ -1158,10 +1158,10 @@
             Open Roll — no active non-receiver has a &gt;5% EPV upgrade<br>
             Restricted — at least one active non-receiver has a &gt;5% EPV upgrade<br>
             &nbsp;&nbsp;→ Sort all eligible non-receivers by priority score<br>
-            &nbsp;&nbsp;→ Find the largest relative gap ≥10% between adjacent scores (top 4)<br>
+            &nbsp;&nbsp;→ Any gap &gt;50% cuts decisively (item awarded outright) &nbsp;|&nbsp; otherwise find largest gap ≥10%<br>
             &nbsp;&nbsp;→ Everyone above the cut rolls &nbsp;|&nbsp; Cap at 4 players &nbsp;|&nbsp; ≤2 eligible: all roll
           </div>
-          <div style="margin-top:8px;color:var(--text-dim);">Open Roll applies when no raider stands to benefit meaningfully from the item — it should go to whoever can use it or wants it for off-spec. When the item is a genuine upgrade for someone, the roll is restricted to players whose priority scores are clustered at the top. The gap detection uses relative difference — (score[i] − score[i+1]) / score[i] — so a 20-point gap means more at the top of the range than at the bottom. If no gap of 10% or more exists within the top 4, all four roll together. A single player standing clearly above the field is awarded the item outright rather than rolling. EPV is only used to determine whether a restricted roll is warranted, not to restrict who participates in the roll itself.</div>
+          <div style="margin-top:8px;color:var(--text-dim);">Open Roll applies when no raider stands to benefit meaningfully from the item — it should go to whoever can use it or wants it for off-spec. When the item is a genuine upgrade for someone, the roll is restricted to players whose priority scores are clustered at the top. The gap detection uses relative difference — (score[i] − score[i+1]) / score[i] — so a 20-point gap means more at the top of the range than at the bottom. Gaps larger than 50% are considered decisive — the player above the gap is awarded the item outright with no roll needed. Gaps between 10% and 50% trigger a roll-off among the players above the cut. Gaps smaller than 10% are too close to distinguish. If no gap of 10% or more exists within the top 4, all four roll together. EPV is only used to determine whether a restricted roll is warranted, not to restrict who participates in the roll itself.</div>
         </div>
 
       </div>
@@ -4131,25 +4131,24 @@ function onItemChange() {
       return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
         <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.18em;color:var(--text-dim);text-transform:uppercase;">Recommendation</div>
         <div style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold-light);letter-spacing:0.08em;">Open Roll</div>
-        <div style="font-size:13px;color:var(--text-dim);text-align:center;">No active raiders have a &gt;5% upgrade</div>
       </div>`;
     }
-    const names = rec.rollers.map(s => `<span style="color:${classColor(s.p.name)||'var(--gold-light)'};">${s.p.name}</span><span style="color:var(--text-dim);font-size:11px;"> (${s.normPr})</span>`);
-    const label = rec.rollers.length === 1 ? 'Awarded To' : 'Roll Off';
+    const names = rec.rollers.map(s => `<span style="color:${classColor(s.p.name)||'var(--gold-light)'};">${s.p.name}</span><span style="color:var(--text-dim);font-size:12px;"> (${s.normPr})</span>`);
+    const label = rec.rollers.length === 1 ? 'Award to' : 'Roll Off';
     return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
       <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.18em;color:var(--text-dim);text-transform:uppercase;">Recommendation</div>
       <div style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold-light);letter-spacing:0.08em;">${label}</div>
-      <div style="font-size:13px;text-align:center;white-space:nowrap;">${names.join(' &nbsp;·&nbsp; ')}</div>
+      <div style="font-size:15px;text-align:center;white-space:nowrap;">${names.join(' &nbsp;·&nbsp; ')}</div>
     </div>`;
   }
 
   const itemHeaderHtml = itemId
     ? `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <div style="display:flex;align-items:center;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;flex-shrink:0;">
           ${itemIconHtml}
           <a href="https://www.wowhead.com/tbc/item=${itemId}" data-wowhead="item=${itemId}&dataset=tbc" target="_blank" rel="noopener" style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold);text-decoration:none;">${item}</a>
         </div>
-        <div id="lootRecommendation" style="min-width:200px;"></div>
+        <div id="lootRecommendation" style="min-width:0;flex:1;margin-left:16px;"></div>
        </div>`
     : `<div style="margin-bottom:16px;font-family:'Cinzel',serif;font-size:16px;color:var(--gold);">${item}</div>`;
 
@@ -4573,10 +4572,18 @@ function onItemChange() {
     if (byPrio.length <= 2) return { type: 'restricted', rollers: byPrio };
     const topN = byPrio.slice(0, 4);
     let cutIdx = topN.length;
-    let biggestGap = -1;
+    // Pass 1: decisive gap — any gap > 50% cuts immediately (item awarded outright)
     for (let i = 0; i < topN.length - 1; i++) {
       const gap = (topN[i].normPr - topN[i + 1].normPr) / topN[i].normPr;
-      if (gap >= 0.10 && gap > biggestGap) { biggestGap = gap; cutIdx = i + 1; }
+      if (gap > 0.50) { cutIdx = i + 1; break; }
+    }
+    // Pass 2: if no decisive gap, find the biggest gap >= 10%
+    if (cutIdx === topN.length) {
+      let biggestGap = -1;
+      for (let i = 0; i < topN.length - 1; i++) {
+        const gap = (topN[i].normPr - topN[i + 1].normPr) / topN[i].normPr;
+        if (gap >= 0.10 && gap > biggestGap) { biggestGap = gap; cutIdx = i + 1; }
+      }
     }
     return { type: 'restricted', rollers: topN.slice(0, cutIdx) };
   }
