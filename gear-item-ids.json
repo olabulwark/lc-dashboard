@@ -18954,63 +18954,2037 @@
     "name": "Flametongue Seal"
   },
   "lurkersbelt": {
-  "id": 30677,
-  "icon": "inv_belt_03",
-  "slot": "Waist",
-  "name": "Lurker's Belt"
+    "id": 30677,
+    "icon": "inv_belt_03",
+    "slot": "Waist",
+    "name": "Lurker's Belt"
   },
   "telaarihuntinggirdle": {
-    "id":27521,
-    "icon":"inv_belt_09",
-    "slot":"Waist",
-    "name":"Telaari Hunting Girdle"
+    "id": 27521,
+    "icon": "inv_belt_09",
+    "slot": "Waist",
+    "name": "Telaari Hunting Girdle"
   },
   "scaledbreastplateofcarnage": {
-    "id":28599,
-    "icon":"inv_chest_chain_07",
-    "slot":"Chest",
-    "name":"Scaled Breastplate of Carnage"
+    "id": 28599,
+    "icon": "inv_chest_chain_07",
+    "slot": "Chest",
+    "name": "Scaled Breastplate of Carnage"
   },
   "salvagershauberk": {
-    "id":30835,
-    "icon":"inv_chest_plate08",
-    "slot":"Chest",
-    "name":"Salvager's Hauberk"
+    "id": 30835,
+    "icon": "inv_chest_plate08",
+    "slot": "Chest",
+    "name": "Salvager's Hauberk"
   },
   "ringofredemption": {
-    "id":23066,
-    "icon":"inv_jewelry_ring_51naxxramas",
-    "slot":"Finger",
-    "name":"Ring of Redemption"
+    "id": 23066,
+    "icon": "inv_jewelry_ring_51naxxramas",
+    "slot": "Finger",
+    "name": "Ring of Redemption"
   },
   "bandofaccuria": {
-    "id":17063,
-    "icon":"inv_jewelry_ring_15",
-    "slot":"Finger",
-    "name":"Band of Accuria"
+    "id": 17063,
+    "icon": "inv_jewelry_ring_15",
+    "slot": "Finger",
+    "name": "Band of Accuria"
   },
   "nalikosrevenge": {
-    "id":25804,
-    "icon":"inv_jewelry_ring_16",
-    "slot":"Finger",
-    "name":"Naliko's Revenge"
+    "id": 25804,
+    "icon": "inv_jewelry_ring_16",
+    "slot": "Finger",
+    "name": "Naliko's Revenge"
   },
   "redemptionhandguards": {
-    "id":22426,
-    "icon":"inv_gauntlets_25",
-    "slot":"Hands",
-    "name":"Redemption Handguards"
+    "id": 22426,
+    "icon": "inv_gauntlets_25",
+    "slot": "Hands",
+    "name": "Redemption Handguards"
   },
   "wrathinfusedgauntlets": {
-    "id":32077,
-    "icon":"inv_gauntlets_11",
-    "slot":"Hands",
-    "name":"Wrath Infused Gauntlets"
+    "id": 32077,
+    "icon": "inv_gauntlets_11",
+    "slot": "Hands",
+    "name": "Wrath Infused Gauntlets"
   },
   "thelightningcapacitor": {
-    "id":28785,
-    "icon":"inv_trinket_naxxramas06",
-    "slot":"Trinket",
-    "name":"The Lightning Capacitor"
+    "id": 28785,
+    "icon": "inv_trinket_naxxramas06",
+    "slot": "Trinket",
+    "name": "The Lightning Capacitor"
+  },
+  "theblackpearl": {
+    "id": 32774,
+    "icon": "inv_jewelry_ring_16",
+    "slot": "Finger",
+    "name": "The Black Pearl"
+  },
+  "grandmarshalslamellarchestpiece": {
+    "id": 28679,
+    "icon": "inv_chest_plate05",
+    "slot": "Chest",
+    "name": "Grand Marshal's Lamellar Chestpiece"
+  },
+  "grandmarshalslamellarhelm": {
+    "id": 28681,
+    "icon": "inv_helmet_22",
+    "slot": "Head",
+    "name": "Grand Marshal's Lamellar Helm"
+  },
+  "bootsofrighteousfortitude": {
+    "id": 32778,
+    "icon": "inv_boots_plate_06",
+    "slot": "Feet",
+    "name": "Boots of Righteous Fortitude"
+  },
+  "grandmarshalslamellarshoulders": {
+    "id": 28683,
+    "icon": "inv_shoulder_22",
+    "slot": "Shoulder",
+    "name": "Grand Marshal's Lamellar Shoulders"
+  },
+  "veteransdragonhideboots": {
+    "id": 32786,
+    "icon": "inv_boots_08",
+    "slot": "Feet",
+    "name": "Veteran's Dragonhide Boots"
+  },
+  "veteransdragonhidebelt": {
+    "id": 32798,
+    "icon": "inv_belt_17",
+    "slot": "Waist",
+    "name": "Veteran's Dragonhide Belt"
+  },
+  "grandmarshalsscaledchestpiece": {
+    "id": 28709,
+    "icon": "inv_chest_plate05",
+    "slot": "Chest",
+    "name": "Grand Marshal's Scaled Chestpiece"
+  },
+  "infernotemperedgauntlets": {
+    "id": 30767,
+    "icon": "inv_gauntlets_22",
+    "slot": "Hands",
+    "name": "Inferno Tempered Gauntlets"
+  },
+  "grandmarshalslamellarlegguards": {
+    "id": 28724,
+    "icon": "inv_pants_plate_17",
+    "slot": "Legs",
+    "name": "Grand Marshal's Lamellar Legguards"
+  },
+  "staffoftheforestlord": {
+    "id": 34898,
+    "icon": "inv_staff_12",
+    "slot": "Two-Hand",
+    "name": "Staff of the Forest Lord"
+  },
+  "highwarlordschainspaulders": {
+    "id": 28809,
+    "icon": "inv_shoulder_29",
+    "slot": "Shoulder",
+    "name": "High Warlord's Chain Spaulders"
+  },
+  "highwarlordsdragonhidehelm": {
+    "id": 28812,
+    "icon": "inv_helmet_30",
+    "slot": "Head",
+    "name": "High Warlord's Dragonhide Helm"
+  },
+  "blessedadamantitebracers": {
+    "id": 30862,
+    "icon": "inv_bracer_19",
+    "slot": "Wrist",
+    "name": "Blessed Adamantite Bracers"
+  },
+  "wolfsheadhelm": {
+    "id": 8345,
+    "icon": "inv_helmet_04",
+    "slot": "Head",
+    "name": "Wolfshead Helm"
+  },
+  "glimmeringsteelmantle": {
+    "id": 30878,
+    "icon": "inv_shoulder_65",
+    "slot": "Shoulder",
+    "name": "Glimmering Steel Mantle"
+  },
+  "highwarlordslamellarchestpiece": {
+    "id": 28831,
+    "icon": "inv_chest_plate05",
+    "slot": "Chest",
+    "name": "High Warlord's Lamellar Chestpiece"
+  },
+  "highwarlordslamellarhelm": {
+    "id": 28833,
+    "icon": "inv_helmet_22",
+    "slot": "Head",
+    "name": "High Warlord's Lamellar Helm"
+  },
+  "highwarlordslamellarlegguards": {
+    "id": 28834,
+    "icon": "inv_pants_plate_17",
+    "slot": "Legs",
+    "name": "High Warlord's Lamellar Legguards"
+  },
+  "pillarofferocity": {
+    "id": 30883,
+    "icon": "inv_staff_60",
+    "slot": "Two-Hand",
+    "name": "Pillar of Ferocity"
+  },
+  "highwarlordslamellarshoulders": {
+    "id": 28835,
+    "icon": "inv_shoulder_22",
+    "slot": "Shoulder",
+    "name": "High Warlord's Lamellar Shoulders"
+  },
+  "brutalgladiatorsbatonoflight": {
+    "id": 34985,
+    "icon": "inv_wand_09",
+    "slot": "Ranged",
+    "name": "Brutal Gladiator's Baton of Light"
+  },
+  "brutalgladiatorsbarrier": {
+    "id": 34986,
+    "icon": "inv_shield_54",
+    "slot": "Off Hand",
+    "name": "Brutal Gladiator's Barrier"
+  },
+  "brutalgladiatorsbattlestaff": {
+    "id": 34987,
+    "icon": "inv_staff_74",
+    "slot": "Two-Hand",
+    "name": "Brutal Gladiator's Battle Staff"
+  },
+  "brutalgladiatorsbonecracker": {
+    "id": 34988,
+    "icon": "inv_mace_74",
+    "slot": "Off Hand",
+    "name": "Brutal Gladiator's Bonecracker"
+  },
+  "brutalgladiatorsbonegrinder": {
+    "id": 34989,
+    "icon": "inv_mace_49",
+    "slot": "Two-Hand",
+    "name": "Brutal Gladiator's Bonegrinder"
+  },
+  "brutalgladiatorschaingauntlets": {
+    "id": 34991,
+    "icon": "inv_gauntlets_65",
+    "slot": "Hands",
+    "name": "Brutal Gladiator's Chain Gauntlets"
+  },
+  "brutalgladiatorschainhelm": {
+    "id": 34992,
+    "icon": "inv_helmet128",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Chain Helm"
+  },
+  "brutalgladiatorschainleggings": {
+    "id": 34993,
+    "icon": "inv_pants_mail_20",
+    "slot": "Legs",
+    "name": "Brutal Gladiator's Chain Leggings"
+  },
+  "brutalgladiatorschainspaulders": {
+    "id": 34994,
+    "icon": "inv_shoulder_90",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Chain Spaulders"
+  },
+  "brutalgladiatorschopper": {
+    "id": 34995,
+    "icon": "inv_axe_1h_blacksmithing_02",
+    "slot": "Off Hand",
+    "name": "Brutal Gladiator's Chopper"
+  },
+  "brutalgladiatorscleaver": {
+    "id": 34996,
+    "icon": "inv_axe_1h_blacksmithing_02",
+    "slot": "One-Hand",
+    "name": "Brutal Gladiator's Cleaver"
+  },
+  "brutalgladiatorsdecapitator": {
+    "id": 34997,
+    "icon": "inv_axe_73",
+    "slot": "Two-Hand",
+    "name": "Brutal Gladiator's Decapitator"
+  },
+  "brutalgladiatorsdragonhidegloves": {
+    "id": 34998,
+    "icon": "inv_gauntlets_25",
+    "slot": "Hands",
+    "name": "Brutal Gladiator's Dragonhide Gloves"
+  },
+  "brutalgladiatorsdragonhidehelm": {
+    "id": 34999,
+    "icon": "inv_helmet_126",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Dragonhide Helm"
+  },
+  "brutalgladiatorsdragonhidelegguards": {
+    "id": 35000,
+    "icon": "inv_pants_leather_07",
+    "slot": "Legs",
+    "name": "Brutal Gladiator's Dragonhide Legguards"
+  },
+  "brutalgladiatorsdragonhidespaulders": {
+    "id": 35001,
+    "icon": "inv_shoulder_88",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Dragonhide Spaulders"
+  },
+  "brutalgladiatorsdragonhidetunic": {
+    "id": 35002,
+    "icon": "inv_chest_cloth_05",
+    "slot": "Chest",
+    "name": "Brutal Gladiator's Dragonhide Tunic"
+  },
+  "saviorsgrasp": {
+    "id": 30904,
+    "icon": "inv_chest_plate02",
+    "slot": "Chest",
+    "name": "Savior's Grasp"
+  },
+  "brutalgladiatorsdreadweavehood": {
+    "id": 35004,
+    "icon": "inv_helmet_132",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Dreadweave Hood"
+  },
+  "highwarlordsscaledchestpiece": {
+    "id": 28861,
+    "icon": "inv_chest_plate05",
+    "slot": "Chest",
+    "name": "High Warlord's Scaled Chestpiece"
+  },
+  "brutalgladiatorsdreadweavemantle": {
+    "id": 35006,
+    "icon": "inv_shoulder_96",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Dreadweave Mantle"
+  },
+  "onslaughtgreathelm": {
+    "id": 30974,
+    "icon": "inv_helmet_98",
+    "slot": "Head",
+    "name": "Onslaught Greathelm"
+  },
+  "brutalgladiatorsendgame": {
+    "id": 35008,
+    "icon": "inv_misc_book_06",
+    "slot": "Held In Off-hand",
+    "name": "Brutal Gladiator's Endgame"
+  },
+  "brutalgladiatorsfelweaveamice": {
+    "id": 35009,
+    "icon": "inv_shoulder_96",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Felweave Amice"
+  },
+  "brutalgladiatorsfelweavecowl": {
+    "id": 35010,
+    "icon": "inv_helmet_132",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Felweave Cowl"
+  },
+  "brutalgladiatorsfelweavehandguards": {
+    "id": 35011,
+    "icon": "inv_gauntlets_49",
+    "slot": "Hands",
+    "name": "Brutal Gladiator's Felweave Handguards"
+  },
+  "brutalgladiatorsfelweavetrousers": {
+    "id": 35013,
+    "icon": "inv_pants_cloth_22",
+    "slot": "Legs",
+    "name": "Brutal Gladiator's Felweave Trousers"
+  },
+  "brutalgladiatorsgavel": {
+    "id": 35014,
+    "icon": "inv_mace_73",
+    "slot": "Main Hand",
+    "name": "Brutal Gladiator's Gavel"
+  },
+  "brutalgladiatorsgreatsword": {
+    "id": 35015,
+    "icon": "inv_sword_116",
+    "slot": "Two-Hand",
+    "name": "Brutal Gladiator's Greatsword"
+  },
+  "brutalgladiatorshacker": {
+    "id": 35017,
+    "icon": "inv_axe_1h_blacksmithing_02",
+    "slot": "Off Hand",
+    "name": "Brutal Gladiator's Hacker"
+  },
+  "brutalgladiatorsheavycrossbow": {
+    "id": 35018,
+    "icon": "inv_weapon_crossbow_26",
+    "slot": "Ranged",
+    "name": "Brutal Gladiator's Heavy Crossbow"
+  },
+  "onslaughtchestguard": {
+    "id": 30976,
+    "icon": "inv_chest_plate_23",
+    "slot": "Chest",
+    "name": "Onslaught Chestguard"
+  },
+  "brutalgladiatorskodohidegloves": {
+    "id": 35022,
+    "icon": "inv_gauntlets_25",
+    "slot": "Hands",
+    "name": "Brutal Gladiator's Kodohide Gloves"
+  },
+  "brutalgladiatorskodohidehelm": {
+    "id": 35023,
+    "icon": "inv_helmet_126",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Kodohide Helm"
+  },
+  "brutalgladiatorskodohidelegguards": {
+    "id": 35024,
+    "icon": "inv_pants_leather_07",
+    "slot": "Legs",
+    "name": "Brutal Gladiator's Kodohide Legguards"
+  },
+  "brutalgladiatorskodohidespaulders": {
+    "id": 35025,
+    "icon": "inv_shoulder_88",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Kodohide Spaulders"
+  },
+  "brutalgladiatorslamellargauntlets": {
+    "id": 35028,
+    "icon": "inv_gauntlets_52",
+    "slot": "Hands",
+    "name": "Brutal Gladiator's Lamellar Gauntlets"
+  },
+  "brutalgladiatorslamellarhelm": {
+    "id": 35029,
+    "icon": "inv_helmet_127",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Lamellar Helm"
+  },
+  "brutalgladiatorslamellarlegguards": {
+    "id": 35030,
+    "icon": "inv_pants_plate_29",
+    "slot": "Legs",
+    "name": "Brutal Gladiator's Lamellar Legguards"
+  },
+  "brutalgladiatorslamellarshoulders": {
+    "id": 35031,
+    "icon": "inv_shoulder_89",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Lamellar Shoulders"
+  },
+  "brutalgladiatorsleathergloves": {
+    "id": 35032,
+    "icon": "inv_gauntlets_17",
+    "slot": "Hands",
+    "name": "Brutal Gladiator's Leather Gloves"
+  },
+  "brutalgladiatorsleatherhelm": {
+    "id": 35033,
+    "icon": "inv_helmet_126",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Leather Helm"
+  },
+  "brutalgladiatorsleatherlegguards": {
+    "id": 35034,
+    "icon": "inv_pants_leather_12",
+    "slot": "Legs",
+    "name": "Brutal Gladiator's Leather Legguards"
+  },
+  "brutalgladiatorsleatherspaulders": {
+    "id": 35035,
+    "icon": "inv_shoulder_88",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Leather Spaulders"
+  },
+  "brutalgladiatorsleftrender": {
+    "id": 35037,
+    "icon": "inv_weapon_hand_15",
+    "slot": "Off Hand",
+    "name": "Brutal Gladiator's Left Render"
+  },
+  "brutalgladiatorsleftripper": {
+    "id": 35038,
+    "icon": "inv_weapon_hand_15",
+    "slot": "Off Hand",
+    "name": "Brutal Gladiator's Left Ripper"
+  },
+  "verdantgloves": {
+    "id": 30943,
+    "icon": "inv_gauntlets_21",
+    "slot": "Hands",
+    "name": "Verdant Gloves"
+  },
+  "umberhowlscollar": {
+    "id": 30944,
+    "icon": "inv_bracer_06",
+    "slot": "Wrist",
+    "name": "Umberhowl's Collar"
+  },
+  "ashtemperedlegguards": {
+    "id": 30941,
+    "icon": "inv_pants_leather_01",
+    "slot": "Legs",
+    "name": "Ash Tempered Legguards"
+  },
+  "brutalgladiatorslinkedhelm": {
+    "id": 35044,
+    "icon": "inv_helmet128",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Linked Helm"
+  },
+  "brutalgladiatorslinkedleggings": {
+    "id": 35045,
+    "icon": "inv_pants_mail_20",
+    "slot": "Legs",
+    "name": "Brutal Gladiator's Linked Leggings"
+  },
+  "brutalgladiatorslinkedspaulders": {
+    "id": 35046,
+    "icon": "inv_shoulder_90",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Linked Spaulders"
+  },
+  "brutalgladiatorslongbow": {
+    "id": 35047,
+    "icon": "inv_weapon_bow_31",
+    "slot": "Ranged",
+    "name": "Brutal Gladiator's Longbow"
+  },
+  "brutalgladiatorsmailgauntlets": {
+    "id": 35049,
+    "icon": "inv_gauntlets_65",
+    "slot": "Hands",
+    "name": "Brutal Gladiator's Mail Gauntlets"
+  },
+  "brutalgladiatorsmailhelm": {
+    "id": 35050,
+    "icon": "inv_helmet128",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Mail Helm"
+  },
+  "brutalgladiatorsmailspaulders": {
+    "id": 35052,
+    "icon": "inv_shoulder_90",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Mail Spaulders"
+  },
+  "brutalgladiatorsmoonclothgloves": {
+    "id": 35053,
+    "icon": "inv_gauntlets_64",
+    "slot": "Hands",
+    "name": "Brutal Gladiator's Mooncloth Gloves"
+  },
+  "brutalgladiatorsmoonclothhood": {
+    "id": 35054,
+    "icon": "inv_helmet_132",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Mooncloth Hood"
+  },
+  "brutalgladiatorsmoonclothleggings": {
+    "id": 35055,
+    "icon": "inv_pants_cloth_28",
+    "slot": "Legs",
+    "name": "Brutal Gladiator's Mooncloth Leggings"
+  },
+  "brutalgladiatorsmoonclothmantle": {
+    "id": 35056,
+    "icon": "inv_shoulder_96",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Mooncloth Mantle"
+  },
+  "brutalgladiatorsmutilator": {
+    "id": 35058,
+    "icon": "inv_weapon_shortblade_75",
+    "slot": "Off Hand",
+    "name": "Brutal Gladiator's Mutilator"
+  },
+  "brutalgladiatorsornamentedgloves": {
+    "id": 35060,
+    "icon": "inv_gauntlets_52",
+    "slot": "Hands",
+    "name": "Brutal Gladiator's Ornamented Gloves"
+  },
+  "brutalgladiatorsornamentedheadcover": {
+    "id": 35061,
+    "icon": "inv_helmet_127",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Ornamented Headcover"
+  },
+  "highwarlordsmaul": {
+    "id": 28919,
+    "icon": "inv_hammer_04",
+    "slot": "Two-Hand",
+    "name": "High Warlord's Maul"
+  },
+  "brutalgladiatorspainsaw": {
+    "id": 35064,
+    "icon": "inv_weapon_halberd_20",
+    "slot": "Two-Hand",
+    "name": "Brutal Gladiator's Painsaw"
+  },
+  "brutalgladiatorsornamentedspaulders": {
+    "id": 35063,
+    "icon": "inv_shoulder_89",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Ornamented Spaulders"
+  },
+  "onslaughthandguards": {
+    "id": 30970,
+    "icon": "inv_gauntlets_62",
+    "slot": "Hands",
+    "name": "Onslaught Handguards"
+  },
+  "brutalgladiatorsplategauntlets": {
+    "id": 35067,
+    "icon": "inv_gauntlets_62",
+    "slot": "Hands",
+    "name": "Brutal Gladiator's Plate Gauntlets"
+  },
+  "brutalgladiatorsplatehelm": {
+    "id": 35068,
+    "icon": "inv_helmet_127",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Plate Helm"
+  },
+  "brutalgladiatorsplatelegguards": {
+    "id": 35069,
+    "icon": "inv_pants_plate_27",
+    "slot": "Legs",
+    "name": "Brutal Gladiator's Plate Legguards"
+  },
+  "brutalgladiatorsplateshoulders": {
+    "id": 35070,
+    "icon": "inv_shoulder_89",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Plate Shoulders"
+  },
+  "brutalgladiatorspummeler": {
+    "id": 35071,
+    "icon": "inv_mace_74",
+    "slot": "One-Hand",
+    "name": "Brutal Gladiator's Pummeler"
+  },
+  "brutalgladiatorsquickblade": {
+    "id": 35072,
+    "icon": "inv_sword_114",
+    "slot": "Off Hand",
+    "name": "Brutal Gladiator's Quickblade"
+  },
+  "brutalgladiatorsredoubt": {
+    "id": 35073,
+    "icon": "inv_shield_52",
+    "slot": "Off Hand",
+    "name": "Brutal Gladiator's Redoubt"
+  },
+  "brutalgladiatorsreprieve": {
+    "id": 35074,
+    "icon": "inv_misc_book_06",
+    "slot": "Held In Off-hand",
+    "name": "Brutal Gladiator's Reprieve"
+  },
+  "brutalgladiatorsrifle": {
+    "id": 35075,
+    "icon": "inv_weapon_rifle_21",
+    "slot": "Ranged",
+    "name": "Brutal Gladiator's Rifle"
+  },
+  "brutalgladiatorsrightripper": {
+    "id": 35076,
+    "icon": "inv_weapon_hand_15",
+    "slot": "Main Hand",
+    "name": "Brutal Gladiator's Right Ripper"
+  },
+  "onslaughtshoulderguards": {
+    "id": 30980,
+    "icon": "inv_shoulder_62",
+    "slot": "Shoulder",
+    "name": "Onslaught Shoulderguards"
+  },
+  "brutalgladiatorsringmailgauntlets": {
+    "id": 35078,
+    "icon": "inv_gauntlets_65",
+    "slot": "Hands",
+    "name": "Brutal Gladiator's Ringmail Gauntlets"
+  },
+  "brutalgladiatorsringmailhelm": {
+    "id": 35079,
+    "icon": "inv_helmet128",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Ringmail Helm"
+  },
+  "brutalgladiatorsringmailleggings": {
+    "id": 35080,
+    "icon": "inv_pants_mail_20",
+    "slot": "Legs",
+    "name": "Brutal Gladiator's Ringmail Leggings"
+  },
+  "brutalgladiatorsringmailspaulders": {
+    "id": 35081,
+    "icon": "inv_shoulder_90",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Ringmail Spaulders"
+  },
+  "brutalgladiatorssalvation": {
+    "id": 35082,
+    "icon": "inv_mace_71",
+    "slot": "Main Hand",
+    "name": "Brutal Gladiator's Salvation"
+  },
+  "onslaughtlegguards": {
+    "id": 30978,
+    "icon": "inv_pants_plate_27",
+    "slot": "Legs",
+    "name": "Onslaught Legguards"
+  },
+  "lightbringergreathelm": {
+    "id": 30988,
+    "icon": "inv_helmet_96",
+    "slot": "Head",
+    "name": "Lightbringer Greathelm"
+  },
+  "brutalgladiatorssatinhood": {
+    "id": 35084,
+    "icon": "inv_helmet_132",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Satin Hood"
+  },
+  "brutalgladiatorssatinmantle": {
+    "id": 35086,
+    "icon": "inv_shoulder_96",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Satin Mantle"
+  },
+  "brutalgladiatorsscaledhelm": {
+    "id": 35090,
+    "icon": "inv_helmet_127",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Scaled Helm"
+  },
+  "brutalgladiatorsscaledlegguards": {
+    "id": 35091,
+    "icon": "inv_pants_plate_29",
+    "slot": "Legs",
+    "name": "Brutal Gladiator's Scaled Legguards"
+  },
+  "grandmarshalsmaul": {
+    "id": 28948,
+    "icon": "inv_hammer_04",
+    "slot": "Two-Hand",
+    "name": "Grand Marshal's Maul"
+  },
+  "brutalgladiatorsshanker": {
+    "id": 35093,
+    "icon": "inv_weapon_shortblade_75",
+    "slot": "One-Hand",
+    "name": "Brutal Gladiator's Shanker"
+  },
+  "brutalgladiatorsshieldwall": {
+    "id": 35094,
+    "icon": "inv_shield_53",
+    "slot": "Off Hand",
+    "name": "Brutal Gladiator's Shield Wall"
+  },
+  "brutalgladiatorsshiv": {
+    "id": 35095,
+    "icon": "inv_weapon_shortblade_75",
+    "slot": "Off Hand",
+    "name": "Brutal Gladiator's Shiv"
+  },
+  "brutalgladiatorssilkamice": {
+    "id": 35096,
+    "icon": "inv_shoulder_96",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Silk Amice"
+  },
+  "brutalgladiatorssilkcowl": {
+    "id": 35097,
+    "icon": "inv_helmet_132",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Silk Cowl"
+  },
+  "brutalgladiatorssilkhandguards": {
+    "id": 35098,
+    "icon": "inv_gauntlets_47",
+    "slot": "Hands",
+    "name": "Brutal Gladiator's Silk Handguards"
+  },
+  "brutalgladiatorsscaledshoulders": {
+    "id": 35092,
+    "icon": "inv_shoulder_89",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Scaled Shoulders"
+  },
+  "brutalgladiatorssilktrousers": {
+    "id": 35100,
+    "icon": "inv_pants_cloth_27",
+    "slot": "Legs",
+    "name": "Brutal Gladiator's Silk Trousers"
+  },
+  "brutalgladiatorsslicer": {
+    "id": 35101,
+    "icon": "inv_sword_114",
+    "slot": "One-Hand",
+    "name": "Brutal Gladiator's Slicer"
+  },
+  "brutalgladiatorsspellblade": {
+    "id": 35102,
+    "icon": "inv_weapon_shortblade_73",
+    "slot": "Main Hand",
+    "name": "Brutal Gladiator's Spellblade"
+  },
+  "brutalgladiatorsstaff": {
+    "id": 35103,
+    "icon": "inv_staff_60",
+    "slot": "Two-Hand",
+    "name": "Brutal Gladiator's Staff"
+  },
+  "veteransbandofdominance": {
+    "id": 33056,
+    "icon": "inv_jewelry_ring_60",
+    "slot": "Finger",
+    "name": "Veteran's Band of Dominance"
+  },
+  "wildcaller": {
+    "id": 31009,
+    "icon": "inv_staff_51",
+    "slot": "Two-Hand",
+    "name": "Wildcaller"
+  },
+  "brutalgladiatorstouchofdefeat": {
+    "id": 35107,
+    "icon": "inv_wand_09",
+    "slot": "Ranged",
+    "name": "Brutal Gladiator's Touch of Defeat"
+  },
+  "brutalgladiatorswarstaff": {
+    "id": 35109,
+    "icon": "inv_staff_74",
+    "slot": "Two-Hand",
+    "name": "Brutal Gladiator's War Staff"
+  },
+  "brutalgladiatorswyrmhidehelm": {
+    "id": 35112,
+    "icon": "inv_helmet_126",
+    "slot": "Head",
+    "name": "Brutal Gladiator's Wyrmhide Helm"
+  },
+  "brutalgladiatorswyrmhidelegguards": {
+    "id": 35113,
+    "icon": "inv_pants_leather_07",
+    "slot": "Legs",
+    "name": "Brutal Gladiator's Wyrmhide Legguards"
+  },
+  "brutalgladiatorswyrmhidespaulders": {
+    "id": 35114,
+    "icon": "inv_shoulder_88",
+    "slot": "Shoulder",
+    "name": "Brutal Gladiator's Wyrmhide Spaulders"
+  },
+  "marshalsdragonhidebelt": {
+    "id": 28976,
+    "icon": "inv_belt_17",
+    "slot": "Waist",
+    "name": "Marshal's Dragonhide Belt"
+  },
+  "marshalsdragonhideboots": {
+    "id": 28977,
+    "icon": "inv_boots_08",
+    "slot": "Feet",
+    "name": "Marshal's Dragonhide Boots"
+  },
+  "marshalsdragonhidebracers": {
+    "id": 28978,
+    "icon": "inv_bracer_07",
+    "slot": "Wrist",
+    "name": "Marshal's Dragonhide Bracers"
+  },
+  "guardiansbandofdominance": {
+    "id": 35129,
+    "icon": "inv_jewelry_ring_60",
+    "slot": "Finger",
+    "name": "Guardian's Band of Dominance"
+  },
+  "thunderheartgauntlets": {
+    "id": 31034,
+    "icon": "inv_gauntlets_58",
+    "slot": "Hands",
+    "name": "Thunderheart Gauntlets"
+  },
+  "guardiansbandofsalvation": {
+    "id": 35130,
+    "icon": "inv_jewelry_ring_60",
+    "slot": "Finger",
+    "name": "Guardian's Band of Salvation"
+  },
+  "guardianspendantofconquest": {
+    "id": 35132,
+    "icon": "inv_jewelry_necklace_36",
+    "slot": "Neck",
+    "name": "Guardian's Pendant of Conquest"
+  },
+  "guardiansbandoftriumph": {
+    "id": 35131,
+    "icon": "inv_jewelry_ring_60",
+    "slot": "Finger",
+    "name": "Guardian's Band of Triumph"
+  },
+  "guardianspendantofsalvation": {
+    "id": 35134,
+    "icon": "inv_jewelry_necklace_36",
+    "slot": "Neck",
+    "name": "Guardian's Pendant of Salvation"
+  },
+  "guardianspendantoftriumph": {
+    "id": 35135,
+    "icon": "inv_jewelry_necklace_36",
+    "slot": "Neck",
+    "name": "Guardian's Pendant of Triumph"
+  },
+  "thunderheartcover": {
+    "id": 31039,
+    "icon": "inv_helmet_94",
+    "slot": "Head",
+    "name": "Thunderheart Cover"
+  },
+  "guardianspendantofdominance": {
+    "id": 35133,
+    "icon": "inv_jewelry_necklace_36",
+    "slot": "Neck",
+    "name": "Guardian's Pendant of Dominance"
+  },
+  "thunderheartchestguard": {
+    "id": 31042,
+    "icon": "inv_chest_leather_15",
+    "slot": "Chest",
+    "name": "Thunderheart Chestguard"
+  },
+  "guardianskodohideboots": {
+    "id": 35139,
+    "icon": "inv_boots_cloth_05",
+    "slot": "Feet",
+    "name": "Guardian's Kodohide Boots"
+  },
+  "thunderheartleggings": {
+    "id": 31044,
+    "icon": "inv_pants_leather_26",
+    "slot": "Legs",
+    "name": "Thunderheart Leggings"
+  },
+  "guardianschainsabatons": {
+    "id": 35136,
+    "icon": "inv_boots_plate_09",
+    "slot": "Feet",
+    "name": "Guardian's Chain Sabatons"
+  },
+  "guardianslamellargreaves": {
+    "id": 35140,
+    "icon": "inv_boots_plate_08",
+    "slot": "Feet",
+    "name": "Guardian's Lamellar Greaves"
+  },
+  "guardiansmailsabatons": {
+    "id": 35143,
+    "icon": "inv_boots_plate_09",
+    "slot": "Feet",
+    "name": "Guardian's Mail Sabatons"
+  },
+  "thunderheartpauldrons": {
+    "id": 31048,
+    "icon": "inv_shoulder_58",
+    "slot": "Shoulder",
+    "name": "Thunderheart Pauldrons"
+  },
+  "guardiansmoonclothslippers": {
+    "id": 35144,
+    "icon": "inv_boots_cloth_12",
+    "slot": "Feet",
+    "name": "Guardian's Mooncloth Slippers"
+  },
+  "guardiansplategreaves": {
+    "id": 35146,
+    "icon": "inv_boots_plate_01",
+    "slot": "Feet",
+    "name": "Guardian's Plate Greaves"
+  },
+  "guardiansringmailsabatons": {
+    "id": 35147,
+    "icon": "inv_boots_plate_09",
+    "slot": "Feet",
+    "name": "Guardian's Ringmail Sabatons"
+  },
+  "guardiansscaledgreaves": {
+    "id": 35148,
+    "icon": "inv_boots_plate_08",
+    "slot": "Feet",
+    "name": "Guardian's Scaled Greaves"
+  },
+  "guardianswyrmhideboots": {
+    "id": 35150,
+    "icon": "inv_boots_cloth_05",
+    "slot": "Feet",
+    "name": "Guardian's Wyrmhide Boots"
+  },
+  "guardianschaingirdle": {
+    "id": 35151,
+    "icon": "inv_belt_13",
+    "slot": "Waist",
+    "name": "Guardian's Chain Girdle"
+  },
+  "guardianskodohidebelt": {
+    "id": 35154,
+    "icon": "inv_belt_12",
+    "slot": "Waist",
+    "name": "Guardian's Kodohide Belt"
+  },
+  "guardianslamellarbelt": {
+    "id": 35155,
+    "icon": "inv_belt_12",
+    "slot": "Waist",
+    "name": "Guardian's Lamellar Belt"
+  },
+  "guardiansmailgirdle": {
+    "id": 35158,
+    "icon": "inv_belt_13",
+    "slot": "Waist",
+    "name": "Guardian's Mail Girdle"
+  },
+  "guardiansplatebelt": {
+    "id": 35161,
+    "icon": "inv_belt_14",
+    "slot": "Waist",
+    "name": "Guardian's Plate Belt"
+  },
+  "guardiansringmailgirdle": {
+    "id": 35162,
+    "icon": "inv_belt_13",
+    "slot": "Waist",
+    "name": "Guardian's Ringmail Girdle"
+  },
+  "guardiansscaledbelt": {
+    "id": 35163,
+    "icon": "inv_belt_12",
+    "slot": "Waist",
+    "name": "Guardian's Scaled Belt"
+  },
+  "guardianschainbracers": {
+    "id": 35166,
+    "icon": "inv_bracer_18",
+    "slot": "Wrist",
+    "name": "Guardian's Chain Bracers"
+  },
+  "guardiansdragonhidebracers": {
+    "id": 35167,
+    "icon": "inv_bracer_09",
+    "slot": "Wrist",
+    "name": "Guardian's Dragonhide Bracers"
+  },
+  "guardianskodohidebracers": {
+    "id": 35169,
+    "icon": "inv_bracer_09",
+    "slot": "Wrist",
+    "name": "Guardian's Kodohide Bracers"
+  },
+  "guardianslamellarbracers": {
+    "id": 35170,
+    "icon": "inv_bracer_17",
+    "slot": "Wrist",
+    "name": "Guardian's Lamellar Bracers"
+  },
+  "guardiansmoonclothcuffs": {
+    "id": 35174,
+    "icon": "inv_bracer_02",
+    "slot": "Wrist",
+    "name": "Guardian's Mooncloth Cuffs"
+  },
+  "guardiansornamentedbracers": {
+    "id": 35175,
+    "icon": "inv_bracer_17",
+    "slot": "Wrist",
+    "name": "Guardian's Ornamented Bracers"
+  },
+  "guardiansplatebracers": {
+    "id": 35176,
+    "icon": "inv_bracer_17",
+    "slot": "Wrist",
+    "name": "Guardian's Plate Bracers"
+  },
+  "guardiansringmailbracers": {
+    "id": 35177,
+    "icon": "inv_bracer_18",
+    "slot": "Wrist",
+    "name": "Guardian's Ringmail Bracers"
+  },
+  "guardiansscaledbracers": {
+    "id": 35178,
+    "icon": "inv_bracer_17",
+    "slot": "Wrist",
+    "name": "Guardian's Scaled Bracers"
+  },
+  "guardianswyrmhidebracers": {
+    "id": 35180,
+    "icon": "inv_bracer_09",
+    "slot": "Wrist",
+    "name": "Guardian's Wyrmhide Bracers"
+  },
+  "justicebringer3000specs": {
+    "id": 35185,
+    "icon": "inv_gizmo_newgoggles",
+    "slot": "Head",
+    "name": "Justicebringer 3000 Specs"
+  },
+  "stalkershelmetofsecondsight": {
+    "id": 31106,
+    "icon": "inv_helmet_01",
+    "slot": "Head",
+    "name": "Stalker's Helmet of Second Sight"
+  },
+  "pendantofforgottennames": {
+    "id": 22947,
+    "icon": "inv_jewelry_necklace_28naxxramas",
+    "slot": "Neck",
+    "name": "Pendant of Forgotten Names"
+  },
+  "breastplateofmalorne": {
+    "id": 29096,
+    "icon": "inv_chest_chain_15",
+    "slot": "Chest",
+    "name": "Breastplate of Malorne"
+  },
+  "gauntletsofmalorne": {
+    "id": 29097,
+    "icon": "inv_gauntlets_25",
+    "slot": "Hands",
+    "name": "Gauntlets of Malorne"
+  },
+  "staghelmofmalorne": {
+    "id": 29098,
+    "icon": "inv_helmet_15",
+    "slot": "Head",
+    "name": "Stag-Helm of Malorne"
+  },
+  "greavesofmalorne": {
+    "id": 29099,
+    "icon": "inv_pants_mail_15",
+    "slot": "Legs",
+    "name": "Greaves of Malorne"
+  },
+  "implacableguardiansabatons": {
+    "id": 33207,
+    "icon": "inv_boots_plate_10",
+    "slot": "Feet",
+    "name": "Implacable Guardian Sabatons"
+  },
+  "chestguardofhiddenpurpose": {
+    "id": 33216,
+    "icon": "inv_chest_plate_24",
+    "slot": "Chest",
+    "name": "Chestguard of Hidden Purpose"
+  },
+  "braxxisstaffofslumber": {
+    "id": 31186,
+    "icon": "inv_staff_51",
+    "slot": "Two-Hand",
+    "name": "Braxxis' Staff of Slumber"
+  },
+  "strengthoftheuntamed": {
+    "id": 29173,
+    "icon": "inv_jewelry_necklace_06",
+    "slot": "Neck",
+    "name": "Strength of the Untamed"
+  },
+  "vindicatorspendantofsubjugation": {
+    "id": 35319,
+    "icon": "inv_jewelry_necklace_36",
+    "slot": "Neck",
+    "name": "Vindicator's Pendant of Subjugation"
+  },
+  "blessedscalegirdle": {
+    "id": 29180,
+    "icon": "inv_belt_08",
+    "slot": "Waist",
+    "name": "Blessed Scale Girdle"
+  },
+  "moonclothcowl": {
+    "id": 35333,
+    "icon": "inv_helmet_30",
+    "slot": "Head",
+    "name": "Mooncloth Cowl"
+  },
+  "moonclothshoulderpads": {
+    "id": 35336,
+    "icon": "inv_shoulder_02",
+    "slot": "Shoulder",
+    "name": "Mooncloth Shoulderpads"
+  },
+  "moonclothvestments": {
+    "id": 35337,
+    "icon": "inv_chest_cloth_43",
+    "slot": "Chest",
+    "name": "Mooncloth Vestments"
+  },
+  "bandofsorrow": {
+    "id": 31258,
+    "icon": "inv_jewelry_ring_ahnqiraj_04",
+    "slot": "Finger",
+    "name": "Band of Sorrow"
+  },
+  "dragonhidehelm": {
+    "id": 35357,
+    "icon": "inv_helmet_30",
+    "slot": "Head",
+    "name": "Dragonhide Helm"
+  },
+  "leggingsofapocalypse": {
+    "id": 23071,
+    "icon": "inv_pants_leather_09",
+    "slot": "Legs",
+    "name": "Leggings of Apocalypse"
+  },
+  "dragonhidespaulders": {
+    "id": 35359,
+    "icon": "inv_shoulder_12",
+    "slot": "Shoulder",
+    "name": "Dragonhide Spaulders"
+  },
+  "maskofintrospection": {
+    "id": 33327,
+    "icon": "inv_mask_02",
+    "slot": "Head",
+    "name": "Mask of Introspection"
+  },
+  "stalkerschainspaulders": {
+    "id": 35380,
+    "icon": "inv_shoulder_29",
+    "slot": "Shoulder",
+    "name": "Stalker's Chain Spaulders"
+  },
+  "chestguardofthetalon": {
+    "id": 31285,
+    "icon": "inv_chest_leather_06",
+    "slot": "Chest",
+    "name": "Chestguard of the Talon"
+  },
+  "treemendersbelt": {
+    "id": 29264,
+    "icon": "inv_belt_22",
+    "slot": "Waist",
+    "name": "Tree-Mender's Belt"
+  },
+  "barkchipboots": {
+    "id": 29265,
+    "icon": "inv_boots_chain_05",
+    "slot": "Feet",
+    "name": "Barkchip Boots"
+  },
+  "bandofimpenetrabledefenses": {
+    "id": 31319,
+    "icon": "inv_jewelry_ring_ahnqiraj_01",
+    "slot": "Finger",
+    "name": "Band of Impenetrable Defenses"
+  },
+  "staffofnaturalfury": {
+    "id": 31334,
+    "icon": "inv_staff_50",
+    "slot": "Two-Hand",
+    "name": "Staff of Natural Fury"
+  },
+  "girdleofstromgardeshope": {
+    "id": 33446,
+    "icon": "inv_belt_27",
+    "slot": "Waist",
+    "name": "Girdle of Stromgarde's Hope"
+  },
+  "masterthiefsgloves": {
+    "id": 29357,
+    "icon": "inv_gauntlets_22",
+    "slot": "Hands",
+    "name": "Master Thief's Gloves"
+  },
+  "feralstaffoflashing": {
+    "id": 29359,
+    "icon": "inv_staff_56",
+    "slot": "Two-Hand",
+    "name": "Feral Staff of Lashing"
+  },
+  "gladiatorsmoonclothgloves": {
+    "id": 31409,
+    "icon": "inv_gauntlets_15",
+    "slot": "Hands",
+    "name": "Gladiator's Mooncloth Gloves"
+  },
+  "gladiatorsmoonclothhood": {
+    "id": 31410,
+    "icon": "inv_helmet_30",
+    "slot": "Head",
+    "name": "Gladiator's Mooncloth Hood"
+  },
+  "gladiatorsmoonclothleggings": {
+    "id": 31411,
+    "icon": "inv_pants_cloth_05",
+    "slot": "Legs",
+    "name": "Gladiator's Mooncloth Leggings"
+  },
+  "wildwoodstaff": {
+    "id": 31414,
+    "icon": "inv_staff_49",
+    "slot": "Two-Hand",
+    "name": "Wild Wood Staff"
+  },
+  "staffofprimalfury": {
+    "id": 33465,
+    "icon": "inv_staff_12",
+    "slot": "Two-Hand",
+    "name": "Staff of Primal Fury"
+  },
+  "agilemountainbracers": {
+    "id": 31426,
+    "icon": "inv_bracer_07",
+    "slot": "Wrist",
+    "name": "Agile Mountain Bracers"
+  },
+  "highjusticarslegplates": {
+    "id": 33518,
+    "icon": "inv_pants_plate_28",
+    "slot": "Legs",
+    "name": "High Justicar's Legplates"
+  },
+  "handguardsofthetemplar": {
+    "id": 33519,
+    "icon": "inv_gauntlets_67",
+    "slot": "Hands",
+    "name": "Handguards of the Templar"
+  },
+  "vambracesofthenaaru": {
+    "id": 33520,
+    "icon": "inv_bracer_02",
+    "slot": "Wrist",
+    "name": "Vambraces of the Naaru"
+  },
+  "collarofcommand": {
+    "id": 27410,
+    "icon": "inv_helmet_06",
+    "slot": "Head",
+    "name": "Collar of Command"
+  },
+  "darkguardfacemask": {
+    "id": 27415,
+    "icon": "inv_helmet_42",
+    "slot": "Head",
+    "name": "Darkguard Face Mask"
+  },
+  "suppleleatherboots": {
+    "id": 31532,
+    "icon": "inv_boots_cloth_07",
+    "slot": "Feet",
+    "name": "Supple Leather Boots"
+  },
+  "bloodknightdefender": {
+    "id": 27449,
+    "icon": "inv_shield_05",
+    "slot": "Off Hand",
+    "name": "Blood Knight Defender"
+  },
+  "signetofrepose": {
+    "id": 27491,
+    "icon": "inv_jewelry_ring_59",
+    "slot": "Finger",
+    "name": "Signet of Repose"
+  },
+  "vengefulgladiatorsbarrier": {
+    "id": 33661,
+    "icon": "inv_shield_31",
+    "slot": "Off Hand",
+    "name": "Vengeful Gladiator's Barrier"
+  },
+  "grandmarshalsmoonclothmitts": {
+    "id": 31620,
+    "icon": "inv_gauntlets_15",
+    "slot": "Hands",
+    "name": "Grand Marshal's Mooncloth Mitts"
+  },
+  "grandmarshalsmoonclothcowl": {
+    "id": 31622,
+    "icon": "inv_helmet_30",
+    "slot": "Head",
+    "name": "Grand Marshal's Mooncloth Cowl"
+  },
+  "vengefulgladiatorsdragonhidegloves": {
+    "id": 33671,
+    "icon": "inv_gauntlets_58",
+    "slot": "Hands",
+    "name": "Vengeful Gladiator's Dragonhide Gloves"
+  },
+  "grandmarshalsmoonclothshoulderpads": {
+    "id": 31624,
+    "icon": "inv_shoulder_02",
+    "slot": "Shoulder",
+    "name": "Grand Marshal's Mooncloth Shoulderpads"
+  },
+  "vengefulgladiatorsdragonhidehelm": {
+    "id": 33672,
+    "icon": "inv_helmet_94",
+    "slot": "Head",
+    "name": "Vengeful Gladiator's Dragonhide Helm"
+  },
+  "vengefulgladiatorsdragonhidelegguards": {
+    "id": 33673,
+    "icon": "inv_pants_leather_26",
+    "slot": "Legs",
+    "name": "Vengeful Gladiator's Dragonhide Legguards"
+  },
+  "vengefulgladiatorsdragonhidespaulders": {
+    "id": 33674,
+    "icon": "inv_shoulder_58",
+    "slot": "Shoulder",
+    "name": "Vengeful Gladiator's Dragonhide Spaulders"
+  },
+  "vengefulgladiatorsdragonhidetunic": {
+    "id": 33675,
+    "icon": "inv_chest_leather_15",
+    "slot": "Chest",
+    "name": "Vengeful Gladiator's Dragonhide Tunic"
+  },
+  "highwarlordsmoonclothshoulderpads": {
+    "id": 31628,
+    "icon": "inv_shoulder_02",
+    "slot": "Shoulder",
+    "name": "High Warlord's Mooncloth Shoulderpads"
+  },
+  "grandmarshalsmoonclothvestments": {
+    "id": 31625,
+    "icon": "inv_chest_cloth_43",
+    "slot": "Chest",
+    "name": "Grand Marshal's Mooncloth Vestments"
+  },
+  "highwarlordsmoonclothvestments": {
+    "id": 31629,
+    "icon": "inv_chest_cloth_43",
+    "slot": "Chest",
+    "name": "High Warlord's Mooncloth Vestments"
+  },
+  "highwarlordsmoonclothcowl": {
+    "id": 31626,
+    "icon": "inv_helmet_30",
+    "slot": "Head",
+    "name": "High Warlord's Mooncloth Cowl"
+  },
+  "vengefulgladiatorsendgame": {
+    "id": 33681,
+    "icon": "inv_misc_book_06",
+    "slot": "Held In Off-hand",
+    "name": "Vengeful Gladiator's Endgame"
+  },
+  "scoutshood": {
+    "id": 31658,
+    "icon": "inv_helmet_30",
+    "slot": "Head",
+    "name": "Scout's Hood"
+  },
+  "vengefulgladiatorsstaff": {
+    "id": 33716,
+    "icon": "inv_staff_60",
+    "slot": "Two-Hand",
+    "name": "Vengeful Gladiator's Staff"
+  },
+  "vengefulgladiatorsornamentedgloves": {
+    "id": 33723,
+    "icon": "inv_gauntlets_60",
+    "slot": "Hands",
+    "name": "Vengeful Gladiator's Ornamented Gloves"
+  },
+  "vengefulgladiatorsredoubt": {
+    "id": 33735,
+    "icon": "inv_shield_31",
+    "slot": "Off Hand",
+    "name": "Vengeful Gladiator's Redoubt"
+  },
+  "vengefulgladiatorsreprieve": {
+    "id": 33736,
+    "icon": "inv_misc_book_06",
+    "slot": "Held In Off-hand",
+    "name": "Vengeful Gladiator's Reprieve"
+  },
+  "vengefulgladiatorsshieldwall": {
+    "id": 33755,
+    "icon": "inv_shield_31",
+    "slot": "Off Hand",
+    "name": "Vengeful Gladiator's Shield Wall"
+  },
+  "felsteelhelm": {
+    "id": 23519,
+    "icon": "inv_helmet_22",
+    "slot": "Head",
+    "name": "Felsteel Helm"
+  },
+  "khoriumpants": {
+    "id": 23523,
+    "icon": "inv_pants_plate_04",
+    "slot": "Legs",
+    "name": "Khorium Pants"
+  },
+  "khoriumbelt": {
+    "id": 23524,
+    "icon": "inv_belt_11",
+    "slot": "Waist",
+    "name": "Khorium Belt"
+  },
+  "gauntletsoftheirontower": {
+    "id": 23532,
+    "icon": "inv_gauntlets_29",
+    "slot": "Hands",
+    "name": "Gauntlets of the Iron Tower"
+  },
+  "oathkeepershelm": {
+    "id": 23536,
+    "icon": "inv_helmet_38",
+    "slot": "Head",
+    "name": "Oathkeeper's Helm"
+  },
+  "amanimaskofdeath": {
+    "id": 33810,
+    "icon": "inv_helmet_114",
+    "slot": "Head",
+    "name": "Amani Mask of Death"
+  },
+  "guardiansbandofsubjugation": {
+    "id": 37927,
+    "icon": "inv_jewelry_ring_60",
+    "slot": "Finger",
+    "name": "Guardian's Band of Subjugation"
+  },
+  "guardianspendantofsubjugation": {
+    "id": 37928,
+    "icon": "inv_jewelry_necklace_36",
+    "slot": "Neck",
+    "name": "Guardian's Pendant of Subjugation"
+  },
+  "guardianspendantofreprieve": {
+    "id": 37929,
+    "icon": "inv_jewelry_necklace_36",
+    "slot": "Neck",
+    "name": "Guardian's Pendant of Reprieve"
+  },
+  "gladiatorslamellargauntlets": {
+    "id": 27703,
+    "icon": "inv_gauntlets_29",
+    "slot": "Hands",
+    "name": "Gladiator's Lamellar Gauntlets"
+  },
+  "glovesofthehiddentemple": {
+    "id": 21605,
+    "icon": "inv_gauntlets_19",
+    "slot": "Hands",
+    "name": "Gloves of the Hidden Temple"
+  },
+  "greatstaffoftheleviathan": {
+    "id": 27757,
+    "icon": "inv_staff_56",
+    "slot": "Two-Hand",
+    "name": "Greatstaff of the Leviathan"
+  },
+  "vindicatorsornamentedbelt": {
+    "id": 33903,
+    "icon": "inv_belt_14",
+    "slot": "Waist",
+    "name": "Vindicator's Ornamented Belt"
+  },
+  "vindicatorsornamentedgreaves": {
+    "id": 33905,
+    "icon": "inv_boots_plate_04",
+    "slot": "Feet",
+    "name": "Vindicator's Ornamented Greaves"
+  },
+  "chainofglowingtendrils": {
+    "id": 29815,
+    "icon": "inv_jewelry_necklace_04",
+    "slot": "Neck",
+    "name": "Chain of Glowing Tendrils"
+  },
+  "gauntletsofvindication": {
+    "id": 27798,
+    "icon": "inv_gauntlets_19",
+    "slot": "Hands",
+    "name": "Gauntlets of Vindication"
+  },
+  "staffofbeasts": {
+    "id": 25761,
+    "icon": "inv_staff_34",
+    "slot": "Two-Hand",
+    "name": "Staff of Beasts"
+  },
+  "manaclesofremembrance": {
+    "id": 25778,
+    "icon": "inv_bracer_07",
+    "slot": "Wrist",
+    "name": "Manacles of Remembrance"
+  },
+  "yorsrevenge": {
+    "id": 31924,
+    "icon": "inv_jewelry_ring_50naxxramas",
+    "slot": "Finger",
+    "name": "Yor's Revenge"
+  },
+  "dauntlesshandguards": {
+    "id": 25788,
+    "icon": "inv_gauntlets_12",
+    "slot": "Hands",
+    "name": "Dauntless Handguards"
+  },
+  "fanbladepauldrons": {
+    "id": 27847,
+    "icon": "inv_shoulder_34",
+    "slot": "Shoulder",
+    "name": "Fanblade Pauldrons"
+  },
+  "maladaarsblessedchaplet": {
+    "id": 27871,
+    "icon": "spell_holy_summonlightwell",
+    "slot": "Neck",
+    "name": "Maladaar's Blessed Chaplet"
+  },
+  "mercilessgladiatorsdragonhidegloves": {
+    "id": 31967,
+    "icon": "inv_gauntlets_28",
+    "slot": "Hands",
+    "name": "Merciless Gladiator's Dragonhide Gloves"
+  },
+  "mercilessgladiatorsdragonhidelegguards": {
+    "id": 31969,
+    "icon": "inv_pants_cloth_05",
+    "slot": "Legs",
+    "name": "Merciless Gladiator's Dragonhide Legguards"
+  },
+  "draenicwildstaff": {
+    "id": 27877,
+    "icon": "inv_staff_42",
+    "slot": "Two-Hand",
+    "name": "Draenic Wildstaff"
+  },
+  "gladiatorsscaledlegguards": {
+    "id": 27882,
+    "icon": "inv_pants_plate_17",
+    "slot": "Legs",
+    "name": "Gladiator's Scaled Legguards"
+  },
+  "platinumshieldofthevalorous": {
+    "id": 27887,
+    "icon": "inv_shield_35",
+    "slot": "Off Hand",
+    "name": "Platinum Shield of the Valorous"
+  },
+  "adamantinefigurine": {
+    "id": 27891,
+    "icon": "inv_qirajidol_sage",
+    "slot": "Trinket",
+    "name": "Adamantine Figurine"
+  },
+  "mercilessgladiatorsmaul": {
+    "id": 32014,
+    "icon": "inv_mace_52",
+    "slot": "Two-Hand",
+    "name": "Merciless Gladiator's Maul"
+  },
+  "mercilessgladiatorsmoonclothhood": {
+    "id": 32016,
+    "icon": "inv_helmet_30",
+    "slot": "Head",
+    "name": "Merciless Gladiator's Mooncloth Hood"
+  },
+  "savagemaskofthelynxlord": {
+    "id": 27938,
+    "icon": "inv_helmet_73",
+    "slot": "Head",
+    "name": "Savage Mask of the Lynx Lord"
+  },
+  "mercilessgladiatorsscaledlegguards": {
+    "id": 32042,
+    "icon": "inv_pants_plate_17",
+    "slot": "Legs",
+    "name": "Merciless Gladiator's Scaled Legguards"
+  },
+  "fleshlingsimulationstaff": {
+    "id": 30010,
+    "icon": "inv_staff_51",
+    "slot": "Two-Hand",
+    "name": "Fleshling Simulation Staff"
+  },
+  "wildfurygreatstaff": {
+    "id": 30021,
+    "icon": "inv_staff_50",
+    "slot": "Two-Hand",
+    "name": "Wildfury Greatstaff"
+  },
+  "soulclothshoulders": {
+    "id": 21864,
+    "icon": "inv_shoulder_02",
+    "slot": "Shoulder",
+    "name": "Soulcloth Shoulders"
+  },
+  "skyforgedgreataxe": {
+    "id": 30088,
+    "icon": "inv_axe_46",
+    "slot": "Two-Hand",
+    "name": "Skyforged Great Axe"
+  },
+  "spauldersofthethalassiansavior": {
+    "id": 34193,
+    "icon": "inv_shoulder_89",
+    "slot": "Shoulder",
+    "name": "Spaulders of the Thalassian Savior"
+  },
+  "corensluckycoin": {
+    "id": 38289,
+    "icon": "inv_misc_elvencoins",
+    "slot": "Trinket",
+    "name": "Coren's Lucky Coin"
+  },
+  "stanchionofprimalinstinct": {
+    "id": 34198,
+    "icon": "inv_staff_12",
+    "slot": "Two-Hand",
+    "name": "Stanchion of Primal Instinct"
+  },
+  "gauntletsofthesoothedsoul": {
+    "id": 34240,
+    "icon": "inv_gauntlets_20",
+    "slot": "Hands",
+    "name": "Gauntlets of the Soothed Soul"
+  },
+  "helmofburningrighteousness": {
+    "id": 34243,
+    "icon": "inv_helmet_25",
+    "slot": "Head",
+    "name": "Helm of Burning Righteousness"
+  },
+  "gladiatorsdragonhidegloves": {
+    "id": 28126,
+    "icon": "inv_gauntlets_28",
+    "slot": "Hands",
+    "name": "Gladiator's Dragonhide Gloves"
+  },
+  "gladiatorsdragonhidelegguards": {
+    "id": 28128,
+    "icon": "inv_pants_cloth_05",
+    "slot": "Legs",
+    "name": "Gladiator's Dragonhide Legguards"
+  },
+  "gladiatorsdragonhidetunic": {
+    "id": 28130,
+    "icon": "inv_chest_leather_03",
+    "slot": "Chest",
+    "name": "Gladiator's Dragonhide Tunic"
+  },
+  "pearlinlaidboots": {
+    "id": 32243,
+    "icon": "inv_boots_chain_08",
+    "slot": "Feet",
+    "name": "Pearl Inlaid Boots"
+  },
+  "nordrassilchestplate": {
+    "id": 30222,
+    "icon": "inv_chest_chain_15",
+    "slot": "Chest",
+    "name": "Nordrassil Chestplate"
+  },
+  "nordrassilhandgrips": {
+    "id": 30223,
+    "icon": "inv_gauntlets_25",
+    "slot": "Hands",
+    "name": "Nordrassil Handgrips"
+  },
+  "nordrassilheaddress": {
+    "id": 30228,
+    "icon": "inv_helmet_15",
+    "slot": "Head",
+    "name": "Nordrassil Headdress"
+  },
+  "nordrassilferalkilt": {
+    "id": 30229,
+    "icon": "inv_pants_mail_15",
+    "slot": "Legs",
+    "name": "Nordrassil Feral-Kilt"
+  },
+  "nordrassilferalmantle": {
+    "id": 30230,
+    "icon": "inv_shoulder_14",
+    "slot": "Shoulder",
+    "name": "Nordrassil Feral-Mantle"
+  },
+  "breastplateoftherighteous": {
+    "id": 28203,
+    "icon": "inv_chest_chain_15",
+    "slot": "Chest",
+    "name": "Breastplate of the Righteous"
+  },
+  "braidedeterniumchain": {
+    "id": 24114,
+    "icon": "inv_jewelry_necklace_07",
+    "slot": "Neck",
+    "name": "Braided Eternium Chain"
+  },
+  "lieutenantssignetoflordaeron": {
+    "id": 28211,
+    "icon": "inv_jewelry_ring_10",
+    "slot": "Finger",
+    "name": "Lieutenant's Signet of Lordaeron"
+  },
+  "eyeofthenight": {
+    "id": 24116,
+    "icon": "inv_jewelry_necklace_28",
+    "slot": "Neck",
+    "name": "Eye of the Night"
+  },
+  "chainofthetwilightowl": {
+    "id": 24121,
+    "icon": "inv_jewelry_necklace_ahnqiraj_02",
+    "slot": "Neck",
+    "name": "Chain of the Twilight Owl"
+  },
+  "figurinetalasiteowl": {
+    "id": 24127,
+    "icon": "inv_jewelcrafting_jadeowl",
+    "slot": "Trinket",
+    "name": "Figurine - Talasite Owl"
+  },
+  "ursolsclaw": {
+    "id": 24155,
+    "icon": "inv_staff_51",
+    "slot": "Two-Hand",
+    "name": "Ursol's Claw"
+  },
+  "crownofempoweredfate": {
+    "id": 32354,
+    "icon": "inv_helmet_96",
+    "slot": "Head",
+    "name": "Crown of Empowered Fate"
+  },
+  "helmoftherighteous": {
+    "id": 28285,
+    "icon": "inv_helmet_25",
+    "slot": "Head",
+    "name": "Helm of the Righteous"
+  },
+  "lightbringerbracers": {
+    "id": 34432,
+    "icon": "inv_bracer_02",
+    "slot": "Wrist",
+    "name": "Lightbringer Bracers"
+  },
+  "protectorateassassinsring": {
+    "id": 30339,
+    "icon": "inv_jewelry_ring_03",
+    "slot": "Finger",
+    "name": "Protectorate Assassin's Ring"
+  },
+  "onslaughtwristguards": {
+    "id": 34442,
+    "icon": "inv_bracer_17",
+    "slot": "Wrist",
+    "name": "Onslaught Wristguards"
+  },
+  "thunderheartwristguards": {
+    "id": 34444,
+    "icon": "inv_bracer_09",
+    "slot": "Wrist",
+    "name": "Thunderheart Wristguards"
+  },
+  "lightwardensgirdle": {
+    "id": 30371,
+    "icon": "inv_belt_08",
+    "slot": "Waist",
+    "name": "Lightwarden's Girdle"
+  },
+  "dreamersdragonstaff": {
+    "id": 28325,
+    "icon": "inv_staff_49",
+    "slot": "Two-Hand",
+    "name": "Dreamer's Dragonstaff"
+  },
+  "lightbringerbelt": {
+    "id": 34487,
+    "icon": "inv_belt_27",
+    "slot": "Waist",
+    "name": "Lightbringer Belt"
+  },
+  "thadellsbracers": {
+    "id": 30400,
+    "icon": "inv_bracer_03",
+    "slot": "Wrist",
+    "name": "Thadell's Bracers"
+  },
+  "resolutecape": {
+    "id": 24258,
+    "icon": "inv_misc_cape_16",
+    "slot": "Back",
+    "name": "Resolute Cape"
+  },
+  "manaweavecloak": {
+    "id": 24260,
+    "icon": "inv_misc_cape_16",
+    "slot": "Back",
+    "name": "Manaweave Cloak"
+  },
+  "onslaughtwaistguard": {
+    "id": 34547,
+    "icon": "inv_belt_33",
+    "slot": "Waist",
+    "name": "Onslaught Waistguard"
+  },
+  "thunderheartwaistguard": {
+    "id": 34556,
+    "icon": "inv_belt_24",
+    "slot": "Waist",
+    "name": "Thunderheart Waistguard"
+  },
+  "lightbringertreads": {
+    "id": 34559,
+    "icon": "inv_boots_chain_08",
+    "slot": "Feet",
+    "name": "Lightbringer Treads"
+  },
+  "girdleoflordaeronsfallen": {
+    "id": 32512,
+    "icon": "inv_belt_28",
+    "slot": "Waist",
+    "name": "Girdle of Lordaeron's Fallen"
+  },
+  "onslaughtboots": {
+    "id": 34568,
+    "icon": "inv_boots_plate_06",
+    "slot": "Feet",
+    "name": "Onslaught Boots"
+  },
+  "thunderhearttreads": {
+    "id": 34573,
+    "icon": "inv_boots_wolf",
+    "slot": "Feet",
+    "name": "Thunderheart Treads"
+  },
+  "generalsdragonhidebelt": {
+    "id": 28443,
+    "icon": "inv_belt_17",
+    "slot": "Waist",
+    "name": "General's Dragonhide Belt"
+  },
+  "generalsdragonhideboots": {
+    "id": 28444,
+    "icon": "inv_boots_08",
+    "slot": "Feet",
+    "name": "General's Dragonhide Boots"
+  },
+  "breastplateoffiercesurvival": {
+    "id": 34605,
+    "icon": "inv_chest_chain_15",
+    "slot": "Chest",
+    "name": "Breastplate of Fierce Survival"
+  },
+  "greavesofthepenitentknight": {
+    "id": 34612,
+    "icon": "inv_boots_chain_05",
+    "slot": "Feet",
+    "name": "Greaves of the Penitent Knight"
+  },
+  "dawnsteelbracers": {
+    "id": 32571,
+    "icon": "inv_bracer_02",
+    "slot": "Wrist",
+    "name": "Dawnsteel Bracers"
+  },
+  "gladiatorsmaul": {
+    "id": 28476,
+    "icon": "inv_mace_52",
+    "slot": "Two-Hand",
+    "name": "Gladiator's Maul"
+  },
+  "dawnsteelshoulders": {
+    "id": 32573,
+    "icon": "inv_shoulder_66",
+    "slot": "Shoulder",
+    "name": "Dawnsteel Shoulders"
+  },
+  "mantleoftheduskdweller": {
+    "id": 24398,
+    "icon": "inv_shoulder_12",
+    "slot": "Shoulder",
+    "name": "Mantle of the Dusk-Dweller"
+  },
+  "moroesluckypocketwatch": {
+    "id": 28528,
+    "icon": "inv_misc_pocketwatch_02",
+    "slot": "Trinket",
+    "name": "Moroes' Lucky Pocket Watch"
+  },
+  "shatteredsunpendantofresolve": {
+    "id": 34680,
+    "icon": "inv_jewelry_necklace_39",
+    "slot": "Neck",
+    "name": "Shattered Sun Pendant of Resolve"
+  },
+  "bracersoftheforeststalker": {
+    "id": 34698,
+    "icon": "inv_bracer_16",
+    "slot": "Wrist",
+    "name": "Bracers of the Forest Stalker"
+  },
+  "gauntletsofdivineblessings": {
+    "id": 34700,
+    "icon": "inv_gauntlets_26",
+    "slot": "Hands",
+    "name": "Gauntlets of Divine Blessings"
+  },
+  "hatebringer": {
+    "id": 24461,
+    "icon": "inv_mace_21",
+    "slot": "Two-Hand",
+    "name": "Hatebringer"
+  },
+  "skullduggersleggings": {
+    "id": 24466,
+    "icon": "inv_pants_mail_21",
+    "slot": "Legs",
+    "name": "Skulldugger's Leggings"
+  },
+  "grandmarshalschainspaulders": {
+    "id": 28617,
+    "icon": "inv_shoulder_29",
+    "slot": "Shoulder",
+    "name": "Grand Marshal's Chain Spaulders"
+  },
+  "grandmarshalsdragonhidehelm": {
+    "id": 28619,
+    "icon": "inv_helmet_30",
+    "slot": "Head",
+    "name": "Grand Marshal's Dragonhide Helm"
+  },
+  "grandmarshalsdragonhidespaulders": {
+    "id": 28622,
+    "icon": "inv_shoulder_12",
+    "slot": "Shoulder",
+    "name": "Grand Marshal's Dragonhide Spaulders"
+  },
+  "leggingsoffaith": {
+    "id": 22513,
+    "icon": "inv_pants_cloth_05",
+    "slot": "Legs",
+    "name": "Leggings of Faith"
+  },
+  "terestiansstranglestaff": {
+    "id": 28658,
+    "icon": "inv_staff_55",
+    "slot": "Two-Hand",
+    "name": "Terestian's Stranglestaff"
+  },
+  "cloakofbladeturning": {
+    "id": 34810,
+    "icon": "inv_misc_cape_20",
+    "slot": "Back",
+    "name": "Cloak of Blade Turning"
   }
 }
