@@ -1129,8 +1129,8 @@
             LootMod = 1.0 − percentile × 0.667
           </div>
           <div style="margin-top:8px;color:var(--text-dim);">
-            Loot Score = (total item value received ÷ raids attended) × 100. Each item is assigned a value reflecting its relative desirability, and the total is divided by raids attended so that tenure does not inflate the score — a veteran who received little is not penalised relative to a newer raider who received a similar amount.<br><br>
-            The modifier is a continuous curve within each role group. The player at the lowest percentile (received the least relative to peers) receives ×1.0 — no penalty. The player at the highest percentile receives ×0.33.
+            Loot Score = sum of BiS EPV across all items received ÷ raids attended, rounded to the nearest integer. Each received item is looked up against the player's all-phases BiS list — items not on any BiS list contribute 0 EPV. Dividing by raids attended normalises for tenure so a veteran who received little is not penalised against a newer raider who received a similar amount.<br><br>
+            The modifier is a continuous curve within each role group. The player at the lowest percentile receives ×1.0 — no penalty. The player at the highest percentile receives ×0.33.
           </div>
         </div>
 
@@ -1660,6 +1660,30 @@ function parsePoints(text) {
   return points;
 }
 
+// Compute loot score points from loot received + BiS EPV + raids attended
+// Replaces the sheet-derived pointsByPlayer after render data is available
+function computePointsByPlayer(roles) {
+  const computed = {};
+  for (const role of roles) {
+    for (const p of role.players) {
+      const key = normalizeName(p.name);
+      const items = lootByPlayer[key] || [];
+      let totalEpv = 0;
+      for (const entry of items) {
+        const itemName = typeof entry === 'object' ? entry.name : entry;
+        const itemId = getItemId(itemName, p.name);
+        if (!itemId) continue;
+        // Use all-phases EPV for the player's spec
+        const epv = getPlayerItemEpv(p.name, itemId);
+        if (epv) totalEpv += epv;
+      }
+      const attended = p.attended || 1;
+      computed[key] = Math.round(totalEpv / attended);
+    }
+  }
+  return computed;
+}
+
 function parseLoot(text) {
   const lines = text.replace(/\r\n/g,'\n').replace(/\r/g,'\n').trim().split('\n');
   function parseRow(line) {
@@ -2168,6 +2192,8 @@ async function fetchData() {
     } else {
       setStatus(`Updated at ${new Date().toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}`, 'success');
     }
+    // Override sheet-derived points with BiS EPV-based calculation
+    pointsByPlayer = computePointsByPlayer(data.roles);
     render(data);
     if (typeof $WowheadPower !== 'undefined' && $WowheadPower.refreshLinks) $WowheadPower.refreshLinks();
   } catch(e) {
@@ -2808,10 +2834,14 @@ function toggleLoot(td, playerName) {
   if (!items || items.length === 0) {
     html += `<em class="no-loot">No loot recorded</em>`;
   } else {
+    const playerObj = lastRenderData.roles.flatMap(r => r.players).find(p => normalizeName(p.name) === key);
     html += `<div class="loot-list">${items.map(({name, value}) => {
-    const col = lootValueColor(value);
-    return `<span class="loot-item" style="border-color:${col};background:${col}18;">${itemLink(name, name)}</span>`;
-  }).join('')}</div>`;
+      const col = lootValueColor(value);
+      const itemId = getItemId(name, playerName);
+      const epv = itemId ? getPlayerItemEpv(playerName, itemId) : null;
+      const epvTip = epv ? ` title="EPV: ${epv.toFixed(1)}"` : '';
+      return `<span class="loot-item" style="border-color:${col};background:${col}18;"${epvTip}>${itemLink(name, name)}</span>`;
+    }).join('')}</div>`;
   }
 
   html += `</td>`;
