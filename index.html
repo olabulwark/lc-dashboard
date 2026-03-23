@@ -1565,6 +1565,26 @@ function parseGlossary(text) {
   return data;
 }
 
+let setBonusData = { setThresholds: {} }; // loaded from set-bonuses.json
+
+async function loadSetBonusesFromRepo() {
+  try {
+    const res = await fetch('./set-bonuses.json?t=' + Date.now());
+    if (!res.ok) { console.warn('set-bonuses.json fetch failed:', res.status); return; }
+    const data = await res.json();
+    if (data && data.setThresholds) {
+      setBonusData = data;
+      console.log('Loaded set-bonuses.json');
+    }
+  } catch(e) {
+    console.warn('set-bonuses.json load error:', e.message);
+  }
+}
+
+async function saveSetBonusesToGitHub() {
+  await saveJsonToGitHub('set-bonuses.json', setBonusData);
+}
+
 async function loadRosterFromRepo() {
   try {
     const res = await fetch('./roster.json?t=' + Date.now());
@@ -3160,12 +3180,10 @@ function toggleLoot(td, playerName) {
       const _isToken = itemId ? !!TOKEN_REWARDS[itemId] : false;
       const _nLabel = _isToken ? `${effListCount} rewards (capped)` : `${effListCount} players`;
       const _epvLabel = _isToken ? 'avgEPV' : 'maxEPV';
-      const _formulaStr = `${_epvLabel}: ${epv ? epv.toFixed(1) : '0'} × ${logMult.toFixed(2)} (log ${_nLabel}) × avg^1.5(${rankAvg.toFixed(3)}) × best(${rankBest.toFixed(2)})^0.5${_is2h ? ' × 0.5 (2H)' : ''} = ${formulaEpv.toFixed(1)}`;
       const epvTip = isOverridden
-        ? ` title="Loot Value: ${lootValue.toFixed(1)} (override)&#10;Formula: ${_formulaStr}"`
-        : ` title="${_formulaStr}"`;
-      const _overrideTag = isOverridden ? '<span style="font-size:9px;color:var(--gold-dim);vertical-align:super;">✎</span>' : '';
-      return `<span class="loot-item" style="border-color:${col};background:${col}18;"${epvTip}>${itemLink(name, name)}${_overrideTag}</span>`;
+        ? ` title="Loot Value: ${lootValue.toFixed(1)} (overridden)"`
+        : ` title="${_epvLabel}: ${epv ? epv.toFixed(1) : '0'} × ${logMult.toFixed(2)} (log ${_nLabel}) × avg^1.5(${rankAvg.toFixed(3)}) × best(${rankBest.toFixed(2)})^0.5${_is2h ? ' × 0.5 (2H)' : ''} = ${formulaEpv.toFixed(1)}"`;
+      return `<span class="loot-item" style="border-color:${col};background:${col}18;"${epvTip}>${itemLink(name, name)}</span>`;
     }).join('')}</div>`;
   }
 
@@ -3728,7 +3746,7 @@ async function loadGearItemIdsFromRepo() {
 }
 
 loadClaSheetsFromRepo().then(async () => {
-  await Promise.all([loadGearItemIdsFromRepo(), loadBisDataFromRepo(), loadRosterFromRepo(), loadLootGlossaryFromRepo()]);
+  await Promise.all([loadGearItemIdsFromRepo(), loadBisDataFromRepo(), loadRosterFromRepo(), loadLootGlossaryFromRepo(), loadSetBonusesFromRepo()]);
   // Handle PKCE callback first (page may have been redirected back from WarcraftLogs)
   const wasCallback = await handleWclCallback();
   await fetchData();
@@ -3740,6 +3758,114 @@ loadClaSheetsFromRepo().then(async () => {
 });
 
 
+
+
+// ── Set Bonus Panel ───────────────────────────────────────────────
+
+let _sbPendingConditions = [];
+let _sbActiveThreshold = null; // '2pc' or '4pc'
+
+function _currentTokenMeta() {
+  const { item } = _glossaryState;
+  if (!item) return null;
+  const id = getItemId(item);
+  return id ? TOKEN_TIER_META[id] || null : null;
+}
+
+function _currentSbConfig() {
+  const meta = _currentTokenMeta();
+  if (!meta) return null;
+  if (!setBonusData.setThresholds[meta.tier]) setBonusData.setThresholds[meta.tier] = {};
+  if (!setBonusData.setThresholds[meta.tier][meta.set]) setBonusData.setThresholds[meta.tier][meta.set] = { '2pc': [], '4pc': [] };
+  return setBonusData.setThresholds[meta.tier][meta.set];
+}
+
+function setBonusAddOpen(threshold) {
+  _sbActiveThreshold = threshold;
+  _sbPendingConditions = [];
+  const form = document.getElementById('setBonusAddForm');
+  if (form) form.style.display = 'block';
+  _sbRenderPendingConditions();
+}
+
+function setBonusUpdateTargetOpts() {
+  const type = document.getElementById('sbPrioType')?.value;
+  const sel  = document.getElementById('sbPrioTarget');
+  if (!sel) return;
+  const opts = type === 'role'
+    ? ['Tanks','Physical DPS','Ranged DPS','Healers']
+    : type === 'class'
+    ? ['Druid','Hunter','Mage','Paladin','Priest','Rogue','Shaman','Warlock','Warrior']
+    : rosterData.players.map(p => p.name).sort();
+  sel.innerHTML = opts.map(o => `<option value="${o}">${o}</option>`).join('');
+}
+
+function setBonusAddCondition() {
+  const val = document.getElementById('sbPrioTarget')?.value;
+  if (!val || _sbPendingConditions.includes(val)) return;
+  _sbPendingConditions.push(val);
+  _sbRenderPendingConditions();
+}
+
+function _sbRenderPendingConditions() {
+  const el = document.getElementById('setBonusConditions');
+  if (!el) return;
+  if (!_sbPendingConditions.length) { el.innerHTML = ''; return; }
+  el.innerHTML = '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;">' +
+    _sbPendingConditions.map((c, i) =>
+      `<span style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:3px 8px;font-size:13px;display:flex;align-items:center;gap:6px;">
+        ${c}
+        <button onclick="_sbRemoveCondition(${i})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:11px;padding:0;">✕</button>
+      </span>`
+    ).join('<span style="color:var(--text-dim);font-size:12px;">AND</span>') +
+    '</div>';
+}
+
+function _sbRemoveCondition(idx) {
+  _sbPendingConditions.splice(idx, 1);
+  _sbRenderPendingConditions();
+}
+
+function setBonusConfirmAdd() {
+  const cfg = _currentSbConfig();
+  if (!cfg || !_sbActiveThreshold) return;
+  let conditions = [..._sbPendingConditions];
+  if (!conditions.length) {
+    const val = document.getElementById('sbPrioTarget')?.value;
+    if (val) conditions = [val];
+  }
+  const mult = parseFloat(document.getElementById('sbPrioMult')?.value);
+  if (!conditions.length || isNaN(mult)) return;
+  if (!cfg[_sbActiveThreshold]) cfg[_sbActiveThreshold] = [];
+  const condKey = conditions.slice().sort().join('|');
+  const existing = cfg[_sbActiveThreshold].find(p =>
+    (p.conditions || []).slice().sort().join('|') === condKey
+  );
+  if (existing) {
+    existing.multiplier = Math.round(existing.multiplier * mult * 10000) / 10000;
+  } else {
+    cfg[_sbActiveThreshold].push({ conditions, multiplier: mult });
+  }
+  _sbPendingConditions = [];
+  _sbActiveThreshold = null;
+  saveSetBonusesToGitHub();
+  renderGlossaryPanel();
+}
+
+function setBonusUpdateMult(threshold, idx, val) {
+  const cfg = _currentSbConfig();
+  if (!cfg || !cfg[threshold]?.[idx]) return;
+  cfg[threshold][idx].multiplier = parseFloat(val);
+  saveSetBonusesToGitHub();
+}
+
+function setBonusRemove(threshold, idx) {
+  const cfg = _currentSbConfig();
+  if (!cfg) return;
+  cfg[threshold].splice(idx, 1);
+  saveSetBonusesToGitHub();
+  renderGlossaryPanel();
+}
 
 // ── Loot Glossary Panel ──────────────────────────────────────────
 
@@ -3929,6 +4055,74 @@ function renderGlossaryPanel() {
           </div>
         </div>
 
+        ${(() => {
+          // Set bonus section — only for token items
+          const _tokenId = entry ? getItemId(entry.item) : null;
+          const _tokenMeta = _tokenId ? TOKEN_TIER_META[_tokenId] : null;
+          if (!_tokenMeta) return '';
+          const _sbConfig = setBonusData?.setThresholds?.[_tokenMeta.tier]?.[_tokenMeta.set] || {};
+          const _renderBonusList = (threshold) => {
+            const prios = _sbConfig[threshold] || [];
+            const rows = prios.map((pr, i) => {
+              const conds = pr.conditions || [];
+              return '<tr style="border-bottom:1px solid rgba(255,255,255,0.05);">' +
+                '<td style="padding:6px 10px;color:var(--text);">' + conds.join('<span style="color:var(--text-dim);margin:0 4px;">+</span>') + '</td>' +
+                '<td style="padding:6px 10px;">' +
+                  '<select onchange="setBonusUpdateMult('' + threshold + '',' + i + ',this.value)" style="background:var(--bg);border:1px solid var(--border);color:var(--gold);padding:3px 6px;border-radius:4px;font-size:13px;">' +
+                  [0.5,0.75,1.0,1.25,1.5,1.75,2.0,2.25,2.5].map(m => '<option value="' + m + '"' + (pr.multiplier==m?' selected':'') + '>×' + m + '</option>').join('') +
+                  '</select></td>' +
+                '<td style="padding:6px 4px;text-align:right;">' +
+                  '<button onclick="setBonusRemove('' + threshold + '',' + i + ')" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:13px;padding:2px 6px;">✕</button>' +
+                '</td></tr>';
+            }).join('');
+            return (prios.length
+              ? '<table style="width:100%;border-collapse:collapse;margin-bottom:10px;"><thead><tr style="border-bottom:1px solid var(--border);"><th style="text-align:left;padding:4px 10px;font-size:11px;color:var(--text-dim);">CONDITIONS</th><th style="text-align:left;padding:4px 10px;font-size:11px;color:var(--text-dim);">MULTIPLIER</th><th></th></tr></thead><tbody>' + rows + '</tbody></table>'
+              : '<p style="font-size:13px;color:var(--text-dim);margin:0 0 10px;">None configured.</p>');
+          };
+          return `
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px;">
+          <div style="font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.15em;color:var(--gold-dim);margin-bottom:4px;">
+            ${_tokenMeta.tier} ${_tokenMeta.set.toUpperCase()} — SET BONUSES
+          </div>
+          <div style="font-size:12px;color:var(--text-dim);margin-bottom:12px;">
+            Applies when a player is one piece away from completing the set threshold. Stacks with item prioritization.
+          </div>
+          <div style="display:flex;gap:24px;">
+            <div style="flex:1;">
+              <div style="font-size:11px;letter-spacing:0.12em;color:var(--gold-dim);margin-bottom:6px;">2-PIECE BONUS</div>
+              ${_renderBonusList('2pc')}
+              <button onclick="setBonusAddOpen('2pc')" style="font-size:12px;color:var(--text-dim);background:none;border:1px solid var(--border);padding:4px 10px;border-radius:4px;cursor:pointer;">+ Add condition</button>
+            </div>
+            <div style="flex:1;">
+              <div style="font-size:11px;letter-spacing:0.12em;color:var(--gold-dim);margin-bottom:6px;">4-PIECE BONUS</div>
+              ${_renderBonusList('4pc')}
+              <button onclick="setBonusAddOpen('4pc')" style="font-size:12px;color:var(--text-dim);background:none;border:1px solid var(--border);padding:4px 10px;border-radius:4px;cursor:pointer;">+ Add condition</button>
+            </div>
+          </div>
+          <div id="setBonusAddForm" style="display:none;margin-top:12px;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:12px;">
+            <div style="font-size:11px;color:var(--text-dim);margin-bottom:8px;">Add conditions (ALL must match)</div>
+            <div id="setBonusConditions" style="margin-bottom:8px;"></div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
+              <select id="sbPrioType" onchange="setBonusUpdateTargetOpts()" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:4px;font-size:13px;">
+                <option value="role">Role</option><option value="class">Class</option><option value="player">Player</option>
+              </select>
+              <select id="sbPrioTarget" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:4px;font-size:13px;">
+                ${['Tanks','Physical DPS','Ranged DPS','Healers'].map(r => '<option value="' + r + '">' + r + '</option>').join('')}
+              </select>
+              <button onclick="setBonusAddCondition()" style="background:none;border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px;">+ Add</button>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <label style="font-size:12px;color:var(--text-dim);">Multiplier:</label>
+              <select id="sbPrioMult" style="background:var(--bg2);border:1px solid var(--border);color:var(--gold);padding:5px 8px;border-radius:4px;font-size:13px;">
+                ${[0.5,0.75,1.0,1.25,1.5,1.75,2.0,2.25,2.5].map(m => '<option value="' + m + '"' + (m===1.25?' selected':'') + '>×' + m + '</option>').join('')}
+              </select>
+              <button onclick="setBonusConfirmAdd()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;margin-left:auto;">ADD</button>
+              <button onclick="document.getElementById('setBonusAddForm').style.display='none';_sbPendingConditions=[];_sbActiveThreshold=null;" style="background:none;border:1px solid var(--border);color:var(--text-dim);padding:6px 10px;border-radius:4px;cursor:pointer;font-size:12px;">Cancel</button>
+            </div>
+          </div>
+        </div>`;
+        })()}
+
       </div>
       ` : `<p style="color:var(--text-dim);font-size:13px;">Select a raid, boss, and item to view and edit its settings.</p>`}
     </div>
@@ -3957,8 +4151,11 @@ function renderGlossaryPanel() {
 
 function glossarySelectRaid() {
   _glossaryState.raid = document.getElementById('glRaid').value;
-  _glossaryState.boss = '';
   _glossaryState.item = '';
+  // Auto-select first boss
+  const bosses = _glossaryState.raid ? glossaryBossList(_glossaryState.raid) : [];
+  _glossaryState.boss = bosses.length ? bosses[0] : '';
+  _glossaryPendingConditions = [];
   renderGlossaryPanel();
 }
 function glossarySelectBoss() {
@@ -3994,6 +4191,7 @@ function _currentGlossaryEntry() {
 }
 
 function glossarySaveValue() {
+  if (!document.getElementById('glValueSaveBtn')?.classList.contains('gloss-btn-ready')) return;
   document.getElementById('glValueSaveBtn')?.classList.remove('gloss-btn-ready');
   const val = parseFloat(document.getElementById('glValueInput')?.value);
   const { item } = _glossaryState;
@@ -4017,6 +4215,7 @@ function glossaryClearValue() {
 }
 
 function glossarySaveNotes() {
+  if (!document.getElementById('glNotesSaveBtn')?.classList.contains('gloss-btn-ready')) return;
   document.getElementById('glNotesSaveBtn')?.classList.remove('gloss-btn-ready');
   const entry = _currentGlossaryEntry();
   if (!entry) return;
@@ -4132,6 +4331,7 @@ function glossaryToggleClass(cls) {
 }
 
 function glossarySaveClasses() {
+  if (!document.getElementById('glClassesSaveBtn')?.classList.contains('gloss-btn-ready')) return;
   document.getElementById('glClassesSaveBtn')?.classList.remove('gloss-btn-ready');
   saveGlossaryToGitHub();
   renderGlossaryPanel();
@@ -4458,6 +4658,122 @@ const TOKEN_REWARDS = {
   34860: {Prot:34571, Fury:34571, Arms:34571, BM:34572, SV:34572, Ele:34573, Enh:34573, Resto:34573},  // Boots Protector
   34858: {Rog:34575, Arc:34574, Fire:34574, Bear:34572, Cat:34572, Owl:34574, Tree:34572},  // Boots Vanquisher
 };
+
+// ── Tier Set Metadata ────────────────────────────────────────────
+// Maps each token ID to its tier level, set name, and gear slot
+const TOKEN_TIER_META = {
+  // T4 Fallen
+  29763:{tier:'T4',set:'Champion',slot:'Shoulders'}, 29764:{tier:'T4',set:'Defender',slot:'Shoulders'}, 29762:{tier:'T4',set:'Hero',slot:'Shoulders'},
+  29754:{tier:'T4',set:'Champion',slot:'Chest'},     29753:{tier:'T4',set:'Defender',slot:'Chest'},     29755:{tier:'T4',set:'Hero',slot:'Chest'},
+  29766:{tier:'T4',set:'Champion',slot:'Legs'},      29767:{tier:'T4',set:'Defender',slot:'Legs'},      29765:{tier:'T4',set:'Hero',slot:'Legs'},
+  // T5 Vanquished
+  30242:{tier:'T5',set:'Champion',slot:'Shoulders'}, 30243:{tier:'T5',set:'Defender',slot:'Shoulders'}, 30244:{tier:'T5',set:'Hero',slot:'Shoulders'},
+  30236:{tier:'T5',set:'Champion',slot:'Chest'},     30237:{tier:'T5',set:'Defender',slot:'Chest'},     30238:{tier:'T5',set:'Hero',slot:'Chest'},
+  30245:{tier:'T5',set:'Champion',slot:'Legs'},      30246:{tier:'T5',set:'Defender',slot:'Legs'},      30247:{tier:'T5',set:'Hero',slot:'Legs'},
+  30239:{tier:'T5',set:'Champion',slot:'Hands'},     30240:{tier:'T5',set:'Defender',slot:'Hands'},     30241:{tier:'T5',set:'Hero',slot:'Hands'},
+  30248:{tier:'T5',set:'Champion',slot:'Head'},      30249:{tier:'T5',set:'Defender',slot:'Head'},      30250:{tier:'T5',set:'Hero',slot:'Head'},
+  // T6 Forgotten
+  31098:{tier:'T6',set:'Conqueror',slot:'Shoulders'},  31100:{tier:'T6',set:'Protector',slot:'Shoulders'},  31099:{tier:'T6',set:'Vanquisher',slot:'Shoulders'},
+  31089:{tier:'T6',set:'Conqueror',slot:'Chest'},      31091:{tier:'T6',set:'Protector',slot:'Chest'},      31090:{tier:'T6',set:'Vanquisher',slot:'Chest'},
+  31101:{tier:'T6',set:'Conqueror',slot:'Legs'},       31103:{tier:'T6',set:'Protector',slot:'Legs'},       31102:{tier:'T6',set:'Vanquisher',slot:'Legs'},
+  31092:{tier:'T6',set:'Conqueror',slot:'Hands'},      31094:{tier:'T6',set:'Protector',slot:'Hands'},      31093:{tier:'T6',set:'Vanquisher',slot:'Hands'},
+  31095:{tier:'T6',set:'Conqueror',slot:'Head'},       31097:{tier:'T6',set:'Protector',slot:'Head'},       31096:{tier:'T6',set:'Vanquisher',slot:'Head'},
+  // T6 Sunwell
+  34853:{tier:'T6',set:'Conqueror',slot:'Bracers'},    34854:{tier:'T6',set:'Protector',slot:'Bracers'},    34852:{tier:'T6',set:'Vanquisher',slot:'Bracers'},
+  34856:{tier:'T6',set:'Conqueror',slot:'Waist'},      34857:{tier:'T6',set:'Protector',slot:'Waist'},      34855:{tier:'T6',set:'Vanquisher',slot:'Waist'},
+  34859:{tier:'T6',set:'Conqueror',slot:'Feet'},       34860:{tier:'T6',set:'Protector',slot:'Feet'},       34858:{tier:'T6',set:'Vanquisher',slot:'Feet'},
+};
+
+// Build inverse map: reward item ID -> { tier, set, slot }
+const REWARD_TIER_META = (() => {
+  const m = {};
+  for (const [tokenId, rewards] of Object.entries(TOKEN_REWARDS)) {
+    const meta = TOKEN_TIER_META[parseInt(tokenId)];
+    if (!meta) continue;
+    for (const rewardId of Object.values(rewards)) {
+      m[rewardId] = meta;
+    }
+  }
+  return m;
+})();
+
+// Count how many pieces of a tier set a player already owns (excluding a specific slot)
+// Checks loot history (tokens received) and CLA gear listing (equipped reward items)
+function countTierPieces(playerName, tier, set, excludeSlot) {
+  const key = normalizeName(playerName);
+  const ownedSlots = new Set();
+
+  // 1. Check loot history for tokens of this tier+set
+  const loot = lootByPlayer[key] || [];
+  for (const entry of loot) {
+    const itemName = typeof entry === 'object' ? entry.name : entry;
+    const itemId = getItemId(itemName, playerName);
+    if (!itemId) continue;
+    const meta = TOKEN_TIER_META[itemId];
+    if (meta && meta.tier === tier && meta.set === set) {
+      ownedSlots.add(meta.slot);
+    }
+  }
+
+  // 2. Check CLA gear listing for equipped reward items of this tier+set
+  const gearSlots = gearListingByPlayer[key]?.slots || {};
+  for (const itemName of Object.values(gearSlots)) {
+    if (!itemName) continue;
+    const itemId = getItemId(itemName, playerName);
+    if (!itemId) continue;
+    const meta = REWARD_TIER_META[itemId];
+    if (meta && meta.tier === tier && meta.set === set) {
+      ownedSlots.add(meta.slot);
+    }
+  }
+
+  // Exclude the slot this token would fill (we're checking what they already have)
+  ownedSlots.delete(excludeSlot);
+  return ownedSlots.size;
+}
+
+// Given a token and player, return applicable set bonus multipliers
+// (only when player is one piece away from completing 2pc or 4pc)
+function getSetBonusMultiplier(playerName, tokenItemId) {
+  const meta = TOKEN_TIER_META[tokenItemId];
+  if (!meta || !setBonusData) return { mult: 1, labels: [] };
+
+  const cls  = classMap[normalizeName(playerName)] || '';
+  const role = lastRenderData.roles.find(r =>
+    r.players.some(p => normalizeName(p.name) === normalizeName(playerName))
+  )?.name || '';
+
+  const existing = countTierPieces(playerName, meta.tier, meta.set, meta.slot);
+  // Check thresholds: 1 existing → completing 2pc, 3 existing → completing 4pc
+  const thresholds = [];
+  if (existing === 1) thresholds.push('2pc');
+  if (existing === 3) thresholds.push('4pc');
+  if (!thresholds.length) return { mult: 1, labels: [] };
+
+  const setConfig = setBonusData?.setThresholds?.[meta.tier]?.[meta.set];
+  if (!setConfig) return { mult: 1, labels: [] };
+
+  let mult = 1;
+  const labels = [];
+  for (const threshold of thresholds) {
+    const prios = setConfig[threshold] || [];
+    for (const pr of prios) {
+      const conditions = pr.conditions || [];
+      if (!conditions.length) continue;
+      const allMatch = conditions.every(c => {
+        const ct = c.trim();
+        return ct.toLowerCase() === cls.toLowerCase() ||
+               ct.toLowerCase() === role.toLowerCase() ||
+               normalizeName(ct) === normalizeName(playerName);
+      });
+      if (allMatch) {
+        mult *= pr.multiplier;
+        labels.push(`${meta.tier} ${meta.set} ${threshold} (${conditions.join('+')}): ×${pr.multiplier}`);
+      }
+    }
+  }
+  return { mult, labels };
+}
 
 // Given a token item ID and player name, return the reward item ID for their spec
 // Returns null if no mapping exists
@@ -5597,13 +5913,19 @@ function onItemChange() {
     const { score: prScore, tooltip: prTooltip } = calculatePriority(p, eligBottom20, eligTop20, eligThreshPts);
     const { mult, labels: prioLabels } = prioMultiplier(p);
     const { mult: bisMult, reason: bisReason } = bisMultiplier(p);
-    const adjScore = prScore * mult * bisMult;
+    // Set bonus multiplier — applies when token drop would complete a 2pc or 4pc
+    const _candidateTokenId = getItemId(item);
+    const { mult: setBonusMult, labels: setBonusLabels } = TOKEN_TIER_META[_candidateTokenId]
+      ? getSetBonusMultiplier(p.name, _candidateTokenId)
+      : { mult: 1, labels: [] };
+    const adjScore = prScore * mult * bisMult * setBonusMult;
     const normPr = Math.round(adjScore * prNormFactor);
     const displayPr = normPr.toFixed(0);
     const prStr = prScore > 0 ? displayPr : '—';
     const prCol = prScore > 0 ? priorityColor(normPr) : 'var(--text-dim)';
     const prioLines = [];
     if (prioLabels && prioLabels.length) prioLines.push('Prio: ' + prioLabels.join(', ') + ' → ×' + mult.toFixed(4));
+    if (setBonusLabels && setBonusLabels.length) prioLines.push(...setBonusLabels);
     if (bisReason) prioLines.push(bisReason);
     const fullTooltip = prTooltip + (prioLines.length ? '&#10;' + prioLines.join('&#10;') : '') + `&#10;Score: ${adjScore.toFixed(2)}`;
 
