@@ -889,7 +889,5 @@
       ]
     }
   },
-  "valueOverrides": {
-    "Thundering Greathelm": 8
-  }
+  "valueOverrides": {}
 }
