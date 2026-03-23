@@ -1,0 +1,798 @@
+{
+  "raids": {
+    "Gruul's Lair": {
+      "High King Maulgar": [
+        {
+          "item": "Pauldrons of the Fallen Defender",
+          "notes": "Bear/Tank War > Non-tailor Heals",
+          "eligibleClasses": [
+            "Warrior",
+            "Priest",
+            "Druid"
+          ],
+          "prioritization": [
+            {
+              "target": "Tank",
+              "multiplier": 1.75
+            }
+          ],
+          "roleValues": {
+            "Tanks": 3,
+            "Physical DPS": 1,
+            "Ranged DPS": 1,
+            "Healers": 2
+          }
+        },
+        {
+          "item": "Pauldrons of the Fallen Champion",
+          "notes": "Tank Pally > Dps > nontailor Healer",
+          "eligibleClasses": [
+            "Paladin",
+            "Rogue",
+            "Shaman"
+          ],
+          "prioritization": [
+            {
+              "target": "Tank",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.25
+            },
+            {
+              "target": "Ranged DPS",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Tanks": 3,
+            "Physical DPS": 4,
+            "Ranged DPS": 4,
+            "Healers": 2
+          }
+        },
+        {
+          "item": "Pauldrons of the Fallen Hero",
+          "notes": "Warlock/Mage",
+          "eligibleClasses": [
+            "Hunter",
+            "Mage",
+            "Warlock"
+          ],
+          "prioritization": [
+            {
+              "target": "Mage",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Warlock",
+              "multiplier": 1.75
+            }
+          ],
+          "roleValues": {
+            "Ranged DPS": 3
+          }
+        },
+        {
+          "item": "Belt of Divine Inspiration",
+          "notes": "S Priest > Dps",
+          "eligibleClasses": [
+            "Priest",
+            "Mage",
+            "Warlock",
+            "Shaman",
+            "Paladin",
+            "Druid"
+          ],
+          "prioritization": [
+            {
+              "target": "Ranged DPS",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Priest",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Ranged DPS": 1
+          }
+        },
+        {
+          "item": "Malefic Mask of the Shadows",
+          "notes": "Enh Sham",
+          "eligibleClasses": [
+            "Hunter",
+            "Shaman",
+            "Rogue",
+            "Warrior",
+            "Paladin",
+            "Druid"
+          ],
+          "prioritization": [
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Shaman",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Tanks": 1,
+            "Physical DPS": 4,
+            "Ranged DPS": 1
+          }
+        },
+        {
+          "item": "Maulgar's Warhelm",
+          "eligibleClasses": [
+            "Shaman",
+            "Hunter",
+            "Warrior",
+            "Paladin"
+          ]
+        },
+        {
+          "item": "Bladespire Warbands",
+          "notes": "DPS",
+          "eligibleClasses": [
+            "Warrior",
+            "Paladin"
+          ],
+          "prioritization": [
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.75
+            }
+          ],
+          "roleValues": {
+            "Tanks": 1,
+            "Physical DPS": 2
+          }
+        },
+        {
+          "item": "Brute Cloak of the Ogre-Magi",
+          "notes": "dps",
+          "eligibleClasses": [
+            "Priest",
+            "Mage",
+            "Warlock",
+            "Shaman",
+            "Paladin",
+            "Druid"
+          ],
+          "prioritization": [
+            {
+              "target": "Ranged DPS",
+              "multiplier": 1.75
+            }
+          ],
+          "roleValues": {
+            "Ranged DPS": 2
+          }
+        },
+        {
+          "item": "Hammer of the Naaru",
+          "eligibleClasses": [
+            "Warrior",
+            "Paladin",
+            "Shaman"
+          ],
+          "prioritization": [
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.75
+            }
+          ],
+          "roleValues": {
+            "Physical DPS": 2
+          }
+        }
+      ],
+      "Gruul": [
+        {
+          "item": "Leggings of the Fallen Defender",
+          "notes": "Bear",
+          "eligibleClasses": [
+            "Warrior",
+            "Priest",
+            "Druid"
+          ],
+          "prioritization": [
+            {
+              "target": "Tank",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Druid",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Tanks": 3
+          }
+        },
+        {
+          "item": "Leggings of the Fallen Champion",
+          "notes": "Prot Pally > Dps > Nontailor Healer",
+          "eligibleClasses": [
+            "Paladin",
+            "Rogue",
+            "Shaman"
+          ],
+          "prioritization": [
+            {
+              "target": "Tank",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.25
+            },
+            {
+              "target": "Ranged DPS",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Tanks": 2,
+            "Physical DPS": 2,
+            "Ranged DPS": 1,
+            "Healers": 1
+          }
+        },
+        {
+          "item": "Leggings of the Fallen Hero",
+          "eligibleClasses": [
+            "Hunter",
+            "Mage",
+            "Warlock"
+          ],
+          "prioritization": [
+            {
+              "target": "Mage",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Warlock",
+              "multiplier": 1.75
+            }
+          ],
+          "roleValues": {
+            "Ranged DPS": 1
+          }
+        },
+        {
+          "item": "Collar of Cho'gall",
+          "notes": "S Priest",
+          "eligibleClasses": [
+            "Priest",
+            "Mage",
+            "Warlock",
+            "Shaman",
+            "Paladin",
+            "Druid"
+          ],
+          "prioritization": [
+            {
+              "target": "Priest",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Ranged DPS": 1
+          }
+        },
+        {
+          "item": "Cowl of Nature's Breath",
+          "eligibleClasses": [
+            "Druid",
+            "Shaman",
+            "Paladin"
+          ],
+          "roleValues": {
+            "Healers": 1
+          }
+        },
+        {
+          "item": "Gronn-Stitched Girdle",
+          "notes": "Hunter + Enh Sham",
+          "eligibleClasses": [
+            "Druid",
+            "Shaman",
+            "Hunter",
+            "Warrior",
+            "Paladin"
+          ],
+          "prioritization": [
+            {
+              "target": "Hunter",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Shaman",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.25
+            },
+            {
+              "target": "Ranged DPS",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Tanks": 1,
+            "Physical DPS": 5,
+            "Ranged DPS": 5
+          }
+        },
+        {
+          "item": "Gauntlets of the Dragonslayer",
+          "eligibleClasses": [
+            "Shaman",
+            "Hunter",
+            "Paladin",
+            "Warrior"
+          ]
+        },
+        {
+          "item": "Windshear Boots",
+          "notes": "Elemental",
+          "eligibleClasses": [
+            "Shaman",
+            "Paladin"
+          ],
+          "prioritization": [
+            {
+              "target": "Ranged DPS",
+              "multiplier": 1.75
+            }
+          ],
+          "roleValues": {
+            "Ranged DPS": 1
+          }
+        },
+        {
+          "item": "Gauntlets of Martial Perfection",
+          "notes": "Warrior >  Ret",
+          "eligibleClasses": [
+            "Warrior",
+            "Paladin"
+          ],
+          "prioritization": [
+            {
+              "target": "Warrior",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Tanks": 2,
+            "Physical DPS": 5
+          }
+        },
+        {
+          "item": "Teeth of Gruul",
+          "eligibleClasses": [
+            "Paladin",
+            "Shaman",
+            "Druid",
+            "Priest"
+          ],
+          "roleValues": {
+            "Healers": 1
+          }
+        },
+        {
+          "item": "Bloodmaw Magus-Blade",
+          "notes": "Caster dps/Tank Pally",
+          "eligibleClasses": [
+            "Paladin",
+            "Warlock",
+            "Mage"
+          ],
+          "roleValues": {
+            "Tanks": 2,
+            "Ranged DPS": 5
+          }
+        },
+        {
+          "item": "Axe of the Gronn Lords",
+          "notes": "DPS",
+          "eligibleClasses": [
+            "Paladin",
+            "Shaman",
+            "Warrior"
+          ]
+        },
+        {
+          "item": "Aldori Legacy Defender",
+          "notes": "Prot Pally/Prot Warrior > 10man off tanks",
+          "eligibleClasses": [
+            "Paladin",
+            "Warrior"
+          ],
+          "roleValues": {
+            "Tanks": 5
+          }
+        },
+        {
+          "item": "Eye of Gruul",
+          "notes": "Healers",
+          "eligibleClasses": [
+            "Paladin",
+            "Shaman",
+            "Druid",
+            "Priest"
+          ],
+          "roleValues": {
+            "Healers": 1
+          }
+        },
+        {
+          "item": "Dragonspine Trophy",
+          "notes": "Johnny/Arctur> Dps(Revisit)",
+          "eligibleClasses": [
+            "Rogue",
+            "Hunter",
+            "Shaman",
+            "Paladin",
+            "Warrior",
+            "Druid"
+          ],
+          "prioritization": [
+            {
+              "target": "Hunter",
+              "multiplier": 2.1875
+            },
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.75
+            }
+          ],
+          "roleValues": {
+            "Tanks": 8,
+            "Physical DPS": 8,
+            "Ranged DPS": 8
+          }
+        },
+        {
+          "item": "Shuriken of Negation",
+          "notes": "Dps",
+          "eligibleClasses": [
+            "Rogue",
+            "Warrior"
+          ],
+          "prioritization": [
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.25
+            }
+          ]
+        }
+      ]
+    },
+    "Magtheridon's Lair": {
+      "Magtheridon": [
+        {
+          "item": "Chestguard of the Fallen Defender",
+          "notes": "Bear/Prot war > Dps",
+          "eligibleClasses": [
+            "Warrior",
+            "Priest",
+            "Druid"
+          ],
+          "prioritization": [
+            {
+              "target": "Tank",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.25
+            },
+            {
+              "target": "Ranged DPS",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Tanks": 3,
+            "Physical DPS": 2,
+            "Ranged DPS": 1,
+            "Healers": 1
+          }
+        },
+        {
+          "item": "Chestguard of the Fallen Champion",
+          "notes": "Prot Pally > Enh Sham/ Rogue > Nontailor Healers",
+          "eligibleClasses": [
+            "Paladin",
+            "Rogue",
+            "Shaman"
+          ],
+          "prioritization": [
+            {
+              "target": "Tank",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Tanks": 3,
+            "Physical DPS": 3,
+            "Ranged DPS": 2,
+            "Healers": 2
+          }
+        },
+        {
+          "item": "Chestguard of the Fallen Hero",
+          "notes": "Warlock",
+          "eligibleClasses": [
+            "Hunter",
+            "Mage",
+            "Warlock"
+          ],
+          "prioritization": [
+            {
+              "target": "Warlock",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Ranged DPS": 2
+          }
+        },
+        {
+          "item": "Magtheridon's Head",
+          "notes": "Bear  > Dps",
+          "eligibleClasses": [
+            "Warrior",
+            "Paladin",
+            "Druid",
+            "Warlock",
+            "Mage",
+            "Hunter",
+            "Priest",
+            "Shaman",
+            "Rogue"
+          ],
+          "prioritization": [
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.25
+            },
+            {
+              "target": "Ranged DPS",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Tanks": 3,
+            "Physical DPS": 2,
+            "Ranged DPS": 3,
+            "Healers": 2
+          }
+        },
+        {
+          "item": "Crystalheart Pulse-Staff",
+          "notes": "Healer",
+          "eligibleClasses": [
+            "Priest",
+            "Druid",
+            "Shaman"
+          ],
+          "roleValues": {
+            "Healers": 3
+          }
+        },
+        {
+          "item": "Soul-Eater's Handwraps",
+          "notes": "Ele Sham > Warlock/Mage > S Priest",
+          "eligibleClasses": [
+            "Shaman",
+            "Warlock",
+            "Mage",
+            "Priest",
+            "Paladin",
+            "Druid"
+          ],
+          "prioritization": [
+            {
+              "target": "Shaman",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Ranged DPS",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Ranged DPS": 2,
+            "Healers": 1
+          }
+        },
+        {
+          "item": "Girdle of the Endless Pit",
+          "notes": "DPS > Tanks",
+          "eligibleClasses": [
+            "Warrior",
+            "Paladin"
+          ],
+          "prioritization": [
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.75
+            }
+          ],
+          "roleValues": {
+            "Tanks": 2,
+            "Physical DPS": 5
+          }
+        },
+        {
+          "item": "Cloak of the Pit Stalker",
+          "eligibleClasses": [
+            "Warrior",
+            "Paladin",
+            "Rogue",
+            "Hunter",
+            "Shaman",
+            "Druid"
+          ],
+          "prioritization": [
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Ranged DPS",
+              "multiplier": 1.75
+            }
+          ],
+          "roleValues": {
+            "Physical DPS": 1
+          }
+        },
+        {
+          "item": "Karaborian Talisman",
+          "eligibleClasses": [
+            "Priest",
+            "Mage",
+            "Warlock",
+            "Shaman",
+            "Paladin",
+            "Druid"
+          ],
+          "roleValues": {
+            "Ranged DPS": 1
+          }
+        },
+        {
+          "item": "Liar's Tongue Gloves",
+          "notes": "Enh Sham",
+          "eligibleClasses": [
+            "Hunter",
+            "Shaman",
+            "Druid",
+            "Rogue",
+            "Warrior",
+            "Paladin"
+          ],
+          "prioritization": [
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Shaman",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Physical DPS": 2
+          }
+        },
+        {
+          "item": "Aegis of the Vindicator",
+          "notes": "Healer",
+          "eligibleClasses": [
+            "Paladin",
+            "Shaman"
+          ],
+          "roleValues": {
+            "Healers": 2
+          }
+        },
+        {
+          "item": "Eredar Wand of Obliteration",
+          "notes": "Arcane Mage > Warlock/Mage",
+          "eligibleClasses": [
+            "Warlock",
+            "Mage",
+            "Priest"
+          ],
+          "prioritization": [
+            {
+              "target": "Mage",
+              "multiplier": 1.75
+            },
+            {
+              "target": "Warlock",
+              "multiplier": 1.25
+            }
+          ],
+          "roleValues": {
+            "Ranged DPS": 2
+          }
+        },
+        {
+          "item": "Terror Pit Girdle",
+          "eligibleClasses": [
+            "Shaman",
+            "Hunter",
+            "Paladin"
+          ]
+        },
+        {
+          "item": "Thundering Greathelm",
+          "eligibleClasses": [
+            "Warrior",
+            "Paladin"
+          ],
+          "prioritization": [
+            {
+              "target": "Physical DPS",
+              "multiplier": 1.75
+            }
+          ],
+          "roleValues": {
+            "Physical DPS": 1
+          }
+        },
+        {
+          "item": "Eye of Magtheridon",
+          "notes": "Tank Pally > DPS",
+          "eligibleClasses": [
+            "Paladin",
+            "Priest",
+            "Shaman",
+            "Druid",
+            "Warlock",
+            "Mage"
+          ],
+          "prioritization": [
+            {
+              "target": "Paladin",
+              "multiplier": 1.75
+            }
+          ],
+          "roleValues": {
+            "Tanks": 3,
+            "Ranged DPS": 2
+          }
+        },
+        {
+          "item": "Glaive of the Pit",
+          "eligibleClasses": [
+            "Warrior",
+            "Paladin",
+            "Hunter"
+          ]
+        }
+      ]
+    }
+  },
+  "valueOverrides": {}
+}
