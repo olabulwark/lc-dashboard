@@ -7,7 +7,15 @@
       },
       "Defender": {
         "2pc": [],
-        "4pc": []
+        "4pc": [
+          {
+            "conditions": [
+              "Physical DPS",
+              "Warrior"
+            ],
+            "multiplier": 2
+          }
+        ]
       },
       "Hero": {
         "2pc": [],
