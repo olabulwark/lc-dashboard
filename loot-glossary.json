@@ -85,7 +85,12 @@
             "Paladin",
             "Druid"
           ],
-          "prioritization": [],
+          "prioritization": [
+            {
+              "target": "Manedic",
+              "multiplier": 2
+            }
+          ],
           "roleValues": {
             "Ranged DPS": 1
           }
