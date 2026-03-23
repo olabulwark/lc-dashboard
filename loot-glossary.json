@@ -37,10 +37,6 @@
               "multiplier": 1.75
             },
             {
-              "target": "Physical DPS",
-              "multiplier": 1.25
-            },
-            {
               "target": "Ranged DPS",
               "multiplier": 1.25
             }
