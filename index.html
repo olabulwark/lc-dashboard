@@ -5583,7 +5583,52 @@ function onItemChange() {
   }
 
   // Check who has already received this item
-  const hasItem = p => (lootByPlayer[normalizeName(p.name)] || []).some(l => (l.name || l).toLowerCase() === item.toLowerCase());
+  // Checks loot log AND CLA gear listing (catches pre-raid items not in our distribution log)
+  const _candidateItemId = getItemId(item);
+  const _tokenRewardIds = _candidateItemId && TOKEN_REWARDS[_candidateItemId]
+    ? new Set(Object.values(TOKEN_REWARDS[_candidateItemId]))
+    : null;
+  // For non-token items, determine which gear slot(s) to check in CLA
+  const _candidateSlot = (() => {
+    if (!_candidateItemId) return null;
+    const _entry = Object.values(gearItemIds).find(v => (typeof v === 'object' ? v.id : v) === _candidateItemId);
+    return _entry && typeof _entry === 'object' ? _entry.slot : null;
+  })();
+  // Map BiS slot name to gear listing slot name
+  const _bisToGearSlot = { Head:'Head', Shoulders:'Shoulders', Chest:'Chest', Bracers:'Bracers',
+    Hands:'Hands', Waist:'Waist', Legs:'Legs', Feet:'Feet', Neck:'Neck', Cloak:'Cloak',
+    'Main Hand':'Weapon', 'One Hand':'Weapon', 'Two Hand':'Weapon',
+    'Off Hand':'Off-Hand', 'Trinket':'Trinket1', 'Ring':'Ring1' };
+  const _gearSlotToCheck = _candidateSlot ? (_bisToGearSlot[_candidateSlot] || _candidateSlot) : null;
+
+  const hasItem = p => {
+    const key = normalizeName(p.name);
+    // 1. Check loot distribution log
+    if ((lootByPlayer[key] || []).some(l => (l.name || l).toLowerCase() === item.toLowerCase())) return true;
+    // 2. Check CLA gear listing
+    const gearSlots = gearListingByPlayer[key]?.slots;
+    if (!gearSlots) return false;
+    if (_tokenRewardIds) {
+      // Token: check if any equipped item in any slot is a reward from this token
+      for (const equippedName of Object.values(gearSlots)) {
+        if (!equippedName) continue;
+        const equippedId = getItemId(equippedName, p.name);
+        if (equippedId && _tokenRewardIds.has(equippedId)) return true;
+      }
+    } else if (_gearSlotToCheck) {
+      // Non-token: check if the item is equipped in its slot
+      // Check both slot variants (Ring1/Ring2, Trinket1/Trinket2)
+      const slotsToCheck = _gearSlotToCheck === 'Ring1'
+        ? ['Ring1','Ring2']
+        : _gearSlotToCheck === 'Trinket1'
+        ? ['Trinket1','Trinket2']
+        : [_gearSlotToCheck];
+      for (const slot of slotsToCheck) {
+        if ((gearSlots[slot] || '').toLowerCase() === item.toLowerCase()) return true;
+      }
+    }
+    return false;
+  };
 
   const haveIt = eligible.filter(p => hasItem(p));
   const needIt = eligible.filter(p => !hasItem(p) && !p.inactive);
