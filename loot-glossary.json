@@ -99,10 +99,11 @@
           ],
           "prioritization": [
             {
-              "multiplier": 1.25,
               "conditions": [
-                "Priest"
-              ]
+                "Priest",
+                "Ranged DPS"
+              ],
+              "multiplier": 1.75
             }
           ],
           "roleValues": {
