@@ -1279,17 +1279,20 @@
   <!-- GitHub auth footer (shown when not authenticated) -->
   <div id="githubAuthFooter" style="margin-top:0;padding:20px 0;display:none;">
     <div style="font-family:'Cinzel',serif;font-size:13px;letter-spacing:0.15em;color:var(--gold);margin-bottom:8px;">Read-Only Mode</div>
-    <div style="font-size:13px;color:var(--text-dim);margin-bottom:12px;">Enter a GitHub Personal Access Token to disable read-only mode.</div>
+    <div style="font-size:13px;color:var(--text-dim);margin-bottom:12px;">Enter the write token to enable data editing. Contact an officer if you need access.</div>
     <div style="display:flex;gap:8px;align-items:center;">
-      <input type="password" id="claToken" class="cla-input wide" placeholder="GitHub Personal Access Token" style="flex:1;" />
+      <input type="password" id="claToken" class="cla-input wide" placeholder="Write Token" style="flex:1;" />
       <button class="btn primary" onclick="saveGithubToken()">Save Token</button>
     </div>
   </div>
 
   <!-- Persistent auth status bar (always visible when authenticated) -->
   <div id="githubAuthBar" style="display:none;padding:8px 12px;display:none;align-items:center;justify-content:space-between;">
-    <span style="font-size:12px;color:var(--text-dim);">&#128273; Authenticated via GitHub</span>
-    <button class="btn" onclick="clearGithubToken()" style="font-size:11px;padding:3px 10px;">Disconnect</button>
+    <span style="font-size:12px;color:var(--text-dim);">&#128273; Write access enabled</span>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="btn" id="migrateBtn" onclick="migrateFromGitHub()" style="font-size:11px;padding:3px 10px;" title="One-time: seed Worker KV from current GitHub Pages JSON files">Seed from GitHub</button>
+      <button class="btn" onclick="clearGithubToken()" style="font-size:11px;padding:3px 10px;">Disconnect</button>
+    </div>
   </div>
 
 </div>
@@ -1521,8 +1524,8 @@ function sortRaids(raids) {
 
 async function loadLootGlossaryFromRepo() {
   try {
-    const res = await fetch('./loot-glossary.json?t=' + Date.now());
-    if (!res.ok) { console.warn('loot-glossary.json fetch failed:', res.status); return; }
+    let res;
+    try { res = { ok: true, json: async () => await fetchFromWorker('loot-glossary.json') }; } catch(e) { console.warn('loot-glossary.json Worker fetch failed:', e.message); return; }
     const data = await res.json();
     if (data && data.raids) {
       lootGlossary = data;
@@ -1581,8 +1584,8 @@ let setBonusData = { setThresholds: {} }; // loaded from set-bonuses.json
 
 async function loadSetBonusesFromRepo() {
   try {
-    const res = await fetch('./set-bonuses.json?t=' + Date.now());
-    if (!res.ok) { console.warn('set-bonuses.json fetch failed:', res.status); return; }
+    let res;
+    try { res = { ok: true, json: async () => await fetchFromWorker('set-bonuses.json') }; } catch(e) { console.warn('set-bonuses.json Worker fetch failed:', e.message); return; }
     const data = await res.json();
     if (data && data.setThresholds) {
       setBonusData = data;
@@ -1602,8 +1605,8 @@ async function saveSetBonusesToGitHub() {
 
 async function loadAttendanceFromRepo() {
   try {
-    const res = await fetch('./attendance.json?t=' + Date.now());
-    if (!res.ok) { console.warn('attendance.json fetch failed:', res.status); return; }
+    let res;
+    try { res = { ok: true, json: async () => await fetchFromWorker('attendance.json') }; } catch(e) { console.warn('attendance.json fetch failed:', e.message); return; }
     const data = await res.json();
     if (data && Array.isArray(data.raids)) {
       attendanceData = data;
@@ -1776,8 +1779,8 @@ function buildAttendanceRenderData() {
 
 async function loadRosterFromRepo() {
   try {
-    const res = await fetch('./roster.json?t=' + Date.now());
-    if (!res.ok) { console.warn('roster.json fetch failed:', res.status); return; }
+    let res;
+    try { res = { ok: true, json: async () => await fetchFromWorker('roster.json') }; } catch(e) { console.warn('roster.json Worker fetch failed:', e.message); return; }
     const data = await res.json();
     if (data && Array.isArray(data.players)) {
       rosterData = data;
@@ -2294,12 +2297,16 @@ let wclToken = null;
 let wclTokenExpiry = 0;
 let wclData = {}; // normalized name -> { points, rank, outOf }
 
-const GITHUB_REPO = 'bunzosteele/dbs-lc';
+const GITHUB_REPO = 'bunzosteele/dbs-lc'; // kept for WCL OAuth only
+// Cloudflare Worker URL — set this to your deployed Worker URL
+// e.g. 'https://dbs-lc.yourname.workers.dev'
+const CF_WORKER_URL = '';  // ← fill in after deploying the Worker
 const GITHUB_FILE = 'cla-sheets.json';
 const GEAR_IDS_FILE = 'gear-item-ids.json';
 let gearItemIds = {}; // item name (lowercase) -> wowhead item ID
 let bisData = {};    // spec -> slot -> [[id, rank, phase, epv*100], ...]
 let githubToken = localStorage.getItem('ghToken') || '';
+let writeToken = localStorage.getItem('writeToken') || ''; // Cloudflare Worker write token
 
 async function saveWclConfigToGitHub(password, clientId, clientSecret, realm) {
   if (!githubToken) { setWclStatus('GitHub token required to save credentials.', 'error'); return; }
@@ -2493,7 +2500,7 @@ function wclColor(pct) {
 
 let _githubSaveTimer = null;
 async function saveClaSheetsToGitHub() {
-  if (!githubToken) return;
+  if (!writeToken) return;
   // Debounce: cancel pending save and wait 600ms to batch rapid calls
   if (_githubSaveTimer) clearTimeout(_githubSaveTimer);
   await new Promise(resolve => { _githubSaveTimer = setTimeout(resolve, 600); });
@@ -3502,7 +3509,9 @@ function initWclIfSaved() {
 function saveGithubToken() {
   const token = document.getElementById('claToken').value.trim();
   if (!token) return;
-  githubToken = token;
+  writeToken = token;
+  githubToken = token; // kept for WCL OAuth which still uses github
+  try { localStorage.setItem('writeToken', token); } catch(e) {}
   try { localStorage.setItem('ghToken', token); } catch(e) {}
   document.getElementById('claToken').value = '';
   updateAuthState();
@@ -3556,6 +3565,8 @@ function setHint(msg, type) {
 
 function clearGithubToken() {
   githubToken = '';
+  writeToken = '';
+  try { localStorage.removeItem('writeToken'); } catch(e) {}
   try { localStorage.removeItem('ghToken'); } catch(e) {}
   // If currently in CLA mode, switch back to role view
   if (['cla','bis','roster','glossary','attendance'].includes(groupingMode)) setGrouping('role');
@@ -3653,7 +3664,7 @@ async function lookupItemId(itemName) {
 
 // Save gear-item-ids.json to GitHub
 async function saveGearItemIdsToGitHub() {
-  if (!githubToken) return;
+  if (!writeToken) return;
   try {
     const apiUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GEAR_IDS_FILE}`;
     let sha = null;
@@ -3957,9 +3968,8 @@ initWclIfSaved();
 // Auto-load CLA sheets from repo JSON if no sheets saved locally
 async function loadClaSheetsFromRepo() {
   try {
-    const res = await fetch('./cla-sheets.json');
-    if (!res.ok) return; // file doesn't exist yet, silently skip
-    const data = await res.json();
+    let data;
+    try { data = await fetchFromWorker('cla-sheets.json'); } catch(e) { return; } // not yet saved, silently skip
     if (!Array.isArray(data) || !data.length) return;
     // Only use repo data if user has no locally saved sheets
     if (!claSheets.length) {
@@ -3974,8 +3984,8 @@ updateAuthState();
 }
 async function loadBisDataFromRepo() {
   try {
-    const res = await fetch('./bis-data.json?t=' + Date.now());
-    if (!res.ok) { console.warn('bis-data.json fetch failed:', res.status); return; }
+    let res;
+    try { res = { ok: true, json: async () => await fetchFromWorker('bis-data.json') }; } catch(e) { console.warn('bis-data.json Worker fetch failed:', e.message); return; }
     const data = await res.json();
     if (typeof data === 'object' && data !== null) {
       bisData = data;
@@ -3989,8 +3999,8 @@ async function loadBisDataFromRepo() {
 
 async function loadGearItemIdsFromRepo() {
   try {
-    const res = await fetch('./gear-item-ids.json?t=' + Date.now());
-    if (!res.ok) { console.warn('gear-item-ids.json fetch failed:', res.status, res.url); return; }
+    let res;
+    try { res = { ok: true, json: async () => await fetchFromWorker('gear-item-ids.json') }; } catch(e) { console.warn('gear-item-ids.json Worker fetch failed:', e.message, res.url); return; }
     const data = await res.json();
     if (typeof data === 'object' && data !== null) {
       gearItemIds = data;
@@ -5545,7 +5555,7 @@ async function bisSubmitOverrides(spec, slot) {
   const inputs = [...document.querySelectorAll('#bisTable input[data-item-id]')];
   const changed = inputs.filter(el => Math.abs(parseFloat(el.value) - parseFloat(el.dataset.original)) > 0.01);
 
-  if (!githubToken) { hint.textContent = 'GitHub token required.'; hint.style.color = '#c94c4c'; return; }
+  if (!writeToken) { hint.textContent = 'Write token required.'; hint.style.color = '#c94c4c'; return; }
   if (!changed.length) { hint.textContent = 'No changes to save.'; return; }
 
   hint.textContent = 'Saving...'; hint.style.color = 'var(--text-dim)';
@@ -5588,7 +5598,7 @@ async function bisAddItem() {
   if (!spec || !slot) { hint.textContent = 'Select a spec and slot first.'; hint.style.color='#c94c4c'; return; }
   if (!idVal || isNaN(idVal)) { hint.textContent = 'Enter a valid item ID.'; hint.style.color='#c94c4c'; return; }
   if (isNaN(epvVal) || epvVal <= 0) { hint.textContent = 'Enter a valid EPV value.'; hint.style.color='#c94c4c'; return; }
-  if (!githubToken) { hint.textContent = 'GitHub token required to save.'; hint.style.color='#c94c4c'; return; }
+  if (!writeToken) { hint.textContent = 'Write token required to save.'; hint.style.color='#c94c4c'; return; }
 
   hint.textContent = 'Fetching item data...'; hint.style.color='var(--text-dim)';
 
@@ -5636,25 +5646,68 @@ async function bisAddItem() {
   }
 }
 
+
+// ── One-time migration: seed Worker KV from GitHub Pages JSON files ──────
+async function migrateFromGitHub() {
+  const btn = document.getElementById('migrateBtn');
+  if (!CF_WORKER_URL) { alert('CF_WORKER_URL not set in source.'); return; }
+  if (!writeToken) { alert('Write token required.'); return; }
+  const files = [
+    'loot-glossary.json', 'roster.json', 'attendance.json',
+    'bis-data.json', 'gear-item-ids.json', 'set-bonuses.json',
+    'cla-sheets.json',
+  ];
+  if (btn) { btn.textContent = 'Seeding…'; btn.disabled = true; }
+  const results = [];
+  for (const file of files) {
+    try {
+      // Fetch from GitHub Pages (raw static file)
+      const res = await fetch(`./${file}?t=${Date.now()}`);
+      if (!res.ok) { results.push(`${file}: not found (skipped)`); continue; }
+      const text = await res.text();
+      JSON.parse(text); // validate
+      const put = await fetch(`${CF_WORKER_URL}/${file}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'X-Token': writeToken },
+        body: text,
+      });
+      results.push(`${file}: ${put.ok ? '✓' : '✗ ' + put.status}`);
+    } catch(e) {
+      results.push(`${file}: error — ${e.message}`);
+    }
+  }
+  if (btn) { btn.textContent = 'Seed from GitHub'; btn.disabled = false; }
+  alert('Migration complete:\n' + results.join('\n'));
+}
+
+// ── Storage: Cloudflare Worker ───────────────────────────────────
+
+async function fetchFromWorker(filename) {
+  if (!CF_WORKER_URL) throw new Error('CF_WORKER_URL not configured');
+  const res = await fetch(`${CF_WORKER_URL}/${filename}`, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Worker fetch failed for ${filename}: ${res.status}`);
+  return res.json();
+}
+
 async function saveJsonToGitHub(filename, data) {
-  const apiUrl = `https://api.github.com/repos/${GITHUB_REPO}/contents/${filename}`;
-  const getRes = await fetch(apiUrl, { headers: { Authorization: `token ${githubToken}`, Accept: 'application/vnd.github.v3+json' }});
-  const sha = getRes.ok ? (await getRes.json()).sha : null;
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-  const putRes = await fetch(apiUrl, {
+  if (!CF_WORKER_URL) throw new Error('CF_WORKER_URL not configured — set it in the dashboard source');
+  if (!writeToken) throw new Error('Write token required — enter it in the auth panel');
+  const res = await fetch(`${CF_WORKER_URL}/${filename}`, {
     method: 'PUT',
-    headers: { Authorization: `token ${githubToken}`, Accept: 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message: `Update ${filename}`, content, ...(sha ? { sha } : {}) })
+    headers: { 'Content-Type': 'application/json', 'X-Token': writeToken },
+    body: JSON.stringify(data, null, 2),
   });
-  if (!putRes.ok) throw new Error(`GitHub save failed for ${filename}: ${(await putRes.json()).message}`);
-  // Reload the file we just saved so local state reflects what's on GitHub
-  // Small delay to allow GitHub Pages CDN to propagate
-  await new Promise(r => setTimeout(r, 1500));
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ error: res.statusText }));
+    throw new Error(`Worker save failed for ${filename}: ${err.error || res.status}`);
+  }
+  // Reload local state immediately — no CDN delay with Worker
   if (filename === 'loot-glossary.json') await loadLootGlossaryFromRepo();
   else if (filename === 'roster.json')   await loadRosterFromRepo();
   else if (filename === 'set-bonuses.json') await loadSetBonusesFromRepo();
   else if (filename === 'gear-item-ids.json') await loadGearItemIdsFromRepo();
   else if (filename === 'bis-data.json') await loadBisDataFromRepo();
+  else if (filename === 'attendance.json') { /* handled by caller */ }
 }
 
 // Refresh slot options when phase changes without resetting spec
