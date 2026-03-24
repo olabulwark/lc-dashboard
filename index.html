@@ -3041,7 +3041,7 @@ function getRoleRowsHtml(sorted, dates, bottom20threshold, top20threshold, point
       const dotStart = Math.max(0, p.n - MAX_DOTS); // always show last 10
       let dotsHtml = '<div class="raid-dots">';
       for (let i = dotStart; i < p.n; i++) {
-        const dateLabel = normalizeDate(dates[i]);
+        const dateLabel = attendanceData.raids[i]?.date || normalizeDate(dates[i]);
         if (p.pct === null) {
           dotsHtml += `<div class="raid-dot absent" title="${dates[i]}"></div>`;
         } else if (i < p.first || i > p.last) {
@@ -3908,6 +3908,8 @@ function parseBuffConsumables(text, label) {
   // Header row is row index 4 (0-based), data starts at row 5
   const headers = rows[4]?.slice(2) || []; // col C onwards
   const normLabel = normalizeDate(label);
+  // Use ISO date as key if we have it, otherwise fall back to normLabel
+  const isoLabel = claSheetDates[label] ? formatAttendanceDate(claSheetDates[label]) : normLabel;
   for (let i = 5; i < rows.length; i++) {
     const row = rows[i];
     const player = row[1]?.trim();
@@ -3932,7 +3934,7 @@ function parseBuffConsumables(text, label) {
     const elixirVal  = parseInt(values[1]?.trim()) || 0;  // Elixir or Flask
     const foodVal     = parseInt(values[5]?.trim()) || 0;  // Food Buff
     const wepOilVal   = parseInt(values[7]?.trim()) || 0;  // Weapon Enhancement
-    buffScoreByPlayerDate[key][normLabel] = {
+    buffScoreByPlayerDate[key][isoLabel] = {
       total: isNaN(pct) ? null : pct,
       scrolls: isNaN(scrollsPct) ? 0 : scrollsPct,
       elixir: elixirVal,
@@ -4085,6 +4087,7 @@ function _sbRemoveCondition(idx) {
 }
 
 function setBonusConfirmAdd() {
+  document.getElementById('setBonusConfirmBtn')?.classList.remove('gloss-btn-ready');
   const cfg = _currentSbConfig();
   if (!cfg || !_sbActiveThreshold) return;
   let conditions = [..._sbPendingConditions];
@@ -4172,8 +4175,8 @@ function renderAttendancePanel() {
           ${CLASSES.map(c => `<option value="${c}" ${_attendanceFilter.cls===c?'selected':''}>${c}</option>`).join('')}
         </select>
         <div style="display:flex;gap:6px;align-items:center;margin-left:auto;">
-          <input type="date" id="newRaidDateInput" style="${selStyle}padding:5px 8px;" />
-          <button onclick="attendanceAddRaid()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:\'Cinzel\',serif;font-size:11px;letter-spacing:0.1em;">+ ADD RAID</button>
+          <input type="date" id="newRaidDateInput" style="${selStyle}padding:5px 8px;" oninput="document.getElementById('addRaidBtn')?.classList.toggle('gloss-btn-ready', !!this.value)" />
+          <button id="addRaidBtn" onclick="attendanceAddRaid()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:\'Cinzel\',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">+ ADD RAID</button>
         </div>
         <span style="font-size:12px;color:var(--text-dim);">${filteredPlayers.length} players · ${raids.length} raids</span>
       </div>
@@ -4184,7 +4187,7 @@ function renderAttendancePanel() {
           <thead>
             <tr style="border-bottom:2px solid var(--border);">
               <th style="text-align:left;padding:6px 12px;font-family:\'Cinzel\',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);white-space:nowrap;position:sticky;left:0;background:var(--bg);z-index:2;min-width:140px;">PLAYER</th>
-              <th style="text-align:right;padding:6px 12px 6px 4px;font-family:\'Cinzel\',serif;font-size:10px;letter-spacing:0.2em;color:var(--text-dim);white-space:nowrap;">CLASS</th>
+
               ${raids.map(r => `<th style="${thStyle}"><div>${r.label}</div><div id="att-count-${r.date}" style="color:var(--gold-dim);font-size:11px;"></div></th>`).join('')}
             </tr>
           </thead>
@@ -4204,9 +4207,11 @@ function renderAttendancePanel() {
       lastRole = p.role;
       const sepRow = document.createElement('tr');
       const sepTd = document.createElement('td');
-      sepTd.colSpan = 2 + raids.length;
+      sepTd.colSpan = 1 + raids.length;
       sepTd.style.cssText = 'padding:0;';
+      const roleIcon = ROLE_ICONS[p.role] || '';
       sepTd.innerHTML = `<div class="role-header" style="margin:12px 0 6px;padding:0 4px;">
+        <span style="font-size:14px;">${roleIcon}</span>
         <span class="role-title">${p.role}</span>
         <div class="role-line"></div>
       </div>`;
@@ -4227,11 +4232,7 @@ function renderAttendancePanel() {
     nameTd.innerHTML = `<span class="loot-arrow">▸</span> <span style="color:${col};">${p.name}</span>`;
     tr.appendChild(nameTd);
 
-    // Class cell — right-aligned
-    const clsTd = document.createElement('td');
-    clsTd.style.cssText = 'padding:5px 12px 5px 4px;font-size:12px;color:var(--text-dim);white-space:nowrap;text-align:right;';
-    clsTd.textContent = p.class || '';
-    tr.appendChild(clsTd);
+
 
     // Attendance checkboxes
     for (const raid of raids) {
@@ -4555,7 +4556,7 @@ function renderGlossaryPanel() {
               <select id="sbPrioMult" style="background:var(--bg2);border:1px solid var(--border);color:var(--gold);padding:5px 8px;border-radius:4px;font-size:13px;">
                 ${[0.5,0.75,1.0,1.25,1.5,1.75,2.0,2.25,2.5].map(m => '<option value="' + m + '"' + (m===1.25?' selected':'') + '>×' + m + '</option>').join('')}
               </select>
-              <button onclick="setBonusConfirmAdd()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;margin-left:auto;">ADD</button>
+              <button id="setBonusConfirmBtn" onclick="setBonusConfirmAdd()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;margin-left:auto;transition:background 0.15s,box-shadow 0.15s;">ADD</button>
               <button onclick="document.getElementById('setBonusAddForm').style.display='none';_sbPendingConditions=[];_sbActiveThreshold=null;" style="background:none;border:1px solid var(--border);color:var(--text-dim);padding:6px 10px;border-radius:4px;cursor:pointer;font-size:12px;">Cancel</button>
             </div>
           </div>
@@ -4877,22 +4878,22 @@ function renderRosterPanel() {
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
           <div style="display:flex;flex-direction:column;gap:4px;">
             <label style="font-size:11px;color:var(--text-dim);">Name</label>
-            <input id="rosterAddName" placeholder="Player name" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;width:160px;">
+            <input id="rosterAddName" placeholder="Player name" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;width:160px;" oninput="rosterCheckAddReady()">
           </div>
           <div style="display:flex;flex-direction:column;gap:4px;">
             <label style="font-size:11px;color:var(--text-dim);">Role</label>
-            <select id="rosterAddRole" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;" onchange="rosterUpdateClassOptions()">
+            <select id="rosterAddRole" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;" onchange="rosterUpdateClassOptions();rosterCheckAddReady()">
               <option value="">— Role —</option>
               ${allRoles.map(r => `<option value="${r}">${r}</option>`).join('')}
             </select>
           </div>
           <div style="display:flex;flex-direction:column;gap:4px;">
             <label style="font-size:11px;color:var(--text-dim);">Class</label>
-            <select id="rosterAddClass" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;" disabled>
+            <select id="rosterAddClass" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;" onchange="rosterCheckAddReady()" disabled>
               <option value="">— Select role first —</option>
             </select>
           </div>
-          <button onclick="rosterAddPlayer()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:7px 16px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.1em;">ADD</button>
+          <button id="rosterAddBtn" onclick="rosterAddPlayer()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:7px 16px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">ADD</button>
         </div>
       </div>
 
@@ -4938,6 +4939,14 @@ function rosterUpdateClassOptions() {
       classes.map(c => `<option value="${c}">${c}</option>`).join('');
     classSel.disabled = false;
   }
+}
+
+function rosterCheckAddReady() {
+  const name = document.getElementById('rosterAddName')?.value.trim();
+  const role = document.getElementById('rosterAddRole')?.value;
+  const cls  = document.getElementById('rosterAddClass')?.value;
+  const ready = !!(name && role && cls);
+  document.getElementById('rosterAddBtn')?.classList.toggle('gloss-btn-ready', ready);
 }
 
 function rosterAddPlayer() {
@@ -5439,7 +5448,7 @@ function renderBisPanel() {
           <label style="font-size:11px;color:var(--text-dim);">EPV</label>
           <input id="bisAddEpv" type="number" step="0.1" placeholder="e.g. 145.5" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:6px 10px;font-size:14px;width:110px;outline:none;" />
         </div>
-        <button class="btn primary" onclick="bisAddItem()" style="padding:6px 16px;">+ Add</button>
+        <button id="bisAddBtn" class="btn primary" onclick="bisAddItem()" style="padding:6px 16px;">+ Add</button>
         <span id="bisAddHint" style="font-size:12px;color:var(--text-dim);align-self:center;"></span>
       </div>
     </div>`;
@@ -6650,7 +6659,7 @@ function onItemChange() {
     const dotStart = Math.max(0, p.n - MAX_DOTS);
     let dotsHtml = '<div class="raid-dots">';
     for (let i = dotStart; i < p.n; i++) {
-      const dateLabel = normalizeDate(dates[i]);
+      const dateLabel = attendanceData.raids[i]?.date || normalizeDate(dates[i]);
       if (p.pct === null) {
         dotsHtml += `<div class="raid-dot absent" title="${dates[i]}"></div>`;
       } else if (i < p.first || i > p.last) {
