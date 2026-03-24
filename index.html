@@ -6161,10 +6161,8 @@ function onItemChange() {
     }));
     const hasUpgrade = scored.some(s => s.epvPct !== null && s.epvPct > 5);
     if (!hasUpgrade) return { type: 'open', rollers: [] };
-    // Only consider players who actually have an upgrade — don't recommend to sidegrades/downgrades
-    const byPrio = scored.filter(s => s.normPr > 0 && s.epvPct !== null && s.epvPct > 5).sort((a, b) => b.normPr - a.normPr);
-    // All eligible players by priority (for runner-up reason, even if they lack an upgrade)
-    const allByPrio = scored.filter(s => s.normPr > 0).sort((a, b) => b.normPr - a.normPr);
+    const byPrio = scored.filter(s => s.normPr > 0).sort((a, b) => b.normPr - a.normPr);
+    const allByPrio = byPrio;
     if (!byPrio.length) return { type: 'open', rollers: [] };
     if (byPrio.length === 1) return { type: 'restricted', rollers: byPrio, runnerUp: allByPrio.find(s => s !== byPrio[0]) || null };
     if (byPrio.length === 2) {
