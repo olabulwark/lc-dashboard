@@ -1424,6 +1424,8 @@ function setGrouping(mode) {
       }
     }
     renderGlossaryPanel();
+  } else if (isAttendance) {
+    renderAttendancePanel();
   } else if (lastRenderData.roles.length) {
     render(lastRenderData);
   }
@@ -4215,11 +4217,14 @@ function renderAttendancePanel() {
     const tr = document.createElement('tr');
     tr.style.borderBottom = '1px solid rgba(255,255,255,0.04)';
 
-    // Name cell with class color
+    // Name cell with class color and loot toggle
     const nameTd = document.createElement('td');
-    nameTd.style.cssText = 'padding:5px 12px;white-space:nowrap;position:sticky;left:0;background:var(--bg);z-index:1;';
+    nameTd.className = 'player-name';
+    nameTd.style.cssText = 'padding:5px 12px;white-space:nowrap;position:sticky;left:0;background:var(--bg);z-index:1;cursor:pointer;';
+    nameTd.title = p.name + ' — Click to view loot';
+    nameTd.setAttribute('onclick', `toggleLoot(this, '${p.name.replace(/'/g, "\\'")}')`);
     const col = classColor(p.name) || 'var(--text)';
-    nameTd.innerHTML = `<span style="color:${col};">${p.name}</span>`;
+    nameTd.innerHTML = `<span class="loot-arrow">▸</span> <span style="color:${col};">${p.name}</span>`;
     tr.appendChild(nameTd);
 
     // Class cell — right-aligned
