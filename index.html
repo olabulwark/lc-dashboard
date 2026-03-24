@@ -5474,6 +5474,86 @@ function onItemChange() {
     ? `<a href="https://www.wowhead.com/tbc/item=${itemId}" data-wowhead="item=${itemId}&dataset=tbc" target="_blank" rel="noopener" style="flex-shrink:0;"><img src="https://wow.zamimg.com/images/wow/icons/large/${itemIcons[itemId]}.jpg" style="width:40px;height:40px;border:2px solid var(--gold-dim);border-radius:4px;display:block;" /></a>`
     : '';
   // Build recommendation HTML (computed later, placeholder updated after algorithm runs)
+  // Decompose what drove the priority gap between winner and runner-up
+  function computeReasonForAward(winner, runnerUp) {
+    const p1 = winner.p;
+    const p2 = runnerUp.p;
+
+    // Helper: compute all raw factor values for a player
+    function getFactors(p) {
+      // Base priority components
+      const base = calculatePriority(p, eligBottom20, eligTop20, eligThreshPts);
+      const tenureScore = 4 * Math.log2(p.attended + 1);
+      const forgiveness = 1 - 1 / (1 + p.attended / 8);
+      const effPct = p.pct + (100 - p.pct) * forgiveness;
+      const attScore = Math.floor(effPct / 10) * tenureScore;
+
+      const _adj = getAdjustedConsumeScores(p.name);
+      const avgConsume = _adj.length ? _adj.reduce((a,b) => a+b,0) / _adj.length : 100;
+      const consumeMod = 1 / (1 + Math.max(0, 100 - avgConsume) / 100);
+
+      const gi = latestGearIssuesByPlayer[normalizeName(p.name)];
+      const gearIssueCount = (gi?.issues || []).reduce((count, issue) => {
+        if (typeof issue === 'string') return count + 1;
+        if (issue?.suboptimal) return count + (isTop5BisItem(issue.itemName, p.name) ? 1 : 0);
+        return count;
+      }, 0);
+      const gearMod = 1 / (1 + 0.1 * gearIssueCount);
+
+      const pts = pointsByPlayer[normalizeName(p.name)] ?? 0;
+      const ranked = [...eligThreshPts].sort((a,b) => a-b);
+      let lootPercentile = 0;
+      if (ranked.length > 1 && pts > 0) {
+        const pos = ranked.filter(v => v < pts).length;
+        lootPercentile = pos / (ranked.length - 1);
+      }
+      const lootMod = 1.0 - lootPercentile * (2/3);
+
+      // Multipliers
+      const prioMult  = prioMultiplier(p).mult;
+      const bisMult   = bisMultiplier(p).mult;
+      const setBMult  = TOKEN_TIER_META[_candidateItemId] ? getSetBonusMultiplier(p.name, _candidateItemId).mult : 1;
+      const altMult   = altModifier(p).mult;
+
+      return { attScore, consumeMod, gearMod, lootMod, prioMult, bisMult, setBMult, altMult };
+    }
+
+    const f1 = getFactors(p1);
+    const f2 = getFactors(p2);
+
+    // For each factor, compute how much it contributed to the gap
+    // We measure the ratio: if factor X alone explained the difference, how big would the gap be?
+    // Gap contribution = |f1[x] / f2[x] - 1| (how much larger p1's value is vs p2's)
+    const factors = [
+      { key: 'attScore',   label: 'Attendance' },
+      { key: 'consumeMod', label: 'Consumable Usage' },
+      { key: 'gearMod',    label: 'Gear Issues' },
+      { key: 'lootMod',    label: 'Loot Score' },
+      { key: 'prioMult',   label: 'Item Prioritization' },
+      { key: 'bisMult',    label: 'Item Upgrade' },
+      { key: 'setBMult',   label: 'Set Bonus' },
+      { key: 'altMult',    label: 'Fewer Alternatives' },
+    ];
+
+    let bestLabel = 'Overall Priority';
+    let bestContrib = 0;
+
+    for (const { key, label } of factors) {
+      const v1 = f1[key];
+      const v2 = f2[key];
+      // Skip if both are effectively equal or both are 1 (multiplier not active for either)
+      if (Math.abs(v1 - v2) < 0.001) continue;
+      // Contribution = how much this factor favours p1 over p2
+      const contrib = v2 > 0 ? (v1 / v2) - 1 : (v1 > 0 ? 1 : 0);
+      if (contrib > bestContrib) {
+        bestContrib = contrib;
+        bestLabel = label;
+      }
+    }
+
+    return bestLabel;
+  }
+
   function buildRecommendationHtml(rec) {
     if (rec.type === 'open') {
       return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
@@ -5481,12 +5561,20 @@ function onItemChange() {
         <div style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold-light);letter-spacing:0.08em;">Open Roll</div>
       </div>`;
     }
-    const names = rec.rollers.map(s => `<span style="color:${classColor(s.p.name)||'var(--gold-light)'};">${s.p.name}</span><span style="color:var(--text-dim);font-size:12px;"> (${s.normPr})</span>`);
+    const names = rec.rollers.length === 1
+      ? rec.rollers.map(s => `<span style="color:${classColor(s.p.name)||'var(--gold-light)'};">${s.p.name}</span>`)
+      : rec.rollers.map(s => `<span style="color:${classColor(s.p.name)||'var(--gold-light)'};">${s.p.name}</span><span style="color:var(--text-dim);font-size:12px;"> (${s.normPr})</span>`);
     const label = rec.rollers.length === 1 ? 'Award to' : 'Roll Off';
+    const reasonHtml = (() => {
+      if (rec.rollers.length !== 1 || !rec.runnerUp) return '';
+      const reason = computeReasonForAward(rec.rollers[0], rec.runnerUp);
+      return `<div style="font-size:12px;color:var(--text-dim);font-style:italic;">For ${reason}</div>`;
+    })();
     return `<div style="display:flex;flex-direction:column;align-items:center;gap:4px;">
       <div style="font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.18em;color:var(--text-dim);text-transform:uppercase;">Recommendation</div>
       <div style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold-light);letter-spacing:0.08em;">${label}</div>
       <div style="font-size:15px;text-align:center;white-space:nowrap;">${names.join(' &nbsp;·&nbsp; ')}</div>
+      ${reasonHtml}
     </div>`;
   }
 
@@ -6055,16 +6143,17 @@ function onItemChange() {
     if (!hasUpgrade) return { type: 'open', rollers: [] };
     const byPrio = scored.filter(s => s.normPr > 0).sort((a, b) => b.normPr - a.normPr);
     if (!byPrio.length) return { type: 'open', rollers: [] };
-    if (byPrio.length === 1) return { type: 'restricted', rollers: byPrio };
+    if (byPrio.length === 1) return { type: 'restricted', rollers: byPrio, runnerUp: null };
     if (byPrio.length === 2) {
       // With only 2 eligible, roll together if gap < 20%, otherwise award to top
       const gap = (byPrio[0].normPr - byPrio[1].normPr) / byPrio[0].normPr;
-      return { type: 'restricted', rollers: gap < 0.20 ? byPrio : [byPrio[0]] };
+      if (gap < 0.20) return { type: 'restricted', rollers: byPrio };
+      return { type: 'restricted', rollers: [byPrio[0]], runnerUp: byPrio[1] };
     }
     // Filter out anyone below priority 50, then take top 4
     const topN = byPrio.filter(s => s.normPr >= 50).slice(0, 4);
     if (!topN.length) return { type: 'open', rollers: [] };
-    if (topN.length === 1) return { type: 'restricted', rollers: topN };
+    if (topN.length === 1) return { type: 'restricted', rollers: topN, runnerUp: byPrio[1] || null };
 
     let cutIdx = topN.length;
     // Find cut: the gap that is both >= 10% AND scores highest on (gap * ratio over previous gap)
@@ -6088,7 +6177,7 @@ function onItemChange() {
       if (spread <= 0.30) break;
       rollers = rollers.slice(0, rollers.length - 1);
     }
-    return { type: 'restricted', rollers };
+    return { type: 'restricted', rollers, runnerUp: rollers.length === 1 ? (topN[1] || byPrio[1] || null) : null };
   }
   recommendation = computeRecommendation();
 
