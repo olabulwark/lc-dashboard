@@ -4354,6 +4354,9 @@ function setBonusAddCondition() {
 function _sbRenderPendingConditions() {
   const el = document.getElementById('setBonusConditions');
   if (!el) return;
+  // Sync ADD button ready state with whether there are pending conditions
+  const confirmBtn = document.getElementById('setBonusConfirmBtn');
+  if (confirmBtn) confirmBtn.classList.toggle('gloss-btn-ready', _sbPendingConditions.length > 0);
   if (!_sbPendingConditions.length) { el.innerHTML = ''; return; }
   el.innerHTML = '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px;">' +
     _sbPendingConditions.map((c, i) =>
