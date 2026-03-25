@@ -4251,13 +4251,7 @@ function renderLootLogRaidList() {
       body.innerHTML = `
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
           <div id="lootlogItemDropdown_${raid.date}" style="position:relative;min-width:220px;"></div>
-          <input id="lootlogRecipient_${raid.date}" placeholder="Recipient"
-            list="lootlogPlayerList"
-            style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;width:150px;"
-            oninput="lootLogCheckAddItemReady('${raid.date}')" />
-          <datalist id="lootlogPlayerList">
-            ${rosterData.players.map(p => `<option value="${p.name}">`).join('')}
-          </datalist>
+          <div id="lootlogRecipientDropdown_${raid.date}" style="position:relative;min-width:160px;"></div>
           <button id="lootlogAddItemBtn_${raid.date}" class="gloss-btn-saveable"
             onclick="lootLogAddItem('${raid.date}')"
             style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">
@@ -4272,6 +4266,7 @@ function renderLootLogRaidList() {
       setTimeout(() => {
         lootLogRenderItems(raid.date);
         lootLogInitItemDropdown(raid.date);
+        lootLogInitRecipientDropdown(raid.date);
       }, 0);
     }
 
@@ -4282,7 +4277,6 @@ function renderLootLogRaidList() {
 function lootLogInitItemDropdown(dateStr) {
   const container = document.getElementById(`lootlogItemDropdown_${dateStr}`);
   if (!container) return;
-  // Build a searchable item list from glossary
   const allItems = [];
   for (const [raid, bosses] of Object.entries(lootGlossary.raids || {})) {
     for (const [boss, items] of Object.entries(bosses)) {
@@ -4292,15 +4286,104 @@ function lootLogInitItemDropdown(dateStr) {
     }
   }
   allItems.sort();
-  const inputId = `lootlogItemInput_${dateStr}`;
-  container.innerHTML = `
-    <input id="${inputId}" placeholder="Item name" list="lootlogItemList_${dateStr}"
-      style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;width:100%;"
-      oninput="lootLogCheckAddItemReady('${dateStr}')" />
-    <datalist id="lootlogItemList_${dateStr}">
-      ${allItems.map(i => `<option value="${i}">`).join('')}
-    </datalist>
-  `;
+  lootLogBuildAutocomplete({
+    container,
+    inputId: `lootlogItemInput_${dateStr}`,
+    placeholder: 'Item name',
+    items: allItems,
+    renderOption: (name) => {
+      const id = getItemId(name);
+      const icon = id && itemIcons[id]
+        ? `<img src="https://wow.zamimg.com/images/wow/icons/small/${itemIcons[id]}.jpg" style="width:16px;height:16px;border-radius:2px;flex-shrink:0;" />`
+        : `<span style="width:16px;height:16px;display:inline-block;flex-shrink:0;"></span>`;
+      return `<span style="display:flex;align-items:center;gap:6px;">${icon}<span>${name}</span></span>`;
+    },
+    onSelect: () => lootLogCheckAddItemReady(dateStr),
+    onInput: () => lootLogCheckAddItemReady(dateStr),
+  });
+}
+
+function lootLogInitRecipientDropdown(dateStr) {
+  const container = document.getElementById(`lootlogRecipientDropdown_${dateStr}`);
+  if (!container) return;
+  const players = rosterData.players.map(p => p.name).sort();
+  lootLogBuildAutocomplete({
+    container,
+    inputId: `lootlogRecipient_${dateStr}`,
+    placeholder: 'Recipient',
+    items: players,
+    renderOption: (name) => {
+      const col = classColor(name) || 'var(--text)';
+      const cls = classMap[normalizeName(name)] || '';
+      return `<span style="display:flex;align-items:center;gap:6px;">
+        <span style="color:${col};font-weight:600;">${name}</span>
+        <span style="font-size:11px;color:var(--text-dim);">${cls}</span>
+      </span>`;
+    },
+    onSelect: () => lootLogCheckAddItemReady(dateStr),
+    onInput: () => lootLogCheckAddItemReady(dateStr),
+  });
+}
+
+function lootLogBuildAutocomplete({ container, inputId, placeholder, items, renderOption, onSelect, onInput }) {
+  const inputStyle = 'background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;width:100%;box-sizing:border-box;';
+  const dropStyle = 'position:absolute;top:100%;left:0;right:0;background:var(--bg2);border:1px solid var(--border);border-top:none;border-radius:0 0 4px 4px;max-height:220px;overflow-y:auto;z-index:100;display:none;';
+
+  container.innerHTML = `<input id="${inputId}" placeholder="${placeholder}" autocomplete="off" style="${inputStyle}" /><div id="${inputId}_drop" style="${dropStyle}"></div>`;
+
+  const input = container.querySelector(`#${inputId}`);
+  const drop = container.querySelector(`#${inputId}_drop`);
+  let activeIdx = -1;
+
+  function showDrop(filter) {
+    const q = filter.toLowerCase();
+    const matched = q ? items.filter(i => i.toLowerCase().includes(q)) : items;
+    if (!matched.length) { drop.style.display = 'none'; return; }
+    drop.innerHTML = matched.slice(0, 40).map((name, idx) =>
+      `<div data-val="${name.replace(/"/g,'&quot;')}" data-idx="${idx}"
+        style="padding:5px 10px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,0.04);"
+        onmouseenter="this.style.background='var(--bg)'"
+        onmouseleave="this.style.background=''"
+        onmousedown="event.preventDefault()">
+        ${renderOption(name)}
+      </div>`
+    ).join('');
+    drop.style.display = 'block';
+    activeIdx = -1;
+  }
+
+  function hideDrop() { drop.style.display = 'none'; activeIdx = -1; }
+
+  function selectItem(val) {
+    input.value = val;
+    hideDrop();
+    if (onSelect) onSelect(val);
+  }
+
+  input.addEventListener('input', () => { showDrop(input.value); if (onInput) onInput(); });
+  input.addEventListener('focus', () => showDrop(input.value));
+  input.addEventListener('blur', () => setTimeout(hideDrop, 150));
+  input.addEventListener('keydown', (e) => {
+    const opts = drop.querySelectorAll('[data-val]');
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      activeIdx = Math.min(activeIdx + 1, opts.length - 1);
+      opts.forEach((o, i) => o.style.background = i === activeIdx ? 'var(--bg)' : '');
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      activeIdx = Math.max(activeIdx - 1, 0);
+      opts.forEach((o, i) => o.style.background = i === activeIdx ? 'var(--bg)' : '');
+    } else if (e.key === 'Enter' && activeIdx >= 0) {
+      e.preventDefault();
+      selectItem(opts[activeIdx].dataset.val);
+    } else if (e.key === 'Escape') {
+      hideDrop();
+    }
+  });
+  drop.addEventListener('mousedown', (e) => {
+    const opt = e.target.closest('[data-val]');
+    if (opt) selectItem(opt.dataset.val);
+  });
 }
 
 function lootLogCheckAddItemReady(dateStr) {
