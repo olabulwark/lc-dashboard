@@ -1806,7 +1806,6 @@ function rebuildGlossaryData() {
           prioritization: (entry.prioritization || []).map(p =>
             p.conditions ? p : { conditions: [p.target], multiplier: p.multiplier }
           ),
-          roleValues: entry.roleValues || {},
         });
       }
     }
@@ -2480,6 +2479,7 @@ function parseLoot(text) {
 const ITEM_SHEET_ID = '1bt-0NVkheMGvWl2FgCcHZH86ZzQxIMuzK_cxPEAsr0A';
 const ITEM_SHEET_GIDS = [170506057, 461402221, 1447687848, 962096481, 1520599598];
 const WCL_CONFIG_FILE = 'wcl-config.json';
+const DATA_DIR = 'data'; // subdirectory where non-config JSON files live
 
 // ── Crypto helpers (AES-GCM via Web Crypto API) ──────────────────
 async function deriveKey(password) {
@@ -6615,7 +6615,7 @@ async function migrateFromGitHub() {
   for (const file of files) {
     try {
       // Fetch from GitHub Pages (raw static file)
-      const res = await fetch(`./${file}?t=${Date.now()}`);
+      const res = await fetch(`./${DATA_DIR}/${file}?t=${Date.now()}`);
       if (!res.ok) { results.push(`${file}: not found (skipped)`); continue; }
       const text = await res.text();
       JSON.parse(text); // validate
