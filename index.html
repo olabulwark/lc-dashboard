@@ -5931,8 +5931,8 @@ async function migrateFromGitHub() {
   if (!confirm('This will overwrite all Worker KV data with the current GitHub Pages JSON files.\n\nThis should only be done once during initial setup. Continue?')) return;
   const files = [
     'loot-glossary.json', 'roster.json', 'attendance.json',
-    'bis-data.json', 'gear-item-ids.json', 'set-bonuses.json',
-    'cla-sheets.json',
+    'loot-distribution.json', 'bis-data.json', 'gear-item-ids.json',
+    'set-bonuses.json', 'cla-sheets.json',
   ];
   if (btn) { btn.textContent = 'Seeding…'; btn.disabled = true; }
   const results = [];
