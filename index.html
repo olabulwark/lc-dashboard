@@ -909,6 +909,15 @@
     pointer-events: none;
     cursor: default;
   }
+  /* Write-gated: dims and disables editable elements for read-only users */
+  body.read-only .write-gated {
+    opacity: 0.35 !important;
+    pointer-events: none !important;
+    cursor: default !important;
+  }
+  body.read-only .write-gated-hide {
+    display: none !important;
+  }
 
     #glValueInput::-webkit-outer-spin-button,
   #glValueInput::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -1043,8 +1052,6 @@
     <button class="group-btn" data-mode="t45" onclick="setGrouping('t45')">T4/5</button>
     <button class="group-btn" data-mode="t6" onclick="setGrouping('t6')">T6</button>
     <button class="group-btn" data-mode="loot" onclick="setGrouping('loot')">Loot</button>
-  </div>
-  <div class="group-btns" id="adminNav" style="justify-content:center;margin:4px auto 0;display:none;">
     <button class="group-btn" data-mode="cla" onclick="setGrouping('cla')">CLA</button>
     <button class="group-btn" data-mode="bis" onclick="setGrouping('bis')">BiS</button>
     <button class="group-btn" data-mode="roster" onclick="setGrouping('roster')">Roster</button>
@@ -1054,9 +1061,8 @@
   </div>
 
   <div class="controls">
-    <div style="margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:2px;">
+    <div style="margin-left:auto;">
       <span class="status" id="status"></span>
-      <span id="wclStatus" style="font-size:12px;color:var(--text-dim);font-style:italic;"></span>
     </div>
   </div>
 
@@ -1240,7 +1246,7 @@
       <input class="cla-input" id="claGearGid" placeholder="Issues GID" />
       <input class="cla-input" id="claGearListingGid" placeholder="Gear GID (optional)" />
       <input class="cla-input" id="claBuffGid" placeholder="Consumes GID" />
-      <button class="btn" onclick="addCla()">+ Add</button>
+      <button class="btn write-gated" onclick="addCla()">+ Add</button>
     </div>
   </div>
 
@@ -1251,7 +1257,7 @@
     <div class="loot-selectors">
       <div class="loot-select-group">
         <label class="loot-select-label">Phase</label>
-        <select class="loot-select" id="bisPhaseSelect" onchange="onBisSpecChange()">
+        <select class="loot-select" id="bisPhaseSelect" class="write-gated" onchange="onBisSpecChange()">
           <option value="0">All Phases</option>
           <option value="1">Phase 1 (T4)</option>
           <option value="2">Phase 2 (T5)</option>
@@ -1262,13 +1268,13 @@
       </div>
       <div class="loot-select-group">
         <label class="loot-select-label">Spec</label>
-        <select class="loot-select" id="bisSpecSelect" onchange="onBisSpecChange()">
+        <select class="loot-select" id="bisSpecSelect" class="write-gated" onchange="onBisSpecChange()">
           <option value="">— Select Spec —</option>
         </select>
       </div>
       <div class="loot-select-group">
         <label class="loot-select-label">Slot</label>
-        <select class="loot-select" id="bisSlotSelect" onchange="renderBisPanel()" disabled>
+        <select class="loot-select" id="bisSlotSelect" class="write-gated" onchange="renderBisPanel()" disabled>
           <option value="">— Select Slot —</option>
         </select>
       </div>
@@ -1277,9 +1283,10 @@
   </div>
 
   <!-- WarcraftLogs connect section -->
-  <div id="wclSection" style="padding:16px 0 8px;border-top:1px solid var(--border);margin-top:8px;">
+  <div id="wclSection" style="padding:16px 0 8px;border-top:1px solid var(--border);margin-top:8px;display:flex;flex-direction:column;align-items:flex-end;gap:4px;">
     <button class="btn" id="wclConnectTopBtn" onclick="connectWcl()" style="display:none;">⚡ Connect WarcraftLogs</button>
     <span id="wclConnectedLabel" style="display:none;font-size:13px;color:#4caa6e;">⚡ Connected to WarcraftLogs</span>
+    <span id="wclStatus" style="font-size:12px;color:var(--text-dim);font-style:italic;"></span>
   </div>
 
   <!-- GitHub auth footer (shown when not authenticated) -->
@@ -1296,7 +1303,7 @@
   <div id="githubAuthBar" style="display:none;padding:8px 12px;display:none;align-items:center;justify-content:space-between;">
     <span style="font-size:12px;color:var(--text-dim);">&#128273; Write access enabled</span>
     <div style="display:flex;gap:8px;align-items:center;">
-      <button class="btn" id="migrateBtn" onclick="migrateFromGitHub()" style="font-size:11px;padding:3px 10px;" title="One-time: seed Worker KV from current GitHub Pages JSON files">Seed from GitHub</button>
+      <button class="btn" id="migrateBtn" class="write-gated-hide" onclick="migrateFromGitHub()" style="font-size:11px;padding:3px 10px;" title="One-time: seed Worker KV from current GitHub Pages JSON files">Seed from GitHub</button>
       <button class="btn" onclick="clearGithubToken()" style="font-size:11px;padding:3px 10px;">Disconnect</button>
     </div>
   </div>
@@ -3482,7 +3489,7 @@ function toggleLoot(td, playerName) {
   // Loot section — with assign button if we're on the loot tab with an item selected
   const _canAssign = writeToken && selectedItem && groupingMode === 'loot';
   const _assignBtn = _canAssign
-    ? `<button onclick="lootLogAssignFromLootTab('${playerName.replace(/'/g, "\\'")}', '${selectedItem.replace(/'/g, "\\'")}')"
+    ? `<button class="write-gated" onclick="lootLogAssignFromLootTab('${playerName.replace(/'/g, "\\'")}', '${selectedItem.replace(/'/g, "\\'")}')"
         style="background:none;border:1px solid var(--gold-dim);color:var(--gold-dim);padding:2px 10px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:10px;letter-spacing:0.1em;margin-left:8px;transition:background 0.15s;"
         onmouseover="this.style.background='var(--gold-dim)';this.style.color='var(--bg)'"
         onmouseout="this.style.background='none';this.style.color='var(--gold-dim)'">
@@ -3639,16 +3646,14 @@ function clearGithubToken() {
 
 function updateAuthState() {
   const authed = !!writeToken;
-  const adminNav = document.getElementById('adminNav');
   const authFooter = document.getElementById('githubAuthFooter');
   const authBar = document.getElementById('githubAuthBar');
   const readOnlyBadge = document.getElementById('readOnlyBadge');
-  if (adminNav) adminNav.style.display = authed ? 'flex' : 'none';
   if (authFooter) authFooter.style.display = authed ? 'none' : 'block';
   if (authBar) authBar.style.display = authed ? 'flex' : 'none';
   if (readOnlyBadge) readOnlyBadge.style.display = authed ? 'none' : 'block';
-  // If CLA panel is visible but no longer authed, hide it
-  if (!authed && groupingMode === 'cla') setGrouping('role');
+  // Toggle read-only body class — controls all write-gated elements via CSS
+  document.body.classList.toggle('read-only', !authed);
 }
 
 // Keep old name as alias for renderClaList calls
@@ -3668,7 +3673,7 @@ function renderClaList() {
       <span class="cla-row-label">${s.label}</span>
       <span class="cla-row-url" title="${s.url}">${s.url.substring(0, 60)}...</span>
       <span class="cla-row-gids">Issues: ${s.gearGid} / Gear: ${s.gearListingGid || '—'} / Consumes: ${s.buffGid}</span>
-      <button class="cla-remove" onclick="removeCla(${i})" title="Remove">✕</button>
+      <button class="cla-remove" class="write-gated" onclick="removeCla(${i})" title="Remove">✕</button>
     </div>
   `).join('');
 }
@@ -4229,10 +4234,10 @@ function renderLootLogPanel() {
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px;">
         <div style="font-family:'Cinzel',serif;font-size:13px;letter-spacing:0.15em;color:var(--gold-dim);">${raids.length} RAIDS RECORDED</div>
         <div style="display:flex;gap:8px;align-items:center;">
-          <input type="date" id="lootlogDateInput"
+          <input type="date" id="lootlogDateInput" class="write-gated"
             style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;"
             oninput="document.getElementById('lootlogAddBtn')?.classList.toggle('gloss-btn-ready', !!this.value)" />
-          <button id="lootlogAddBtn" class="gloss-btn-saveable"
+          <button id="lootlogAddBtn" class="gloss-btn-saveable write-gated"
             onclick="lootLogAddRaid()"
             style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">
             + ADD RAID
@@ -4339,9 +4344,9 @@ function renderLootLogRaidList() {
       // Add item form
       body.innerHTML = `
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;">
-          <div id="lootlogItemDropdown_${raid.date}" style="position:relative;min-width:320px;"></div>
-          <div id="lootlogRecipientDropdown_${raid.date}" style="position:relative;min-width:160px;"></div>
-          <button id="lootlogAddItemBtn_${raid.date}" class="gloss-btn-saveable"
+          <div id="lootlogItemDropdown_${raid.date}" class="write-gated" style="position:relative;min-width:320px;"></div>
+          <div id="lootlogRecipientDropdown_${raid.date}" class="write-gated" style="position:relative;min-width:160px;"></div>
+          <button id="lootlogAddItemBtn_${raid.date}" class="gloss-btn-saveable write-gated"
             onclick="lootLogAddItem('${raid.date}')"
             style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">
             + ADD ITEM
@@ -4522,7 +4527,7 @@ function lootLogRenderItems(dateStr) {
       <td style="padding:5px 8px;font-size:13px;color:${recipientColor};">${entry.recipient}</td>
       <td style="padding:5px 8px;font-size:13px;color:${epvColor};text-align:right;">${epv > 0 ? epv.toFixed(1) : '—'}</td>
       <td style="padding:5px 8px;text-align:center;">
-        <button onclick="lootLogRemoveItem('${dateStr}', ${idx})"
+        <button class="write-gated" onclick="lootLogRemoveItem('${dateStr}', ${idx})"
           style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:13px;padding:0 4px;"
           title="Remove item">✕</button>
       </td>
@@ -4651,10 +4656,10 @@ function renderAttendancePanel() {
           ${CLASSES.map(c => `<option value="${c}" ${_attendanceFilter.cls===c?'selected':''}>${c}</option>`).join('')}
         </select>
         <div style="display:flex;gap:6px;align-items:center;margin-left:auto;">
-          <input type="date" id="newRaidDateInput" style="${selStyle}padding:5px 8px;" oninput="document.getElementById('addRaidBtn')?.classList.toggle('gloss-btn-ready', !!this.value)" />
-          <button id="addRaidBtn" class="gloss-btn-saveable" onclick="attendanceAddRaid()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:\'Cinzel\',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">+ ADD RAID</button>
+          <input type="date" id="newRaidDateInput" class="write-gated" style="${selStyle}padding:5px 8px;" oninput="document.getElementById('addRaidBtn')?.classList.toggle('gloss-btn-ready', !!this.value)" />
+          <button id="addRaidBtn" class="gloss-btn-saveable write-gated" onclick="attendanceAddRaid()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:\'Cinzel\',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">+ ADD RAID</button>
         </div>
-        <button id="attendanceSaveBtn" class="gloss-btn-saveable" onclick="attendanceSave()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:\'Cinzel\',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">SAVE</button>
+        <button id="attendanceSaveBtn" class="gloss-btn-saveable write-gated" onclick="attendanceSave()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:\'Cinzel\',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">SAVE</button>
         <span style="font-size:12px;color:var(--text-dim);">${filteredPlayers.length} players · ${raids.length} raids</span>
       </div>
 
@@ -4744,6 +4749,7 @@ function renderAttendancePanel() {
       const cb = document.createElement('input');
       cb.type = 'checkbox';
       cb.checked = present;
+      cb.className = 'write-gated';
       cb.style.cssText = 'cursor:pointer;width:16px;height:16px;accent-color:' + (hasOverride ? 'var(--gold)' : 'var(--gold-dim)') + ';';
       cb.title = hasOverride ? 'Manual override' : (hasCla ? 'From CLA' : 'Not in CLA');
       cb.onchange = (function(name, date) {
@@ -4922,10 +4928,10 @@ function renderGlossaryPanel() {
             <span style="font-size:22px;font-weight:700;color:var(--gold);">${displayVal.toFixed(1)}</span>
             ${overrideVal !== null ? `<span style="font-size:13px;color:var(--text-dim);">(formula: ${formulaEpv.toFixed(1)})</span>` : `<span style="font-size:13px;color:var(--text-dim);">(formula)</span>`}
             <div style="display:flex;align-items:center;gap:8px;margin-left:auto;">
-              <input id="glValueInput" type="number" step="0.1" value="${overrideVal !== null ? overrideVal : ''}" placeholder="${formulaEpv.toFixed(1)}"
+              <input id="glValueInput" class="write-gated" type="number" step="0.1" value="${overrideVal !== null ? overrideVal : ''}" placeholder="${formulaEpv.toFixed(1)}"
                 oninput="document.getElementById('glValueSaveBtn')?.classList.add('gloss-btn-ready')"
                 style="width:100px;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;">
-              <button id="glValueSaveBtn" class="gloss-btn-saveable" onclick="glossarySaveValue()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">SAVE</button>
+              <button id="glValueSaveBtn" class="gloss-btn-saveable write-gated" onclick="glossarySaveValue()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">SAVE</button>
               ${overrideVal !== null ? `<button onclick="glossaryClearValue()" style="background:none;border:1px solid var(--border);color:var(--text-dim);padding:6px 10px;border-radius:4px;cursor:pointer;font-size:12px;">Clear override</button>` : ''}
             </div>
           </div>
@@ -4935,10 +4941,10 @@ function renderGlossaryPanel() {
         <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:16px;">
           <div style="font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.15em;color:var(--gold-dim);margin-bottom:10px;">NOTES</div>
           <div style="display:flex;gap:8px;">
-            <input id="glNotesInput" type="text" value="${(entry.notes||'').replace(/"/g,'&quot;')}" placeholder="Prioritization notes shown above loot table…"
+            <input id="glNotesInput" class="write-gated" type="text" value="${(entry.notes||'').replace(/"/g,'&quot;')}" placeholder="Prioritization notes shown above loot table…"
               oninput="document.getElementById('glNotesSaveBtn')?.classList.add('gloss-btn-ready')"
               style="flex:1;background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;">
-            <button id="glNotesSaveBtn" class="gloss-btn-saveable" onclick="glossarySaveNotes()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">SAVE</button>
+            <button id="glNotesSaveBtn" class="gloss-btn-saveable write-gated" onclick="glossarySaveNotes()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">SAVE</button>
           </div>
         </div>
 
@@ -4963,7 +4969,7 @@ function renderGlossaryPanel() {
                   </select>
                 </td>
                 <td style="padding:6px 4px;text-align:right;">
-                  <button onclick="glossaryRemovePrio(${i})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:13px;padding:2px 6px;">✕</button>
+                  <button class="write-gated" onclick="glossaryRemovePrio(${i})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:13px;padding:2px 6px;">✕</button>
                 </td>
               </tr>`;
             }).join('')}
@@ -4982,14 +4988,14 @@ function renderGlossaryPanel() {
               <select id="glPrioTarget" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:4px;font-size:13px;">
                 ${ROLES.map(r => `<option value="${r}">${r}</option>`).join('')}
               </select>
-              <button onclick="glossaryAddCondition()" style="background:none;border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px;">+ Add condition</button>
+              <button class="write-gated" onclick="glossaryAddCondition()" style="background:none;border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px;">+ Add condition</button>
             </div>
             <div style="display:flex;gap:8px;align-items:center;margin-top:10px;">
               <label style="font-size:12px;color:var(--text-dim);">Multiplier:</label>
               <select id="glPrioMult" onchange="document.getElementById('glAddPrioBtn')?.classList.add('gloss-btn-ready')" style="background:var(--bg2);border:1px solid var(--border);color:var(--gold);padding:5px 8px;border-radius:4px;font-size:13px;">
                 ${MULTS.map(m => `<option value="${m}" ${m===1.75?'selected':''}>×${m}</option>`).join('')}
               </select>
-              <button id="glAddPrioBtn" class="gloss-btn-saveable" onclick="glossaryAddPrio()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;margin-left:auto;transition:background 0.15s,box-shadow 0.15s;">ADD PRIO</button>
+              <button id="glAddPrioBtn" class="gloss-btn-saveable write-gated" onclick="glossaryAddPrio()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;margin-left:auto;transition:background 0.15s,box-shadow 0.15s;">ADD PRIO</button>
             </div>
           </div>
         </div>
@@ -5007,7 +5013,7 @@ function renderGlossaryPanel() {
             }).join('')}
           </div>
           <div style="display:flex;justify-content:flex-end;margin-top:8px;">
-            <button id="glClassesSaveBtn" class="gloss-btn-saveable" onclick="glossarySaveClasses()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">SAVE</button>
+            <button id="glClassesSaveBtn" class="gloss-btn-saveable write-gated" onclick="glossarySaveClasses()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">SAVE</button>
           </div>
         </div>
 
@@ -5028,7 +5034,7 @@ function renderGlossaryPanel() {
                   [0.5,0.75,1.0,1.25,1.5,1.75,2.0,2.25,2.5].map(m => '<option value="' + m + '"' + (pr.multiplier==m?' selected':'') + '>×' + m + '</option>').join('') +
                   '</select></td>' +
                 '<td style="padding:6px 4px;text-align:right;">' +
-                  '<button onclick="setBonusRemove(\'' + threshold + '\',' + i + ')" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:13px;padding:2px 6px;">✕</button>' +
+                  '<button class="write-gated" onclick="setBonusRemove(\'' + threshold + '\',' + i + ')" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:13px;padding:2px 6px;">✕</button>' +
                 '</td></tr>';
             }).join('');
             return (prios.length
@@ -5047,12 +5053,12 @@ function renderGlossaryPanel() {
             <div style="flex:1;">
               <div style="font-size:11px;letter-spacing:0.12em;color:var(--gold-dim);margin-bottom:6px;">2-PIECE BONUS</div>
               ${_renderBonusList('2pc')}
-              <button onclick="setBonusAddOpen('2pc')" style="font-size:12px;color:var(--text-dim);background:none;border:1px solid var(--border);padding:4px 10px;border-radius:4px;cursor:pointer;">+ Add condition</button>
+              <button class="write-gated" onclick="setBonusAddOpen('2pc')" style="font-size:12px;color:var(--text-dim);background:none;border:1px solid var(--border);padding:4px 10px;border-radius:4px;cursor:pointer;">+ Add condition</button>
             </div>
             <div style="flex:1;">
               <div style="font-size:11px;letter-spacing:0.12em;color:var(--gold-dim);margin-bottom:6px;">4-PIECE BONUS</div>
               ${_renderBonusList('4pc')}
-              <button onclick="setBonusAddOpen('4pc')" style="font-size:12px;color:var(--text-dim);background:none;border:1px solid var(--border);padding:4px 10px;border-radius:4px;cursor:pointer;">+ Add condition</button>
+              <button class="write-gated" onclick="setBonusAddOpen('4pc')" style="font-size:12px;color:var(--text-dim);background:none;border:1px solid var(--border);padding:4px 10px;border-radius:4px;cursor:pointer;">+ Add condition</button>
             </div>
           </div>
           <div id="setBonusAddForm" style="display:none;margin-top:12px;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:12px;">
@@ -5065,14 +5071,14 @@ function renderGlossaryPanel() {
               <select id="sbPrioTarget" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:5px 8px;border-radius:4px;font-size:13px;">
                 ${['Tanks','Physical DPS','Ranged DPS','Healers'].map(r => '<option value="' + r + '">' + r + '</option>').join('')}
               </select>
-              <button onclick="setBonusAddCondition()" style="background:none;border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px;">+ Add</button>
+              <button class="write-gated" onclick="setBonusAddCondition()" style="background:none;border:1px solid var(--border);color:var(--text-dim);padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px;">+ Add</button>
             </div>
             <div style="display:flex;gap:8px;align-items:center;">
               <label style="font-size:12px;color:var(--text-dim);">Multiplier:</label>
               <select id="sbPrioMult" style="background:var(--bg2);border:1px solid var(--border);color:var(--gold);padding:5px 8px;border-radius:4px;font-size:13px;">
                 ${[0.5,0.75,1.0,1.25,1.5,1.75,2.0,2.25,2.5].map(m => '<option value="' + m + '"' + (m===1.25?' selected':'') + '>×' + m + '</option>').join('')}
               </select>
-              <button id="setBonusConfirmBtn" class="gloss-btn-saveable" onclick="setBonusConfirmAdd()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;margin-left:auto;transition:background 0.15s,box-shadow 0.15s;">ADD</button>
+              <button id="setBonusConfirmBtn" class="gloss-btn-saveable write-gated" onclick="setBonusConfirmAdd()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:6px 14px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:11px;letter-spacing:0.1em;margin-left:auto;transition:background 0.15s,box-shadow 0.15s;">ADD</button>
               <button onclick="document.getElementById('setBonusAddForm').style.display='none';_sbPendingConditions=[];_sbActiveThreshold=null;" style="background:none;border:1px solid var(--border);color:var(--text-dim);padding:6px 10px;border-radius:4px;cursor:pointer;font-size:12px;">Cancel</button>
             </div>
           </div>
@@ -5214,7 +5220,7 @@ function _glossaryRenderPendingConditions() {
     _glossaryPendingConditions.map((c, i) =>
       `<span style="background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:3px 8px;font-size:13px;display:flex;align-items:center;gap:6px;">
         ${c}
-        <button onclick="glossaryRemoveCondition(${i})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:11px;padding:0;line-height:1;">✕</button>
+        <button class="write-gated" onclick="glossaryRemoveCondition(${i})" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:11px;padding:0;line-height:1;">✕</button>
       </span>`
     ).join('<span style="color:var(--text-dim);font-size:12px;">AND</span>') +
     '</div>';
@@ -5384,7 +5390,7 @@ function renderRosterPanel() {
               <td style="padding:7px 12px;color:var(--text-dim);font-size:13px;">${ROLE_ICONS[p.role]||''} ${p.role}</td>
               <td style="padding:7px 12px;font-size:13px;${classStyle(p.class)}">${p.class}</td>
               <td style="padding:7px 12px;text-align:right;">
-                <button onclick="rosterRemovePlayer('${p.name}')" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:13px;padding:2px 6px;" title="Remove from roster">✕</button>
+                <button class="write-gated" onclick="rosterRemovePlayer('${p.name}')" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:13px;padding:2px 6px;" title="Remove from roster">✕</button>
               </td>
             </tr>`).join('')}
         </tbody>
@@ -5396,22 +5402,22 @@ function renderRosterPanel() {
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;">
           <div style="display:flex;flex-direction:column;gap:4px;">
             <label style="font-size:11px;color:var(--text-dim);">Name</label>
-            <input id="rosterAddName" placeholder="Player name" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;width:160px;" oninput="rosterCheckAddReady()">
+            <input id="rosterAddName" class="write-gated" placeholder="Player name" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;width:160px;" oninput="rosterCheckAddReady()">
           </div>
           <div style="display:flex;flex-direction:column;gap:4px;">
             <label style="font-size:11px;color:var(--text-dim);">Role</label>
-            <select id="rosterAddRole" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;" onchange="rosterUpdateClassOptions();rosterCheckAddReady()">
+            <select id="rosterAddRole" class="write-gated" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;" onchange="rosterUpdateClassOptions();rosterCheckAddReady()">
               <option value="">— Role —</option>
               ${allRoles.map(r => `<option value="${r}">${r}</option>`).join('')}
             </select>
           </div>
           <div style="display:flex;flex-direction:column;gap:4px;">
             <label style="font-size:11px;color:var(--text-dim);">Class</label>
-            <select id="rosterAddClass" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;" onchange="rosterCheckAddReady()" disabled>
+            <select id="rosterAddClass" class="write-gated" style="background:var(--bg);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:4px;font-size:13px;" onchange="rosterCheckAddReady()" disabled>
               <option value="">— Select role first —</option>
             </select>
           </div>
-          <button id="rosterAddBtn" class="gloss-btn-saveable" onclick="rosterAddPlayer()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:7px 16px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">ADD</button>
+          <button id="rosterAddBtn" class="gloss-btn-saveable write-gated" onclick="rosterAddPlayer()" style="background:var(--gold-dim);border:none;color:var(--bg);padding:7px 16px;border-radius:4px;cursor:pointer;font-family:'Cinzel',serif;font-size:12px;letter-spacing:0.1em;transition:background 0.15s,box-shadow 0.15s;">ADD</button>
         </div>
       </div>
 
@@ -5424,7 +5430,7 @@ function renderRosterPanel() {
           ${recommendations.map(key => `
             <div style="display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:4px 10px;">
               <span style="font-size:13px;color:var(--text);">${key}</span>
-              <button onclick="rosterExcludePlayer('${key}')" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:12px;padding:0 2px;" title="Exclude permanently">✕</button>
+              <button class="write-gated" onclick="rosterExcludePlayer('${key}')" style="background:none;border:none;color:var(--text-dim);cursor:pointer;font-size:12px;padding:0 2px;" title="Exclude permanently">✕</button>
             </div>`).join('')}
         </div>
       </div>` : ''}
@@ -5936,6 +5942,7 @@ function renderBisPanel() {
       <td style="padding:4px 12px;text-align:right;">
         <input type="number" step="0.1" value="${epv}"
           data-item-id="${id}" data-original="${epv}"
+          class="write-gated"
           style="background:transparent;border:none;border-bottom:1px solid transparent;color:var(--gold-dim);font-size:16px;font-family:'Crimson Pro',serif;text-align:right;width:90px;outline:none;cursor:text;transition:border-color 0.15s;"
           onfocus="this.style.borderBottomColor='var(--gold-dim)';this.style.background='var(--bg2)';"
           onblur="this.style.borderBottomColor='transparent';this.style.background='transparent';bisMarkChanged(this);"
@@ -5948,8 +5955,8 @@ function renderBisPanel() {
   // Save overrides button — hidden until changes are made
   html += `
     <div id="bisOverrideSaveBar" style="display:none;border-top:1px solid var(--border);padding:12px 0;margin-bottom:16px;display:none;align-items:center;gap:12px;">
-      <button class="btn primary" onclick="bisSubmitOverrides('${spec}','${slot}')" style="padding:6px 18px;">Save EPV Changes</button>
-      <button class="btn" onclick="bisResetOverrides()" style="padding:6px 14px;">Reset</button>
+      <button class="btn primary" class="write-gated" onclick="bisSubmitOverrides('${spec}','${slot}')" style="padding:6px 18px;">Save EPV Changes</button>
+      <button class="btn" class="write-gated" onclick="bisResetOverrides()" style="padding:6px 14px;">Reset</button>
       <span id="bisOverrideHint" style="font-size:12px;color:var(--text-dim);"></span>
     </div>`;
 
@@ -5964,9 +5971,9 @@ function renderBisPanel() {
         </div>
         <div style="display:flex;flex-direction:column;gap:4px;">
           <label style="font-size:11px;color:var(--text-dim);">EPV</label>
-          <input id="bisAddEpv" type="number" step="0.1" placeholder="e.g. 145.5" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:6px 10px;font-size:14px;width:110px;outline:none;" />
+          <input id="bisAddEpv" class="write-gated" type="number" step="0.1" placeholder="e.g. 145.5" style="background:var(--bg2);border:1px solid var(--border);color:var(--text);padding:6px 10px;font-size:14px;width:110px;outline:none;" />
         </div>
-        <button id="bisAddBtn" class="btn primary" onclick="bisAddItem()" style="padding:6px 16px;">+ Add</button>
+        <button id="bisAddBtn" class="btn primary write-gated" onclick="bisAddItem()" style="padding:6px 16px;">+ Add</button>
         <span id="bisAddHint" style="font-size:12px;color:var(--text-dim);align-self:center;"></span>
       </div>
     </div>`;
