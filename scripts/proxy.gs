@@ -1,11 +1,15 @@
 /**
- * Loot Council Dashboard — Main Apps Script Proxy
+ * Loot Council Dashboard — Shared Apps Script Proxy
  *
- * Handles three responsibilities:
+ * Handles two responsibilities:
  *   1. Fetching CLA Google Sheets as CSV (?sheetId=...&gid=...)
- *   2. WarcraftLogs OAuth token exchange (?action=wclAuth&payload=...)
- *   3. WarcraftLogs GraphQL queries (?action=wclQuery&q=...&token=...)
- *   4. Wowhead item ID lookup (?action=itemLookup&name=...)
+ *   2. Wowhead item ID lookup (?action=itemLookup&name=...)
+ *
+ * This script is safe to share across guilds — it is stateless,
+ * involves no credentials, and has low per-guild quota usage.
+ *
+ * WarcraftLogs OAuth and GraphQL are handled by a separate
+ * wcl-proxy.gs script that each guild deploys themselves.
  *
  * Deploy as:
  *   Execute as: Me
@@ -18,51 +22,7 @@ function doGet(e) {
 
   try {
 
-    // ── 1. WCL OAuth Token Exchange ──────────────────────────────
-    // Dashboard sends PKCE token exchange params as base64 JSON payload
-    if (action === 'wclAuth') {
-      const payload = JSON.parse(atob(params.payload));
-
-      const response = UrlFetchApp.fetch('https://www.warcraftlogs.com/oauth/token', {
-        method: 'post',
-        contentType: 'application/x-www-form-urlencoded',
-        payload: {
-          grant_type:    payload.grant_type,
-          client_id:     payload.client_id,
-          redirect_uri:  payload.redirect_uri,
-          code:          payload.code,
-          code_verifier: payload.code_verifier,
-        },
-        muteHttpExceptions: true,
-      });
-
-      return ContentService
-        .createTextOutput(response.getContentText())
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-
-    // ── 2. WCL GraphQL Query ─────────────────────────────────────
-    // Query is base64-encoded to handle special characters safely
-    if (action === 'wclQuery') {
-      const query = decodeURIComponent(escape(atob(params.q)));
-      const token = params.token;
-
-      const response = UrlFetchApp.fetch('https://www.warcraftlogs.com/api/v2/client', {
-        method: 'post',
-        contentType: 'application/json',
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-        payload: JSON.stringify({ query }),
-        muteHttpExceptions: true,
-      });
-
-      return ContentService
-        .createTextOutput(response.getContentText())
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-
-    // ── 3. Wowhead Item ID Lookup ─────────────────────────────────
+    // ── 1. Wowhead Item ID Lookup ─────────────────────────────────
     // Searches Wowhead's XML API for an item by name, returns { id, slot }
     if (action === 'itemLookup') {
       const name = params.name;
@@ -78,9 +38,8 @@ function doGet(e) {
       const response = UrlFetchApp.fetch(url, { muteHttpExceptions: true });
       const xml = response.getContentText();
 
-      // Extract first item result from Wowhead XML
       const idMatch   = xml.match(/<id>(\d+)<\/id>/);
-      const nameMatch = xml.match(/<name><!\[CDATA\[([^\]]+)\]\]><\/name>/);
+      const nameMatch = xml.match(/<n><!\[CDATA\[([^\]]+)\]\]><\/name>/);
       const slotMatch = xml.match(/<slot>(\d+)<\/slot>/);
 
       if (!idMatch) {
@@ -89,7 +48,6 @@ function doGet(e) {
           .setMimeType(ContentService.MimeType.JSON);
       }
 
-      // Map Wowhead slot numbers to slot names
       const SLOT_MAP = {
         1: 'Head', 2: 'Neck', 3: 'Shoulder', 5: 'Chest',
         6: 'Waist', 7: 'Legs', 8: 'Feet', 9: 'Wrist',
@@ -110,7 +68,7 @@ function doGet(e) {
         .setMimeType(ContentService.MimeType.JSON);
     }
 
-    // ── 4. Google Sheet CSV Fetch ─────────────────────────────────
+    // ── 2. Google Sheet CSV Fetch ─────────────────────────────────
     // Fetches a specific tab of a Google Sheet as CSV by sheetId + gid
     if (params.sheetId && params.gid) {
       const sheetId = params.sheetId;
