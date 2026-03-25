@@ -3860,12 +3860,50 @@ function initWclIfSaved() {
   }
 }
 
-function saveGithubToken() {
-  const token = document.getElementById('claToken').value.trim();
+async function saveGithubToken() {
+  const token = document.getElementById('claToken')?.value.trim();
   if (!token) return;
-  writeToken = token.trim();
-  try { localStorage.setItem('writeToken', token.trim()); } catch(e) {}
+
+  const saveBtn = document.querySelector('#githubAuthFooter .btn.primary');
+  if (saveBtn) { saveBtn.textContent = 'Validating…'; saveBtn.disabled = true; }
+
+  try {
+    let base = (CF_WORKER_URL || '').trim().replace(/\/+$/, '');
+    if (!base.startsWith('http')) base = 'https://' + base;
+    const res = await fetch(`${base}/auth-check`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-Token': token },
+    });
+    if (!res.ok) {
+      if (saveBtn) { saveBtn.textContent = 'Save Token'; saveBtn.disabled = false; }
+      const input = document.getElementById('claToken');
+      if (input) {
+        input.style.borderColor = 'var(--red)';
+        setTimeout(() => { input.style.borderColor = ''; }, 2000);
+      }
+      // Show error below the input
+      let errEl = document.getElementById('tokenErrorMsg');
+      if (!errEl) {
+        errEl = document.createElement('div');
+        errEl.id = 'tokenErrorMsg';
+        errEl.style.cssText = 'color:var(--red);font-size:12px;margin-top:6px;';
+        document.querySelector('#githubAuthFooter .btn.primary')?.parentNode?.after(errEl);
+        input?.parentNode?.appendChild(errEl);
+      }
+      errEl.textContent = res.status === 401 ? 'Invalid token — access denied.' : `Validation failed (${res.status}).`;
+      return;
+    }
+  } catch(e) {
+    // Worker unreachable — warn but allow (offline scenario)
+    console.warn('Token validation fetch failed:', e.message);
+  }
+
+  writeToken = token;
+  try { localStorage.setItem('writeToken', token); } catch(e) {}
   document.getElementById('claToken').value = '';
+  if (saveBtn) { saveBtn.textContent = 'Save Token'; saveBtn.disabled = false; }
+  const errEl = document.getElementById('tokenErrorMsg');
+  if (errEl) errEl.remove();
   updateAuthState();
 }
 
