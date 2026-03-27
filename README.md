@@ -99,6 +99,8 @@ If you want WarcraftLogs integration (see Section 6), change "enable_wcl" to tru
 ```
 This also requires completion of the Apps Script set-up.
 
+Within the "formula" section of the config there are a number of configurable modifiers for the loot priority formula. You can configure these as best suits your loot council.
+
 Commit and push — GitHub Pages will redeploy automatically.
 
 > **Tip:** To use a custom browser tab icon, replace `favicon.ico` in the root of your repo with your own 32×32 or 64×64 pixel `.ico` file.
