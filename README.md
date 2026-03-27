@@ -143,7 +143,7 @@ CLA (Combat Log Analytics) is the source of attendance, current gear, gear issue
 **If `enable_apps_script` is false (paste mode):**
 - Enter a **Label** (e.g. `Mar 25`)
 - Open your CLA Google Sheet, go to each tab, press **Ctrl+A** then **Ctrl+C**
-- Paste directly into the **Gear Issues**, **Gear Listing** (optional), and **Buff Consumables** fields
+- Paste directly into the **Gear Issues**, **Gear Listing**, and **Buff Consumables** fields
 - Click **+ Add** — data is parsed immediately
 - Both tab-separated (clipboard) and CSV (downloaded) formats are accepted
 
