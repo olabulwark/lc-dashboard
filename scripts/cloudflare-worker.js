@@ -1,5 +1,5 @@
 /**
- * DBS Loot Council — Cloudflare Workers KV Storage
+ * Cloudflare Workers KV Storage
  * Token is hardcoded below — replace with your chosen write token.
  * The Worker source is only visible to the Cloudflare account owner.
  */
