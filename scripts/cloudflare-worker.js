@@ -32,6 +32,20 @@ export default {
     const url = new URL(request.url);
     const key = url.pathname.replace(/^\/+/, '');
 
+    // ── POST /auth-check (token validation only, no side effects) ───
+    if (request.method === 'POST' && key === 'auth-check') {
+      const token = request.headers.get('X-Token');
+      if (!token || token !== WRITE_TOKEN)
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      return new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     if (!key || !ALLOWED_KEYS.has(key))
       return new Response(JSON.stringify({ error: 'Unknown key: ' + key }), {
         status: 404,
@@ -49,20 +63,6 @@ export default {
             status: 404,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
-    }
-
-    // ── POST /auth-check (token validation only, no side effects) ───
-    if (request.method === 'POST' && key === 'auth-check') {
-      const token = request.headers.get('X-Token');
-      if (!token || token !== WRITE_TOKEN)
-        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      return new Response(JSON.stringify({ ok: true }), {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
     }
 
     // ── PUT (write token required) ────────────────────────────────
