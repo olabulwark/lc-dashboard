@@ -2,7 +2,7 @@
   "guild_name": "Bulwark",
   "guild_subtitle": "Loot Council Summary",
   "page_title": "Bulwark",
-  "cf_worker_url": "my-lc-worker.aaron-dickens.workers.dev",
+  "cf_worker_url": "https://my-lc-worker.aaron-dickens.workers.dev/",
   "enable_apps_script": false, // Enables WCL, Automated Icon fetching, and CLA parsing. See scripts/apps-script.md if you want to set it up, but it is non-trivial.
   "apps_script": "https://script.google.com/macros/s/YOURAPPSSCRIPT/exec",
   "formula": {
