@@ -2908,6 +2908,7 @@ async function appsScriptFetch(url) {
 }
 
 async function fetchSheet(sheetId, gid) {
+  if (!APPS_SCRIPT) throw new Error('Apps Script URL not configured — set apps_script in config.json to fetch sheets by URL');
   const rawUrl = APPS_SCRIPT + '?sheetId=' + sheetId + '&gid=' + gid;
   const text = await appsScriptFetch(rawUrl);
   if (!text.trim() || !text.includes(',')) throw new Error('Response does not look like CSV');
@@ -4077,7 +4078,7 @@ function renderClaList() {
   list.innerHTML = claSheets.map((s, i) => `
     <div class="cla-row">
       <span class="cla-row-label">${s.label}</span>
-      <span class="cla-row-url" title="${s.url}">${s.url.substring(0, 60)}...</span>
+      <span class="cla-row-url" title="${s.url || ''}">${s.url ? s.url.substring(0, 60) + '...' : '(pasted CSV)'}</span>
       <span class="cla-row-gids">${s.sheetId
         ? `Issues: ${s.gearGid} / Gear: ${s.gearListingGid || '—'} / Consumes: ${s.buffGid}`
         : `Paste mode${s.csvGearListing ? ' (with gear listing)' : ''}`}</span>
@@ -4246,9 +4247,15 @@ function addCla() {
     if (csvGearListing) {
       try {
         const gearData = parseGearListing(csvGearListing);
+        const thisIdx = claSheets.length; // entry not pushed yet, so length = its future index
+        const thisDate = claSheetDates[label] || null;
         Object.entries(gearData).forEach(([playerName, slots]) => {
           const key = normalizeName(playerName);
-          gearListingByPlayer[key] = { label, slots };
+          const existingLabel = gearListingByPlayer[key]?.label;
+          const existingDate = existingLabel ? (claSheetDates[existingLabel] || null) : null;
+          const existingIdx = existingLabel ? claSheets.findIndex(s => s.label === existingLabel) : -1;
+          const isNewer = (thisDate && existingDate) ? thisDate >= existingDate : thisIdx >= existingIdx;
+          if (isNewer) gearListingByPlayer[key] = { label, slots };
         });
       } catch(e) { console.warn('Gear listing parse error:', e); }
     }
@@ -4277,9 +4284,20 @@ function removeCla(i) {
 
 // Apply stored parsed CLA data to in-memory globals
 function _applyClaStoredParsed() {
-  for (const [label, pd] of Object.entries(_claStoredParsed)) {
-    // sheetDate
-    if (pd.sheetDate) claSheetDates[label] = pd.sheetDate;
+  // Process in sheet order (chronological) so newer entries correctly overwrite older ones
+  const _sortedLabels = claSheets.map(s => s.label).filter(l => _claStoredParsed[l]);
+  const _remainingLabels = Object.keys(_claStoredParsed).filter(l => !_sortedLabels.includes(l));
+  const _allLabels = [..._sortedLabels, ..._remainingLabels];
+
+  // Pre-populate ALL sheet dates before any recency comparisons so they're available
+  for (const label of _allLabels) {
+    const pd = _claStoredParsed[label];
+    if (pd?.sheetDate) claSheetDates[label] = pd.sheetDate;
+  }
+
+  for (const label of _allLabels) {
+    const pd = _claStoredParsed[label];
+    if (!pd) continue;
 
     // claPresence
     if (pd.claPresence) {
@@ -4329,8 +4347,9 @@ function _applyClaStoredParsed() {
       }
     }
 
-    // gearListing
-    if (pd.gearListing) {
+    // gearListing — only apply if this sheet had entries (skip empty/older sheets)
+    console.log(`[apply] label="${label}" stored gearListing players: ${Object.keys(pd.gearListing||{}).length}`);
+    if (pd.gearListing && Object.keys(pd.gearListing).length > 0) {
       for (const [key, slots] of Object.entries(pd.gearListing)) {
         const existingLabel = gearListingByPlayer[key]?.label;
         const existingDate = existingLabel ? (claSheetDates[existingLabel] || null) : null;
@@ -4345,7 +4364,7 @@ function _applyClaStoredParsed() {
         if (isNewer) gearListingByPlayer[key] = { label, slots };
       }
     }
-  }
+  } // end for loop
   console.log('CLA cache applied:', Object.keys(claDataByPlayer).length, 'players,',
     Object.keys(gearListingByPlayer).length, 'gear listings,',
     Object.keys(buffScoreByPlayerDate).length, 'buff score players');
@@ -4407,6 +4426,7 @@ function _storeParsedClaData() {
     for (const [key, data] of Object.entries(gearListingByPlayer)) {
       if (data.label === label) gearListing[key] = data.slots;
     }
+    console.log(`[store] label="${label}" gearListing players: ${Object.keys(gearListing).length} / gearListingByPlayer total: ${Object.keys(gearListingByPlayer).length}`);
 
     // CLA presence
     const claPresence = [...(claPlayersByLabel[label] || [])];
@@ -4437,31 +4457,45 @@ async function fetchAllClaData() {
   canonicalNames = {};
 
   // Paste-mode entries already have parsed data stored — only fetch-mode entries need HTTP
-  const fetchSheets = ENABLE_APPS_SCRIPT ? claSheets.filter(s => s.sheetId) : [];
+  const fetchSheets = claSheets.filter(s => s.sheetId); // always fetch URL/GID sheets regardless of ENABLE_APPS_SCRIPT
   const pasteSheets = claSheets.filter(s => s.csvGear || s.csvBuff);
 
   // If all sheets are either cached or paste-mode, skip fetching entirely
   const allHandled = claSheets.length > 0 && claSheets.every(s =>
     _claStoredParsed[s.label] || s.csvGear
   );
+  console.log('[fetchAllClaData] allHandled:', allHandled, '| fetchSheets:', fetchSheets.length, '| pasteSheets:', pasteSheets.length, '| cached:', claSheets.filter(s => _claStoredParsed[s.label]).length);
   if (allHandled) {
     console.log('Loading CLA data from cache/paste (' + claSheets.length + ' sheets)');
     // Apply paste-mode entries directly
+    // Collect paste gear listings and run through recency-ordered processing alongside cached data
+    const _pasteGearListingResults = [];
     pasteSheets.forEach(s => {
       if (!_claStoredParsed[s.label]) {
         try { parseGearIssues(normalizeClaPaste(s.csvGear||''), s.label); } catch(e) {}
         try { parseBuffConsumables(normalizeClaPaste(s.csvBuff||''), s.label); } catch(e) {}
         if (s.csvGearListing) {
-          try {
-            const gd = parseGearListing(normalizeClaPaste(s.csvGearListing));
-            Object.entries(gd).forEach(([n, slots]) => {
-              gearListingByPlayer[normalizeName(n)] = { label: s.label, slots };
-            });
-          } catch(e) {}
+          _pasteGearListingResults.push({ label: s.label, text: normalizeClaPaste(s.csvGearListing), sheetIdx: claSheets.indexOf(s) });
         }
       }
     });
     _applyClaStoredParsed();
+    // Apply paste gear listings after cache restore, with recency checks
+    _pasteGearListingResults.sort((a, b) => a.sheetIdx - b.sheetIdx);
+    for (const { label, text, sheetIdx } of _pasteGearListingResults) {
+      try {
+        const data = parseGearListing(text);
+        const thisDate = claSheetDates[label] || null;
+        Object.entries(data).forEach(([playerName, slots]) => {
+          const key = normalizeName(playerName);
+          const existingLabel = gearListingByPlayer[key]?.label;
+          const existingDate = existingLabel ? (claSheetDates[existingLabel] || null) : null;
+          const existingIdx = existingLabel ? claSheets.findIndex(s => s.label === existingLabel) : -1;
+          const isNewer = (thisDate && existingDate) ? thisDate >= existingDate : sheetIdx >= existingIdx;
+          if (isNewer) gearListingByPlayer[key] = { label, slots };
+        });
+      } catch(e) {}
+    }
     return;
   }
 
@@ -4477,6 +4511,7 @@ async function fetchAllClaData() {
     try { parseGearIssues(csvGear, sheet.label); } catch(e) {}
     try { parseBuffConsumables(csvBuff, sheet.label); } catch(e) {}
     if (csvGearListing) {
+      // Push into gearListingResults so it goes through the same recency-ordered processing as URL sheets
       gearListingResults.push({ label: sheet.label, text: csvGearListing, sheetIdx: claSheets.indexOf(sheet) });
     }
   });
@@ -6996,7 +7031,7 @@ async function bisAddItem() {
 
 // ── One-time migration: seed Worker KV from GitHub Pages JSON files ──────
 async function migrateFromGitHub() {
-  if (!CF_WORKER_URL) { alert('CF_WORKER_URL not set in source.'); return; }
+  if (!CF_WORKER_URL) { alert('CF_WORKER_URL is not set — check that config.json loaded correctly (open the browser console for errors).'); return; }
   if (!writeToken) { alert('Write token required.'); return; }
   if (!confirm('This will overwrite all Worker KV data with the current GitHub Pages JSON files.\n\nThis should only be done once during initial setup. Continue?')) return;
   const files = [
@@ -7004,7 +7039,6 @@ async function migrateFromGitHub() {
     'loot-distribution.json', 'bis-data.json', 'gear-item-ids.json',
     'set-bonuses.json', 'cla-sheets.json',
   ];
-  if (btn) { btn.textContent = 'Seeding…'; btn.disabled = true; }
   const results = [];
   for (const file of files) {
     try {
